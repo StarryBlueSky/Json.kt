@@ -7,7 +7,7 @@ import jp.nephy.jsonkt.exception.InvalidJsonModelException
 import jp.nephy.jsonkt.exception.JsonNullCastException
 import kotlin.reflect.KProperty
 
-class JsonDelegate<out T>(private val json: JsonObject, private val key: String?, private val default: ((JsonObject).() -> T)?, private val lambda: ((JsonElement).() -> T)?, private val modelClass: Class<T>? = null) {
+class JsonDelegate<out T>(private val json: JsonObject, private val key: String?, private val default: ((JsonObject).() -> T)?, private val lambda: ((JsonElement).() -> T)?, private val modelClass: Class<T>? = null, private vararg val params: Any) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         val jsonKey = key ?: property.name
         val isMarkedNullable = property.returnType.isMarkedNullable
@@ -30,7 +30,7 @@ class JsonDelegate<out T>(private val json: JsonObject, private val key: String?
             wrap(lambda?.invoke(json[jsonKey]))
         } else {
             try {
-                modelClass.getConstructor(JsonObject::class.java).newInstance(json[jsonKey])
+                modelClass.getConstructor(*params.map { it::class.java }.toTypedArray(), JsonObject::class.java).newInstance(*params, json[jsonKey])
             } catch (e: NoSuchMethodException) {
                 throw InvalidJsonModelException(modelClass.canonicalName)
             }
