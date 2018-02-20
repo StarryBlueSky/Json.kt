@@ -15,11 +15,17 @@ class DelegateTest {
         println(JsonKt.toPrettyString(model))
 
         model::class.memberProperties.forEach {
+            if (it.visibility?.name == "PRIVATE") {
+                return@forEach
+            }
+
             if (it.returnType.isSubtypeOf(JsonModel::class.createType())) {
                 println("val ${it.name}: ${it.returnType.javaType.typeName} = {")
-                val model2 = it.call(model) as ExampleModel.InnerModel
+                val model2 = it.call(model)!!
                 model2::class.memberProperties.forEach {
-                    println("   val ${it.name}: ${it.returnType.javaType.typeName} = ${it.call(model2)}")
+                    if (it.visibility?.name != "PRIVATE") {
+                        println("   val ${it.name}: ${it.returnType.javaType.typeName} = ${it.call(model2)}")
+                    }
                 }
                 println("}")
             } else {
@@ -31,6 +37,11 @@ class DelegateTest {
     private fun makeJsonObject(): JsonObject {
         return jsonObject(
                 "model" to mapOf(
+                        "x" to 5,
+                        "y" to 2,
+                        "z" to arrayOf(1, 10, 100)
+                ),
+                "model2" to mapOf(
                         "x" to 5,
                         "y" to 2,
                         "z" to arrayOf(1, 10, 100)
