@@ -11,10 +11,10 @@ class JsonKt {
 
         fun toJsonObject(content: String) = Gson().toJsonObject(content)
 
-        fun toPrettyString(json: JsonObject) = GsonBuilder().setPrettyPrinting().create().toJson(json)
+        fun toPrettyString(json: JsonObject) = GsonBuilder().setPrettyPrinting().create().toJson(json)!!
         fun toPrettyString(model: JsonModel) = toPrettyString(model.json)
 
-        inline fun <reified T: JsonModel> parse(json: JsonObject) = Gson().parse<T>(json)
+        inline fun <reified T: JsonModel> parse(json: JsonObject) = T::class.java.getConstructor(JsonObject::class.java).newInstance(json)!!
         inline fun <reified T: JsonModel> parse(content: String) = Gson().parse<T>(content)
     }
 }
@@ -23,9 +23,6 @@ fun Gson.toJsonObject(content: String): JsonObject {
     return fromJson(content, JsonObject::class.java)
 }
 
-inline fun <reified T: JsonModel> Gson.parse(json: JsonObject): T {
-    return T::class.java.getConstructor(JsonObject::class.java).newInstance(json)
-}
 inline fun <reified T: JsonModel> Gson.parse(content: String): T {
-    return parse(toJsonObject(content))
+    return JsonKt.parse(toJsonObject(content))
 }
