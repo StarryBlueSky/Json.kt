@@ -9,14 +9,18 @@ import java.math.BigInteger
 import java.net.URI
 import java.net.URL
 
-fun <T> JsonObject.byLambda(key: String? = null, default: (JsonObject.() -> T)? = null, lambda: JsonElement.() -> T) = JsonDelegate(asJsonObject, key, default, lambda)
-fun <T> JsonObject.byNullableLambda(key: String? = null, default: (JsonObject.() -> T?)? = null, lambda: JsonElement.() -> T?) = JsonDelegate(asJsonObject, key, default, lambda)
+fun <T> JsonObject.byLambda(key: String? = null, default: (JsonObject.() -> T)? = null, lambda: JsonElement.() -> T) = JsonDelegate(jsonObject, key, default, lambda)
+fun <T> JsonObject.byNullableLambda(key: String? = null, default: (JsonObject.() -> T?)? = null, lambda: JsonElement.() -> T?) = JsonDelegate(jsonObject, key, default, lambda)
 
-fun <T> JsonObject.byLambdaList(key: String? = null, default: (JsonObject.() -> Collection<T>)? = null, lambda: JsonElement.() -> T) = JsonArrayDelegate(asJsonObject, key, default, lambda)
-fun <T> JsonObject.byNullableLambdaList(key: String? = null, default: (JsonObject.() -> Collection<T?>)? = null, lambda: JsonElement.() -> T?) = JsonArrayDelegate(asJsonObject, key, default, lambda)
+fun <T> JsonObject.byLambdaList(key: String? = null, default: (JsonObject.() -> Collection<T>)? = null, lambda: JsonElement.() -> T) = JsonArrayDelegate(jsonObject, key, default, lambda)
+fun <T> JsonObject.byNullableLambdaList(key: String? = null, default: (JsonObject.() -> Collection<T?>)? = null, lambda: JsonElement.() -> T?) = JsonArrayDelegate(jsonObject, key, default, lambda)
 
-inline fun <reified T: JsonModel> JsonObject.byModel(key: String? = null, noinline default: (JsonObject.() -> T)? = null) = JsonDelegate(asJsonObject, key, default, null, T::class.java)
-inline fun <reified T: JsonModel> JsonObject.byModelList(key: String? = null, noinline default: (JsonObject.() -> Collection<T>)? = null) = JsonArrayDelegate(asJsonObject, key, default, null, T::class.java)
+fun <T> JsonObject.byMap(key: String? = null, default: (JsonObject.() -> List<T>)? = null, operation: (it: Map.Entry<String, JsonElement>) -> T) = JsonArrayDelegate(jsonObject, key, default, null, operation)
+
+inline fun <reified T: JsonModel?> JsonObject.byModel(key: String? = null, noinline default: (JsonObject.() -> T)? = null) = JsonDelegate(jsonObject, key, default, null, T::class.java)
+inline fun <reified T: JsonModel?> JsonObject.byModel(vararg args: Any, key: String? = null, noinline default: (JsonObject.() -> T)? = null) = JsonDelegate(jsonObject, key, default, null, T::class.java, *args)
+inline fun <reified T: JsonModel?> JsonObject.byModelList(key: String? = null, noinline default: (JsonObject.() -> Collection<T>)? = null) = JsonArrayDelegate(jsonObject, key, default, null, modelClass = T::class.java)
+inline fun <reified T: JsonModel?> JsonObject.byModelList(vararg args: Any, key: String? = null, noinline default: (JsonObject.() -> Collection<T>)? = null) = JsonArrayDelegate(jsonObject, key, default, null, modelClass = T::class.java, params = *args)
 
 fun JsonObject.byBool(key: String? = null, default: (JsonObject.() -> Boolean)? = null) = byLambda(key, default) { bool }
 val JsonObject.byBool: JsonDelegate<Boolean>
