@@ -6,14 +6,22 @@ import java.math.BigInteger
 import java.net.URI
 import java.net.URL
 
+@Suppress("UNUSED")
 class ExampleModel(override val json: JsonObject): JsonModel {
     class InnerModel(override val json: JsonObject): JsonModel {
-        val x by json.byInt
+        private val x by json.byInt
         val y by json.byLambda { x * int }
         val z by json.byLambdaList { int + 10 }
     }
 
-    val model by json.byModel<InnerModel>()
+    class ValueRequiredModel(val a: String, val b: String, val c: String, override val json: JsonObject): JsonModel {
+        private val x by json.byInt
+        val y by json.byLambda { x * int }
+        val z by json.byLambdaList { int + 10 }
+    }
+
+    val model by json.byMap { it.key }
+    val model2 by json.byModel<ValueRequiredModel>("aaa", "bbb", "ccc")
 
     val bool by json.byBool
     val boolKey by json.byBool("bool")
