@@ -97,13 +97,15 @@ fun main(args: Array<String>) {
 }
 ```
 
+もっとほかのサンプルを参照したい方は, [Penicillin](https://github.com/NephyProject/Penicillin) や [KChroner](https://github.com/NephyProject/KChroner) の内部でも使用していますのでご覧ください.
+
 Prepare
 -------
-最新バージョンは `v1.1` です. すべての変更は [Change Logs](https://github.com/NephyProject/Json.kt/blob/master/CHANGELOG.md) から確認できます.
+最新バージョンは `v1.2` です. すべての変更は [Change Logs](https://github.com/NephyProject/Json.kt/blob/master/CHANGELOG.md) から確認できます.
 
 Gradle:
 ```groovy
-compile "jp.nephy:json.kt:1.1"
+compile "jp.nephy:json.kt:1.2"
 ```
 
 Maven:
@@ -111,7 +113,7 @@ Maven:
 <dependency>
     <groupId>jp.nephy</groupId>
     <artifactId>json.kt</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 </dependency>
 ```
 
