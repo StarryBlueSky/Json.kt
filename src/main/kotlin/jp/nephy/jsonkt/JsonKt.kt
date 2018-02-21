@@ -9,20 +9,18 @@ class JsonKt {
     companion object {
         val jsonNull = JsonNull.INSTANCE!!
 
-        fun toJsonObject(content: String) = Gson().toJsonObject(content)
+        fun toJsonObject(data: Any) = toJsonObject(toJsonString(data))
+        fun toJsonObject(content: String) = Gson().fromJson(content, JsonObject::class.java)!!
 
-        fun toPrettyString(json: JsonObject) = GsonBuilder().setPrettyPrinting().create().toJson(json)!!
+        fun toJsonString(data: Any) = Gson().toJson(data)!!
+        fun toJsonString(json: JsonObject) = Gson().toJson(json)!!
+        fun toJsonString(model: JsonModel) = toJsonString(model.json)
+
+        fun toPrettyString(data: Any) = toPrettyString(toJsonObject(data))
+        fun toPrettyString(json: JsonObject) = GsonBuilder().serializeNulls().setPrettyPrinting().create().toJson(json)!!
         fun toPrettyString(model: JsonModel) = toPrettyString(model.json)
 
         inline fun <reified T: JsonModel> parse(json: JsonObject) = T::class.java.getConstructor(JsonObject::class.java).newInstance(json)!!
-        inline fun <reified T: JsonModel> parse(content: String) = Gson().parse<T>(content)
+        inline fun <reified T: JsonModel> parse(content: String): T = parse(toJsonObject(content))
     }
-}
-
-fun Gson.toJsonObject(content: String): JsonObject {
-    return fromJson(content, JsonObject::class.java)
-}
-
-inline fun <reified T: JsonModel> Gson.parse(content: String): T {
-    return JsonKt.parse(toJsonObject(content))
 }
