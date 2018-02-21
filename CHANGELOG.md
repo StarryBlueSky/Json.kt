@@ -1,4 +1,8 @@
-### v 1.1  
+### v 1.2 (2018/2/21)  
+- 委譲プロパティをJsonObjectからJsonElementをレシーバーに変更した.
+- JsonElement[index]とJsonElement[key]を追加した.
+
+### v 1.1 (2018/2/21)  
 - JsonObject#byModelで引数をモデルクラスに渡せるようになった.  
     ```kotlin
     class ExampleModel(override val json: JsonObject): JsonModel {
@@ -28,5 +32,5 @@
 - JsonElement, JsonObjectに関する拡張関数, フィールドを追加  
 - Platform型が露出している問題を修正  
 
-### v 1.0  
+### v 1.0 (2018/2/20)  
 - 初版リリース  
