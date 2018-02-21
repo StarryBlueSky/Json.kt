@@ -1,13 +1,10 @@
 package jp.nephy.jsonkt
 
-import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
 fun jsonObject(vararg elements: Pair<String, Any?>): JsonObject {
-    return Gson().run {
-        toJsonObject(toJson(elements.toMap()))
-    }
+    return JsonKt.toJsonObject(elements.toMap())
 }
 
 val JsonObject.size: Int
@@ -35,3 +32,22 @@ val JsonObject.entries: Set<Map.Entry<String, JsonElement>>
 fun JsonObject.forEach(operation: (it: Map.Entry<String, JsonElement>) -> Unit) = entries.forEach { operation(it) }
 fun <R> JsonObject.map(operation: (it: Map.Entry<String, JsonElement>) -> R) = entries.map { operation(it) }
 fun JsonObject.toMap() = entries.associateBy({ it.key }, { it.value })
+
+fun JsonObject.put(it: Pair<String, Any?>) = add(it.first, it.second.toJsonElement())
+fun JsonObject.put(it: Map.Entry<String, Any?>) = add(it.key, it.value.toJsonElement())
+
+fun JsonObject.putAll(vararg pairs: Pair<String, Any?>) = pairs.forEach { put(it) }
+fun JsonObject.putAll(vararg entries: Map.Entry<String, Any?>) = entries.forEach { put(it) }
+fun JsonObject.putAll(map: Map<String, Any?>) = map.entries.forEach { put(it) }
+fun JsonObject.putAll(obj: JsonObject) = obj.entrySet().forEach { put(it) }
+fun JsonObject.putAll(pairs: Sequence<Pair<String, Any?>>) = pairs.forEach { put(it) }
+fun JsonObject.putAll(pairs: Iterable<Pair<String, Any?>>) = pairs.forEach { put(it) }
+fun JsonObject.putAllEntries(entries: Sequence<Map.Entry<String, Any?>>) = entries.forEach { put(it) }
+fun JsonObject.putAllEntries(entries: Iterable<Map.Entry<String, Any?>>) = entries.forEach { put(it) }
+
+fun JsonObject.removeAll(vararg keys: String) = keys.forEach { remove(it) }
+fun JsonObject.removeAll(keys: Iterable<String>) = keys.forEach { remove(it) }
+fun JsonObject.removeAll(keys: Sequence<String>) = keys.forEach { remove(it) }
+fun JsonObject.removeAllJsonKeys(vararg keys: JsonElement) = keys.forEach { remove(it.string) }
+fun JsonObject.removeAllJsonKeys(keys: Iterable<JsonElement>) = keys.forEach { remove(it.string) }
+fun JsonObject.removeAllJsonKeys(keys: Sequence<JsonElement>) = keys.forEach { remove(it.string) }
