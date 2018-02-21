@@ -66,6 +66,9 @@ private inline fun <reified T: Any?> JsonElement?.dynamicCast(): T {
     }
 }
 
+operator fun JsonElement.get(key: String) = jsonObject.get(key) ?: throw NoSuchElementException(key)
+operator fun JsonElement.get(index: Int) = jsonArray.get(index)!!
+
 fun JsonElement.toJsonObject() = dynamicCast<JsonObject>()
 fun JsonElement?.toJsonObjectOrNull() = dynamicCast<JsonObject?>()
 fun JsonElement?.toJsonObjectOrDefault(default: JsonObject) = toJsonObjectOrNull() ?: default
