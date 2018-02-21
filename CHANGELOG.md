@@ -1,3 +1,7 @@
+### v 1.3 (2018/2/21)
+- JsonObject, JsonArrayを編集するメソッドを追加した.
+- toJsonString()などのショートカットを追加した.
+
 ### v 1.2 (2018/2/21)  
 - 委譲プロパティをJsonObjectからJsonElementをレシーバーに変更した.
 - JsonElement[index]とJsonElement[key]を追加した.

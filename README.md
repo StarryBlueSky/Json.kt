@@ -76,8 +76,6 @@ fun main(args: Array<String>) {
 
     // JsonKt.parse(String)はGsonのデフォルトインスタンスでJsonをパースします.
     val model = JsonKt.parse<Model>(content)
-    // 独自のGsonインスタンスを生成している場合は次のようにしてもパースできます.
-    val model2 = Gson().parse<Model>(content)
 
     // jsonObject, jsonArrayはJsonObject, JsonArrayを生成するユーティリティ関数です.
     val json = jsonObject(
@@ -91,9 +89,8 @@ fun main(args: Array<String>) {
     //    "x": 4,
     //    "y": 6
     // }
-    // JsonKt.toJsonObject(String) はJson文字列をJsonObjectに変換する関数です. Gsonインスタンスからも利用できます.
+    // JsonKt.toJsonObject(String) はJson文字列をJsonObjectに変換する関数です.
     val json2 = JsonKt.toJsonObject(jsonString)
-    val json3 = Gson().toJsonObject(jsonString)
 }
 ```
 
@@ -101,11 +98,11 @@ fun main(args: Array<String>) {
 
 Prepare
 -------
-最新バージョンは `v1.2` です. すべての変更は [Change Logs](https://github.com/NephyProject/Json.kt/blob/master/CHANGELOG.md) から確認できます.
+最新バージョンは `v1.3` です. すべての変更は [Change Logs](https://github.com/NephyProject/Json.kt/blob/master/CHANGELOG.md) から確認できます.
 
 Gradle:
 ```groovy
-compile "jp.nephy:json.kt:1.2"
+compile "jp.nephy:json.kt:1.3"
 ```
 
 Maven:
@@ -113,7 +110,7 @@ Maven:
 <dependency>
     <groupId>jp.nephy</groupId>
     <artifactId>json.kt</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
 </dependency>
 ```
 
