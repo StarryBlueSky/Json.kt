@@ -1,9 +1,6 @@
 package jp.nephy.jsonkt
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
+import com.google.gson.*
 
 class JsonKt {
     companion object {
@@ -11,6 +8,9 @@ class JsonKt {
 
         fun toJsonObject(data: Any) = toJsonObject(toJsonString(data))
         fun toJsonObject(content: String) = Gson().fromJson(content, JsonObject::class.java)!!
+
+        fun toJsonArray(data: Any) = toJsonArray(toJsonString(data))
+        fun toJsonArray(content: String) = Gson().fromJson(content, JsonArray::class.java)!!
 
         fun toJsonString(data: Any) = Gson().toJson(data)!!
         fun toJsonString(json: JsonObject) = Gson().toJson(json)!!
