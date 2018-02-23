@@ -72,7 +72,7 @@ class Model(override val json: JsonObject): JsonModel {
 }
 
 fun main(args: Array<String>) {
-    val content = "{\"x\": 4, \"y\": 6, \"z\": 0.1, \"url\": \"https://www.google.co.jp\", \"array\": [1, 2, 3], \"array3\": [9, 19, 29], \"innermodel\": {\"deep\": \"You found me!\"}, \"objectsArray\": [{\"key\": \"a\"}, \"key\": \"b\"], \"valueRequiredModel\": {\"a\": 4}}"
+    val content = "{\"x\": 4, \"y\": 6, \"z\": 0.1, \"url\": \"https://www.google.co.jp\", \"array\": [1, 2, 3], \"array3\": [9, 19, 29], \"innermodel\": {\"deep\": \"You found me!\"}, \"objectsArray\": [{\"key\": \"a\"}, {\"key\": \"b\"}], \"valueRequiredModel\": {\"a\": 4}}"
 
     // JsonKt.parse(String)はGsonのデフォルトインスタンスでJsonをパースします.
     val model = JsonKt.parse<Model>(content)
@@ -91,6 +91,37 @@ fun main(args: Array<String>) {
     // }
     // JsonKt.toJsonObject(String) はJson文字列をJsonObjectに変換する関数です.
     val json2 = JsonKt.toJsonObject(jsonString)
+
+    // モデルクラスを作るのが面倒な方は 次で1発生成できます.
+    // 生成される文字列をクラスとして保存すれば すぐにモデルクラスとして使うことができます.
+    // 配列内のオブジェクトやnullが混在している値も型推論するので安全にアクセスできます.
+    println(JsonKt.toModelString(content))
+    // import jp.nephy.jsonkt.*
+    // import com.google.gson.JsonObject
+
+    // class Model(override val json: JsonObject): JsonModel {
+    //     val array by json.byIntList  // [1, ...]
+    //     val array3 by json.byIntList  // [9, ...]
+    //     val innermodel by json.byModel<Innermodel>()  // {...}
+    //     val objectsArray by json.byModelList<ObjectsArray>()  // [{"key":"a"}, ...]
+    //     val url by json.byString  // "https://www.google.co.jp"
+    //     val valueRequiredModel by json.byModel<ValueRequiredModel>()  // {...}
+    //     val x by json.byInt  // 4
+    //     val y by json.byInt  // 6
+    //     val z by json.byFloat  // 0.1
+    // }
+    //
+    // class Innermodel(override val json: JsonObject): JsonModel {
+    //     val deep by json.byString  // "You found me!"
+    // }
+    //
+    // class ObjectsArray(override val json: JsonObject): JsonModel {
+    //     val key by json.byString  // "a"
+    // }
+    //
+    // class ValueRequiredModel(override val json: JsonObject): JsonModel {
+    //     val a by json.byInt  // 4
+    // }
 }
 ```
 
@@ -98,11 +129,11 @@ fun main(args: Array<String>) {
 
 Prepare
 -------
-最新バージョンは `v1.3` です. すべての変更は [Change Logs](https://github.com/NephyProject/Json.kt/blob/master/CHANGELOG.md) から確認できます.
+最新バージョンは `v1.4` です. すべての変更は [Change Logs](https://github.com/NephyProject/Json.kt/blob/master/CHANGELOG.md) から確認できます.
 
 Gradle:
 ```groovy
-compile "jp.nephy:json.kt:1.3"
+compile "jp.nephy:json.kt:1.4"
 ```
 
 Maven:
@@ -110,7 +141,7 @@ Maven:
 <dependency>
     <groupId>jp.nephy</groupId>
     <artifactId>json.kt</artifactId>
-    <version>1.3</version>
+    <version>1.4</version>
 </dependency>
 ```
 
