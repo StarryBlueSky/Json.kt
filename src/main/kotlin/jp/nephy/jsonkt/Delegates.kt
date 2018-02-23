@@ -1,8 +1,6 @@
 package jp.nephy.jsonkt
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
+import com.google.gson.*
 import jp.nephy.jsonkt.delegate.JsonArrayDelegate
 import jp.nephy.jsonkt.delegate.JsonDelegate
 import java.math.BigDecimal
@@ -22,6 +20,19 @@ inline fun <reified T: JsonModel?> JsonElement.byModel(key: String? = null, noin
 inline fun <reified T: JsonModel?> JsonElement.byModel(vararg args: Any, key: String? = null, noinline default: (JsonObject.() -> T)? = null) = JsonDelegate(jsonObject, key, default, null, T::class.java, *args)
 inline fun <reified T: JsonModel?> JsonElement.byModelList(key: String? = null, noinline default: (JsonObject.() -> Collection<T>)? = null) = JsonArrayDelegate(jsonObject, key, default, null, modelClass = T::class.java)
 inline fun <reified T: JsonModel?> JsonElement.byModelList(vararg args: Any, key: String? = null, noinline default: (JsonObject.() -> Collection<T>)? = null) = JsonArrayDelegate(jsonObject, key, default, null, modelClass = T::class.java, params = *args)
+
+fun JsonElement.byJsonElement(key: String? = null, default: (JsonObject.() -> JsonElement)? = null) = byLambda(key, default) { jsonElement }
+val JsonElement.byJsonElement: JsonDelegate<JsonElement>
+    get() = byJsonElement()
+fun JsonElement.byNullableJsonElement(key: String? = null, default: (JsonObject.() -> JsonElement?)? = null) = byNullableLambda(key, default) { jsonElement }
+val JsonElement.byNullableJsonElement: JsonDelegate<JsonElement?>
+    get() = byNullableJsonElement()
+fun JsonElement.byJsonElementList(key: String? = null, default: (JsonObject.() -> Collection<JsonElement>)? = null) = byLambdaList(key, default) { jsonElement }
+val JsonElement.byJsonElementList: JsonArrayDelegate<JsonElement>
+    get() = byJsonElementList()
+fun JsonElement.byNullableJsonElementList(key: String? = null, default: (JsonObject.() -> Collection<JsonElement?>)? = null) = byNullableLambdaList(key, default) { jsonElement }
+val JsonElement.byNullableJsonElementList: JsonArrayDelegate<JsonElement?>
+    get() = byNullableJsonElementList()
 
 fun JsonElement.byJsonObject(key: String? = null, default: (JsonObject.() -> JsonObject)? = null) = byLambda(key, default) { jsonObject }
 val JsonElement.byJsonObject: JsonDelegate<JsonObject>
@@ -48,6 +59,32 @@ val JsonElement.byJsonArrayList: JsonArrayDelegate<JsonArray>
 fun JsonElement.byNullableJsonArrayList(key: String? = null, default: (JsonObject.() -> Collection<JsonArray?>)? = null) = byNullableLambdaList(key, default) { jsonArray }
 val JsonElement.byNullableJsonArrayList: JsonArrayDelegate<JsonArray?>
     get() = byNullableJsonArrayList()
+
+fun JsonElement.byJsonPrimitive(key: String? = null, default: (JsonObject.() -> JsonPrimitive)? = null) = byLambda(key, default) { jsonPrimitive }
+val JsonElement.byJsonPrimitive: JsonDelegate<JsonPrimitive>
+    get() = byJsonPrimitive()
+fun JsonElement.byNullableJsonPrimitive(key: String? = null, default: (JsonObject.() -> JsonPrimitive?)? = null) = byNullableLambda(key, default) { jsonPrimitive }
+val JsonElement.byNullableJsonPrimitive: JsonDelegate<JsonPrimitive?>
+    get() = byNullableJsonPrimitive()
+fun JsonElement.byJsonPrimitiveList(key: String? = null, default: (JsonObject.() -> Collection<JsonPrimitive>)? = null) = byLambdaList(key, default) { jsonPrimitive }
+val JsonElement.byJsonPrimitiveList: JsonArrayDelegate<JsonPrimitive>
+    get() = byJsonPrimitiveList()
+fun JsonElement.byNullableJsonPrimitiveList(key: String? = null, default: (JsonObject.() -> Collection<JsonPrimitive?>)? = null) = byNullableLambdaList(key, default) { jsonPrimitive }
+val JsonElement.byNullableJsonPrimitiveList: JsonArrayDelegate<JsonPrimitive?>
+    get() = byNullableJsonPrimitiveList()
+
+fun JsonElement.byJsonNull(key: String? = null, default: (JsonObject.() -> JsonNull)? = null) = byLambda(key, default) { jsonNull }
+val JsonElement.byJsonNull: JsonDelegate<JsonNull>
+    get() = byJsonNull()
+fun JsonElement.byNullableJsonNull(key: String? = null, default: (JsonObject.() -> JsonNull?)? = null) = byNullableLambda(key, default) { jsonNull }
+val JsonElement.byNullableJsonNull: JsonDelegate<JsonNull?>
+    get() = byNullableJsonNull()
+fun JsonElement.byJsonNullList(key: String? = null, default: (JsonObject.() -> Collection<JsonNull>)? = null) = byLambdaList(key, default) { jsonNull }
+val JsonElement.byJsonNullList: JsonArrayDelegate<JsonNull>
+    get() = byJsonNullList()
+fun JsonElement.byNullableJsonNullList(key: String? = null, default: (JsonObject.() -> Collection<JsonNull?>)? = null) = byNullableLambdaList(key, default) { jsonNull }
+val JsonElement.byNullableJsonNullList: JsonArrayDelegate<JsonNull?>
+    get() = byNullableJsonNullList()
 
 fun JsonElement.byBool(key: String? = null, default: (JsonObject.() -> Boolean)? = null) = byLambda(key, default) { bool }
 val JsonElement.byBool: JsonDelegate<Boolean>
