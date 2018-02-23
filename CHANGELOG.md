@@ -1,3 +1,16 @@
+### v 1.4 (2018/2/23)
+- JsonPrimitiveに対するサポートを拡充した.
+- DelegateでJsonNull, JsonElementに対するサポートを追加した.
+- Json文字列からKotlinクラスを生成する関数を追加した.
+    ```kotlin
+    val result = JsonKt.toModelString("{\"a\": 10, \"b\": [1, 2, 3]}")
+    println(result)
+    // class Model(override val json: JsonObject): JsonModel {
+    //     val a by json.byInt
+    //     val b by json.byIntList
+    // }
+    ```
+
 ### v 1.3 (2018/2/21)
 - JsonObject, JsonArrayを編集するメソッドを追加した.
 - toJsonString()などのショートカットを追加した.
