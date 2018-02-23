@@ -1,9 +1,6 @@
 package jp.nephy.jsonkt
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import com.google.gson.*
 import jp.nephy.jsonkt.exception.AnyTypeCastException
 import jp.nephy.jsonkt.exception.JsonTypeCastException
 import java.math.BigDecimal
@@ -41,7 +38,8 @@ private inline fun <reified T: Any?> JsonElement?.dynamicCast(): T {
         when (T::class.java) {
             com.google.gson.JsonObject::class.java -> asJsonObject
             com.google.gson.JsonArray::class.java -> asJsonArray
-            com.google.gson.JsonNull::class.java -> null
+            com.google.gson.JsonPrimitive::class.java -> asJsonPrimitive
+            com.google.gson.JsonNull::class.java -> asJsonNull
             java.lang.Boolean::class.java -> asBoolean
             java.lang.Byte::class.java -> asByte
             java.lang.Character::class.java -> asCharacter
@@ -52,6 +50,7 @@ private inline fun <reified T: Any?> JsonElement?.dynamicCast(): T {
             java.lang.Float::class.java -> asFloat
             java.lang.Double::class.java -> asDouble
             java.math.BigDecimal::class.java -> asBigDecimal
+            java.lang.Number::class.java -> asNumber
             java.lang.String::class.java -> asString
             java.net.URI::class.java -> URI(asString)
             java.net.URL::class.java -> URL(asString)
@@ -72,6 +71,15 @@ operator fun JsonElement.get(index: Int) = jsonArray.get(index)!!
 operator fun JsonElement.set(key: String, value: Any?) = jsonObject.add(key, value.toJsonElement())
 operator fun JsonElement.set(index: Int, value: Any?) = jsonArray.set(index, value.toJsonElement()).run {  }
 
+fun JsonElement.toJsonElement() = dynamicCast<JsonElement>()
+fun JsonElement?.toJsonElementOrNull() = dynamicCast<JsonElement?>()
+fun JsonElement?.toJsonElementOrDefault(default: JsonElement) = toJsonElementOrNull() ?: default
+fun JsonElement?.toJsonElementOrElse(default: () -> JsonElement) = toJsonElementOrNull() ?: default()
+val JsonElement.jsonElement: JsonElement
+    get() = toJsonElement()
+val JsonElement?.nullableJsonElement: JsonElement?
+    get() = toJsonElementOrNull()
+
 fun JsonElement.toJsonObject() = dynamicCast<JsonObject>()
 fun JsonElement?.toJsonObjectOrNull() = dynamicCast<JsonObject?>()
 fun JsonElement?.toJsonObjectOrDefault(default: JsonObject) = toJsonObjectOrNull() ?: default
@@ -89,6 +97,24 @@ val JsonElement.jsonArray: JsonArray
     get() = toJsonArray()
 val JsonElement?.nullableJsonArray: JsonArray?
     get() = toJsonArrayOrNull()
+
+fun JsonElement.toJsonPrimitive() = dynamicCast<JsonPrimitive>()
+fun JsonElement?.toJsonPrimitiveOrNull() = dynamicCast<JsonPrimitive?>()
+fun JsonElement?.toJsonPrimitiveOrDefault(default: JsonPrimitive) = toJsonPrimitiveOrNull() ?: default
+fun JsonElement?.toJsonPrimitiveOrElse(default: () -> JsonPrimitive) = toJsonPrimitiveOrNull() ?: default()
+val JsonElement.jsonPrimitive: JsonPrimitive
+    get() = toJsonPrimitive()
+val JsonElement?.nullableJsonPrimitive: JsonPrimitive?
+    get() = toJsonPrimitiveOrNull()
+
+fun JsonElement.toJsonNull() = dynamicCast<JsonNull>()
+fun JsonElement?.toJsonNullOrNull() = dynamicCast<JsonNull?>()
+fun JsonElement?.toJsonNullOrDefault(default: JsonNull) = toJsonNullOrNull() ?: default
+fun JsonElement?.toJsonNullOrElse(default: () -> JsonNull) = toJsonNullOrNull() ?: default()
+val JsonElement.jsonNull: JsonNull
+    get() = toJsonNull()
+val JsonElement?.nullableJsonNull: JsonNull?
+    get() = toJsonNullOrNull()
 
 fun JsonElement.toBool() = dynamicCast<Boolean>()
 fun JsonElement?.toBoolOrNull() = dynamicCast<Boolean?>()
@@ -179,6 +205,15 @@ val JsonElement.bigDecimal: BigDecimal
     get() = toBigDecimal()
 val JsonElement?.nullableBigDecimal: BigDecimal?
     get() = toBigDecimalOrNull()
+
+fun JsonElement.toNumber() = dynamicCast<Number>()
+fun JsonElement?.toNumberOrNull() = dynamicCast<Number?>()
+fun JsonElement?.toNumberOrDefault(default: Number) = toNumberOrNull() ?: default
+fun JsonElement?.toNumberOrElse(default: () -> Number) = toNumberOrNull() ?: default()
+val JsonElement.number: Number
+    get() = toNumber()
+val JsonElement?.nullableNumber: Number?
+    get() = toNumberOrNull()
 
 fun JsonElement?.toStringOrNull() = dynamicCast<String?>()
 fun JsonElement?.toStringOrDefault(default: String) = toStringOrNull() ?: default

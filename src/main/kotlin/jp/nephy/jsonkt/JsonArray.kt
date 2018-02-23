@@ -12,6 +12,10 @@ fun jsonArray(vararg elements: Any?): JsonArray {
     return json
 }
 
+val JsonArray.size: Int
+    get() = size()
+fun JsonArray.isEmpty() = size == 0
+fun JsonArray.isNotEmpty() = ! isEmpty()
 fun JsonArray.contains(value: Any) = contains(value.toJsonElement())
 
 fun JsonArray.add(value: Any?) = add(value.toJsonElement())
