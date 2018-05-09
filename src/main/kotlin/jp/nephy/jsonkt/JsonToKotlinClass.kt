@@ -1,5 +1,6 @@
 package jp.nephy.jsonkt
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -37,17 +38,21 @@ internal class JsonToKotlinClass(private val json: JsonObject) {
                     when {
                         it.value.isJsonObject -> when {
                             it.value.toString() == "{}" -> JsonObjectProperty(it)
+                            it.value.jsonObject.isNullable -> JsonNullableModelProperty(it)
                             else -> JsonModelProperty(it)
                         }
                         it.value.isJsonArray -> when {
                             it.value.jsonArray.isEmpty() || it.value.jsonArray.all { it.isJsonArray } -> JsonArrayProperty(it)
-                            it.value.jsonArray.all { it.isJsonObject } -> JsonModelListProperty(it)
+                            it.value.jsonArray.all { it.isJsonObject } -> when {
+                                it.value.asJsonArray.isNullable -> JsonNullableModelListProperty(it)
+                                else -> JsonModelListProperty(it)
+                            }
                             it.value.jsonArray.all { it.isJsonPrimitive } -> JsonPrimitiveListProperty(it, typeStrict)
                             else -> throw IllegalStateException("Not all elements in array are same type. These must be JsonObject, JsonArray or JsonPrimitive. (${it.key}: ${it.value})")
                         }
                         it.value.isJsonNull -> JsonNullProperty(it)
                         it.value.isJsonPrimitive -> when {
-                            it.value.jsonPrimitive.isNullablePrimitive -> JsonNullablePrimitiveProperty(it)
+                            it.value.jsonPrimitive.isNullable -> JsonNullablePrimitiveProperty(it)
                             else -> JsonPrimitiveProperty(it, typeStrict)
                         }
                         else -> throw IllegalArgumentException("Unknown type: ${it.value}")
@@ -59,11 +64,11 @@ internal class JsonToKotlinClass(private val json: JsonObject) {
                     } else if (it is JsonModelListProperty) {
                         val values = mutableMapOf<String, MutableSet<JsonElement>>()
                         it.element.jsonArray.forEach {
-                            it.jsonObject.forEach {
-                                if (values.contains(it.key)) {
-                                    values[it.key]?.add(it.value)
+                            it.jsonObject.forEach { k, v ->
+                                if (values.contains(k)) {
+                                    values[k]?.add(v)
                                 } else {
-                                    values[it.key] = mutableSetOf(it.value)
+                                    values[k] = mutableSetOf(v)
                                 }
                             }
                         }
@@ -74,12 +79,11 @@ internal class JsonToKotlinClass(private val json: JsonObject) {
                                     if (all { it.isJsonObject }) {
                                         val innerValues = mutableMapOf<String, Pair<MutableSet<JsonElement>, Boolean>>()
                                         forEach {
-                                            it.jsonObject.forEach {
-                                                if (innerValues.contains(it.key)) {
-                                                    innerValues[it.key]?.first?.add(it.value)
+                                            it.jsonObject.forEach { k, v ->
+                                                if (innerValues.contains(k)) {
+                                                    innerValues[k]?.first?.add(v)
                                                 } else {
-                                                    val key = it.key
-                                                    innerValues[it.key] = mutableSetOf(it.value) to (size != count { it.jsonObject.contains(key) })
+                                                    innerValues[k] = mutableSetOf(v) to (size != count { it.jsonObject.contains(k) })
                                                 }
                                             }
                                         }
@@ -88,7 +92,11 @@ internal class JsonToKotlinClass(private val json: JsonObject) {
                                             it.key to it.value.run {
                                                 first.first().apply {
                                                     if (second) {
-                                                        jsonPrimitive.isNullablePrimitive = true
+                                                        when {
+                                                            isJsonPrimitive -> jsonPrimitive.isNullable = true
+                                                            isJsonObject -> jsonObject.isNullable = true
+                                                            isJsonArray -> jsonArray.isNullable = true
+                                                        }
                                                     }
                                                 }
                                             }
@@ -97,9 +105,9 @@ internal class JsonToKotlinClass(private val json: JsonObject) {
                                         first()
                                     }
                                 }
-                                it.value.all { it.isJsonNull } -> it.key to JsonKt.jsonNull
+                                it.value.all { it.isJsonNull } -> it.key to jsonNull
                                 else -> it.key to it.value.find { ! it.isJsonNull }!!.apply {
-                                    jsonPrimitive.isNullablePrimitive = true
+                                    jsonPrimitive.isNullable = true
                                 }
                             }
                         }.toTypedArray())
@@ -119,7 +127,13 @@ internal class JsonToKotlinClass(private val json: JsonObject) {
     }
 }
 
-private val nullableCache = mutableMapOf<JsonPrimitive, Boolean>()
-private var JsonPrimitive.isNullablePrimitive: Boolean
+private val nullableCache = mutableMapOf<JsonElement, Boolean>()
+private var JsonPrimitive.isNullable: Boolean
+    get() = nullableCache[this] ?: false
+    set(value) = nullableCache.set(this, value)
+private var JsonObject.isNullable: Boolean
+    get() = nullableCache[this] ?: false
+    set(value) = nullableCache.set(this, value)
+private var JsonArray.isNullable: Boolean
     get() = nullableCache[this] ?: false
     set(value) = nullableCache.set(this, value)

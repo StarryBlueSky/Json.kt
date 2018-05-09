@@ -45,7 +45,7 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
         }
     }
 
-    private fun String.toLowerCamelCase(): String {
+    fun String.toLowerCamelCase(): String {
         val part = split("_")
         return part.first().decapitalize() + part.drop(1).joinToString("") { it.capitalize() }
     }
