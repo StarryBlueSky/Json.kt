@@ -133,20 +133,20 @@ Prepare
 
 Gradle:
 ```groovy
-compile "jp.nephy:json.kt:1.4"
+compile "jp.nephy:jsonkt:1.4"
 ```
 
 Maven:
 ```xml
 <dependency>
     <groupId>jp.nephy</groupId>
-    <artifactId>json.kt</artifactId>
+    <artifactId>jsonkt</artifactId>
     <version>1.4</version>
 </dependency>
 ```
 
 Release: [GitHub](https://github.com/NephyProject/Json.kt/releases).  
-Snapshot: [Sonatype Snapshots Repository](https://oss.sonatype.org/content/repositories/snapshots/jp/nephy/json.kt/).
+Snapshot: [Sonatype Snapshots Repository](https://oss.sonatype.org/content/repositories/snapshots/jp/nephy/jsonkt/).
 
 
 Credits
