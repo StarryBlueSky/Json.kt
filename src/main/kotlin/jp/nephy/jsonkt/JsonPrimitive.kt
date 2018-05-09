@@ -53,7 +53,7 @@ val JsonPrimitive.isFloat: Boolean
     }
 
 val JsonPrimitive.isDouble: Boolean
-    get() = isNumber && toString().contains(".") && toString() == number.toDouble().toString()
+    get() = isNumber && toString().contains(".") && ! isFloat
 
 val JsonPrimitive.isChar: Boolean
     get() = isString && string.toCharArray().size == 1

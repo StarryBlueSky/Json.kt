@@ -8,6 +8,9 @@ import java.math.BigInteger
 import java.net.URI
 import java.net.URL
 
+
+val jsonNull = JsonNull.INSTANCE!!
+
 fun Boolean.toJson() = JsonPrimitive(this)
 fun Number.toJson() = JsonPrimitive(this)
 fun Char.toJson() = JsonPrimitive(this)
@@ -15,7 +18,7 @@ fun String.toJson() = JsonPrimitive(this)
 
 fun Any?.toJsonElement(): JsonElement {
     if (this == null) {
-        return JsonKt.jsonNull
+        return jsonNull
     }
 
     return when (this) {
