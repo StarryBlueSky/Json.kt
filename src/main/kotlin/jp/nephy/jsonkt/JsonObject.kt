@@ -30,6 +30,7 @@ val JsonObject.values: Collection<JsonElement>
 val JsonObject.entries: Set<Map.Entry<String, JsonElement>>
     get() = entrySet()
 fun JsonObject.forEach(operation: (it: Map.Entry<String, JsonElement>) -> Unit) = entries.forEach { operation(it) }
+fun JsonObject.forEach(operation: (k: String, v: JsonElement) -> Unit) = entries.forEach { operation(it.key, it.value) }
 fun <R> JsonObject.map(operation: (it: Map.Entry<String, JsonElement>) -> R) = entries.map { operation(it) }
 fun JsonObject.toMap() = entries.associateBy({ it.key }, { it.value })
 

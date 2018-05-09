@@ -5,30 +5,32 @@ import java.nio.file.Path
 
 class JsonKt {
     companion object {
-        val jsonNull = JsonNull.INSTANCE!!
-
-        fun getNullSupportGsonInstance() = GsonBuilder().serializeNulls().create()!!
-        fun getPrettyPrintingGsonInstance() = GsonBuilder().serializeNulls().setPrettyPrinting().create()!!
+        private val serializeNullsGson = gson { serializeNulls() }
+        private val prettyPrintingGson = gson { setPrettyPrinting() }
 
         fun toJsonObject(data: Any) = toJsonObject(toJsonString(data))
         fun toJsonObject(path: Path) = toJsonObject(path.toFile().readText())
-        fun toJsonObject(content: String) = getNullSupportGsonInstance().fromJson(content, JsonObject::class.java)!!
+        fun toJsonObject(content: String) = serializeNullsGson.fromJson(content, JsonObject::class.java)!!
 
         fun toJsonArray(data: Any) = toJsonArray(toJsonString(data))
         fun toJsonArray(path: Path) = toJsonArray(path.toFile().readText())
-        fun toJsonArray(content: String) = getNullSupportGsonInstance().fromJson(content, JsonArray::class.java)!!
+        fun toJsonArray(content: String) = serializeNullsGson.fromJson(content, JsonArray::class.java)!!
 
-        fun toJsonString(data: Any) = getNullSupportGsonInstance().toJson(data)!!
-        fun toJsonString(json: JsonObject) = getNullSupportGsonInstance().toJson(json)!!
+        fun toJsonString(data: Any) = serializeNullsGson.toJson(data)!!
+        fun toJsonString(json: JsonObject) =serializeNullsGson.toJson(json)!!
         fun toJsonString(model: JsonModel) = toJsonString(model.json)
 
-        fun toPrettyString(data: Any) = toPrettyString(toJsonObject(data))
-        fun toPrettyString(json: JsonObject) = getPrettyPrintingGsonInstance().toJson(json)!!
-        fun toPrettyString(model: JsonModel) = toPrettyString(model.json)
+        fun toPrettyJsonString(data: Any) = toPrettyJsonString(toJsonObject(data))
+        fun toPrettyJsonString(json: JsonObject) = prettyPrintingGson.toJson(json)!!
+        fun toPrettyJsonString(model: JsonModel) = toPrettyJsonString(model.json)
 
         inline fun <reified T: JsonModel> parse(json: JsonObject) = T::class.java.getConstructor(JsonObject::class.java).newInstance(json)!!
         inline fun <reified T: JsonModel> parse(path: Path): T = parse(path.toFile().readText())
         inline fun <reified T: JsonModel> parse(content: String): T = parse(toJsonObject(content))
+
+        inline fun <reified T: JsonModel> parseList(json: JsonArray) = json.map { T::class.java.getConstructor(JsonObject::class.java).newInstance(it)!! }
+        inline fun <reified T: JsonModel> parseList(path: Path): List<T> = parseList(path.toFile().readText())
+        inline fun <reified T: JsonModel> parseList(content: String): List<T> = parseList(toJsonArray(content))
 
         fun toModelString(json: JsonObject, modelName: String? = null, typeStrict: Boolean? = null) = JsonToKotlinClass(json).convert(modelName, typeStrict)
         fun toModelString(path: Path, modelName: String? = null, typeStrict: Boolean? = null) = toModelString(path.toFile().readText(), modelName, typeStrict)
