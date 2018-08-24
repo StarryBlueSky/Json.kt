@@ -1,10 +1,33 @@
 package jp.nephy.jsonkt
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import com.google.gson.*
 import jp.nephy.jsonkt.property.*
+
+fun generateModelClass(): String {
+    print("Model name? (Optional): ")
+    val modelName = readLine().orEmpty()
+    print("Use type strict mode? (Y/n): ")
+    val typeStrict = readLine().orEmpty().toLowerCase() == "y"
+    println("Input json string. If blank line is input, quit.")
+
+    while (true) {
+        var text = ""
+        while (true) {
+            val line = readLine()
+            if (line.isNullOrBlank()) {
+                break
+            }
+            text += line
+        }
+
+        try {
+            return text.toModelString(modelName, typeStrict)
+        } catch (e: JsonSyntaxException) {
+            System.err.write("Invalid json format: ${e.localizedMessage}\n".toByteArray())
+            continue
+        }
+    }
+}
 
 internal class JsonToKotlinClass(private val json: JsonObject) {
     fun convert(targetModelName: String?, typeStrict: Boolean?): String {
