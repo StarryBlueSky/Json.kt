@@ -1,5 +1,5 @@
 # Json.kt
-[![Kotlin 1.2.21](https://img.shields.io/badge/Kotlin-1.2.21-blue.svg)](http://kotlinlang.org)
+[![Kotlin 1.2.61](https://img.shields.io/badge/Kotlin-1.2.61-blue.svg)](http://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/jp.nephy/jsonkt.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22jp.nephy%22)
 [![Travis](https://img.shields.io/travis/NephyProject/Json.kt.svg)](https://travis-ci.org/NephyProject/Json.kt/builds)
 [![MIT License](https://img.shields.io/github/license/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/blob/master/LICENSE)
@@ -129,11 +129,12 @@ fun main(args: Array<String>) {
 
 Prepare
 -------
-最新バージョンは `v1.4` です. すべての変更は [Change Logs](https://github.com/NephyProject/Json.kt/blob/master/CHANGELOG.md) から確認できます.
+最新バージョンは [![Maven Central](https://img.shields.io/maven-central/v/jp.nephy/jsonkt.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22jp.nephy%22)
+ です. すべての変更は [Change Logs](https://github.com/NephyProject/Json.kt/blob/master/CHANGELOG.md) から確認できます.
 
 Gradle:
 ```groovy
-compile "jp.nephy:jsonkt:1.4"
+compile "jp.nephy:jsonkt:${jsonkt_version}"
 ```
 
 Maven:
@@ -141,13 +142,9 @@ Maven:
 <dependency>
     <groupId>jp.nephy</groupId>
     <artifactId>jsonkt</artifactId>
-    <version>1.4</version>
+    <version>${jsonkt_version}</version>
 </dependency>
 ```
-
-Release: [GitHub](https://github.com/NephyProject/Json.kt/releases).  
-Snapshot: [Sonatype Snapshots Repository](https://oss.sonatype.org/content/repositories/snapshots/jp/nephy/jsonkt/).
-
 
 Credits
 ---------
@@ -160,4 +157,4 @@ Json.ktはMITライセンスのもとで公開されています.
 Json.kt is provided under MIT License.  
 
 
-Copyright (c) 2018 Nephy Project
+Copyright (c) 2018 Nephy Project.
