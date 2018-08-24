@@ -2,6 +2,10 @@
 ### Kotlin template
 # Compiled class file
 *.class
+.gradle/
+.idea/
+build/
+out/
 
 # Log file
 *.log
