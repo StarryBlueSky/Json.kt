@@ -1,8 +1,8 @@
 group 'jp.nephy'
-version '1.5'
+version '2.0'
 
 buildscript {
-    ext.kotlin_version = '1.2.41'
+    ext.kotlin_version = '1.2.61'
 
     repositories {
         mavenCentral()
@@ -23,7 +23,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compile "com.google.code.gson:gson:2.8.4"
+    compile "com.google.code.gson:gson:2.8.5"
 }
 
 compileKotlin {
@@ -107,4 +107,3 @@ if (hasProperty("deploy")) {
         }
     }
 }
-
