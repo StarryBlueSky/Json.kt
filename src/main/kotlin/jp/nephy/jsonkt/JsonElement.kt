@@ -8,7 +8,6 @@ import java.math.BigInteger
 import java.net.URI
 import java.net.URL
 
-
 val jsonNull = JsonNull.INSTANCE!!
 
 fun Boolean.toJson() = JsonPrimitive(this)
@@ -31,7 +30,7 @@ fun Any?.toJsonElement(): JsonElement {
     }
 }
 
-private inline fun <reified T: Any?> JsonElement?.dynamicCast(): T {
+inline fun <reified T: Any?> JsonElement?.dynamicCast(): T {
     return try {
         if (this == null) {
             throw UnsupportedOperationException()
@@ -68,11 +67,33 @@ private inline fun <reified T: Any?> JsonElement?.dynamicCast(): T {
     }
 }
 
-operator fun JsonElement.get(key: String) = jsonObject.get(key) ?: throw NoSuchElementException(key)
-operator fun JsonElement.get(index: Int) = jsonArray.get(index)!!
+inline fun <reified T: Any?> JsonElement?.dynamicCastList(): List<T> {
+    return try {
+        if (this == null || !isJsonArray) {
+            return emptyList()
+        }
 
-operator fun JsonElement.set(key: String, value: Any?) = jsonObject.add(key, value.toJsonElement())
-operator fun JsonElement.set(index: Int, value: Any?) = jsonArray.set(index, value.toJsonElement()).run {  }
+        jsonArray.map {
+            it.dynamicCast<T>()
+        }
+    } catch (e: UnsupportedOperationException) {
+        emptyList()
+    }
+}
+
+operator fun JsonElement.get(key: String): JsonElement {
+    return jsonObject.get(key) ?: throw NoSuchElementException(key)
+}
+operator fun JsonElement.get(index: Int): JsonElement {
+    return jsonArray.get(index)
+}
+
+operator fun JsonElement.set(key: String, value: Any?) {
+    jsonObject.add(key, value.toJsonElement())
+}
+operator fun JsonElement.set(index: Int, value: Any?) {
+    jsonArray.set(index, value.toJsonElement())
+}
 
 fun JsonElement.toJsonElement() = dynamicCast<JsonElement>()
 fun JsonElement?.toJsonElementOrNull() = dynamicCast<JsonElement?>()
@@ -82,6 +103,9 @@ val JsonElement.jsonElement: JsonElement
     get() = toJsonElement()
 val JsonElement?.nullableJsonElement: JsonElement?
     get() = toJsonElementOrNull()
+fun JsonElement.toJsonElementList() = dynamicCastList<JsonElement>()
+val JsonElement.jsonElementList: List<JsonElement>
+    get() = toJsonElementList()
 
 fun JsonElement.toJsonObject() = dynamicCast<JsonObject>()
 fun JsonElement?.toJsonObjectOrNull() = dynamicCast<JsonObject?>()
@@ -91,6 +115,9 @@ val JsonElement.jsonObject: JsonObject
     get() = toJsonObject()
 val JsonElement?.nullableJsonObject: JsonObject?
     get() = toJsonObjectOrNull()
+fun JsonElement.toJsonObjectList() = dynamicCastList<JsonObject>()
+val JsonElement.jsonObjectList: List<JsonObject>
+    get() = toJsonObjectList()
 
 fun JsonElement.toJsonArray() = dynamicCast<JsonArray>()
 fun JsonElement?.toJsonArrayOrNull() = dynamicCast<JsonArray?>()
@@ -100,6 +127,9 @@ val JsonElement.jsonArray: JsonArray
     get() = toJsonArray()
 val JsonElement?.nullableJsonArray: JsonArray?
     get() = toJsonArrayOrNull()
+fun JsonElement.toJsonArrayList() = dynamicCastList<JsonArray>()
+val JsonElement.jsonArrayList: List<JsonArray>
+    get() = toJsonArrayList()
 
 fun JsonElement.toJsonPrimitive() = dynamicCast<JsonPrimitive>()
 fun JsonElement?.toJsonPrimitiveOrNull() = dynamicCast<JsonPrimitive?>()
@@ -109,6 +139,9 @@ val JsonElement.jsonPrimitive: JsonPrimitive
     get() = toJsonPrimitive()
 val JsonElement?.nullableJsonPrimitive: JsonPrimitive?
     get() = toJsonPrimitiveOrNull()
+fun JsonElement.toJsonPrimitiveList() = dynamicCastList<JsonPrimitive>()
+val JsonElement.jsonPrimitiveList: List<JsonPrimitive>
+    get() = toJsonPrimitiveList()
 
 fun JsonElement.toJsonNull() = dynamicCast<JsonNull>()
 fun JsonElement?.toJsonNullOrNull() = dynamicCast<JsonNull?>()
@@ -118,6 +151,9 @@ val JsonElement.jsonNull: JsonNull
     get() = toJsonNull()
 val JsonElement?.nullableJsonNull: JsonNull?
     get() = toJsonNullOrNull()
+fun JsonElement.toJsonNullList() = dynamicCastList<JsonNull>()
+val JsonElement.jsonNullList: List<JsonNull>
+    get() = toJsonNullList()
 
 fun JsonElement.toBool() = dynamicCast<Boolean>()
 fun JsonElement?.toBoolOrNull() = dynamicCast<Boolean?>()
@@ -127,6 +163,9 @@ val JsonElement.bool: Boolean
     get() = toBool()
 val JsonElement?.nullableBool: Boolean?
     get() = toBoolOrNull()
+fun JsonElement.toBoolList() = dynamicCastList<Boolean>()
+val JsonElement.boolList: List<Boolean>
+    get() = toBoolList()
 
 fun JsonElement.toByte() = dynamicCast<Byte>()
 fun JsonElement?.toByteOrNull() = dynamicCast<Byte?>()
@@ -136,6 +175,9 @@ val JsonElement.byte: Byte
     get() = toByte()
 val JsonElement?.nullableByte: Byte?
     get() = toByteOrNull()
+fun JsonElement.toByteList() = dynamicCastList<Byte>()
+val JsonElement.byteList: List<Byte>
+    get() = toByteList()
 
 fun JsonElement.toChar() = dynamicCast<Char>()
 fun JsonElement?.toCharOrNull() = dynamicCast<Char?>()
@@ -145,6 +187,9 @@ val JsonElement.char: Char
     get() = toChar()
 val JsonElement?.nullableChar: Char?
     get() = toCharOrNull()
+fun JsonElement.toCharList() = dynamicCastList<Char>()
+val JsonElement.charList: List<Char>
+    get() = toCharList()
 
 fun JsonElement.toShort() = dynamicCast<Short>()
 fun JsonElement?.toShortOrNull() = dynamicCast<Short?>()
@@ -154,6 +199,9 @@ val JsonElement.short: Short
     get() = toShort()
 val JsonElement?.nullableShort: Short?
     get() = toShortOrNull()
+fun JsonElement.toShortList() = dynamicCastList<Short>()
+val JsonElement.shortList: List<Short>
+    get() = toShortList()
 
 fun JsonElement.toInt() = dynamicCast<Int>()
 fun JsonElement?.toIntOrNull() = dynamicCast<Int?>()
@@ -163,6 +211,9 @@ val JsonElement.int: Int
     get() = toInt()
 val JsonElement?.nullableInt: Int?
     get() = toIntOrNull()
+fun JsonElement.toIntList() = dynamicCastList<Int>()
+val JsonElement.intList: List<Int>
+    get() = toIntList()
 
 fun JsonElement.toLong() = dynamicCast<Long>()
 fun JsonElement?.toLongOrNull() = dynamicCast<Long?>()
@@ -172,6 +223,9 @@ val JsonElement.long: Long
     get() = toLong()
 val JsonElement?.nullableLong: Long?
     get() = toLongOrNull()
+fun JsonElement.toLongList() = dynamicCastList<Long>()
+val JsonElement.longList: List<Long>
+    get() = toLongList()
 
 fun JsonElement.toBigInteger() = dynamicCast<BigInteger>()
 fun JsonElement?.toBigIntegerOrNull() = dynamicCast<BigInteger?>()
@@ -181,6 +235,9 @@ val JsonElement.bigInteger: BigInteger
     get() = toBigInteger()
 val JsonElement?.nullableBigInteger: BigInteger?
     get() = toBigIntegerOrNull()
+fun JsonElement.toBigIntegerList() = dynamicCastList<BigInteger>()
+val JsonElement.bigIntegerList: List<BigInteger>
+    get() = toBigIntegerList()
 
 fun JsonElement.toFloat() = dynamicCast<Float>()
 fun JsonElement?.toFloatOrNull() = dynamicCast<Float?>()
@@ -190,6 +247,9 @@ val JsonElement.float: Float
     get() = toFloat()
 val JsonElement?.nullableFloat: Float?
     get() = toFloatOrNull()
+fun JsonElement.toFloatList() = dynamicCastList<Float>()
+val JsonElement.floatList: List<Float>
+    get() = toFloatList()
 
 fun JsonElement.toDouble() = dynamicCast<Double>()
 fun JsonElement?.toDoubleOrNull() = dynamicCast<Double?>()
@@ -199,6 +259,9 @@ val JsonElement.double: Double
     get() = toDouble()
 val JsonElement?.nullableDouble: Double?
     get() = toDoubleOrNull()
+fun JsonElement.toDoubleList() = dynamicCastList<Double>()
+val JsonElement.doubleList: List<Double>
+    get() = toDoubleList()
 
 fun JsonElement.toBigDecimal() = dynamicCast<BigDecimal>()
 fun JsonElement?.toBigDecimalOrNull() = dynamicCast<BigDecimal?>()
@@ -208,6 +271,9 @@ val JsonElement.bigDecimal: BigDecimal
     get() = toBigDecimal()
 val JsonElement?.nullableBigDecimal: BigDecimal?
     get() = toBigDecimalOrNull()
+fun JsonElement.toBigDecimalList() = dynamicCastList<BigDecimal>()
+val JsonElement.bigDecimalList: List<BigDecimal>
+    get() = toBigDecimalList()
 
 fun JsonElement.toNumber() = dynamicCast<Number>()
 fun JsonElement?.toNumberOrNull() = dynamicCast<Number?>()
@@ -217,6 +283,9 @@ val JsonElement.number: Number
     get() = toNumber()
 val JsonElement?.nullableNumber: Number?
     get() = toNumberOrNull()
+fun JsonElement.toNumberList() = dynamicCastList<Number>()
+val JsonElement.numberList: List<Number>
+    get() = toNumberList()
 
 fun JsonElement?.toStringOrNull() = dynamicCast<String?>()
 fun JsonElement?.toStringOrDefault(default: String) = toStringOrNull() ?: default
@@ -225,6 +294,9 @@ val JsonElement.string: String
     get() = dynamicCast()
 val JsonElement?.nullableString: String?
     get() = toStringOrNull()
+fun JsonElement.toStringList() = dynamicCastList<String>()
+val JsonElement.stringList: List<String>
+    get() = toStringList()
 
 fun JsonElement.toURI() = dynamicCast<URI>()
 fun JsonElement?.toURIOrNull() = dynamicCast<URI?>()
@@ -234,6 +306,9 @@ val JsonElement.uri: URI
     get() = toURI()
 val JsonElement?.nullableUri: URI?
     get() = toURIOrNull()
+fun JsonElement.toURIList() = dynamicCastList<URI>()
+val JsonElement.uriList: List<URI>
+    get() = toURIList()
 
 fun JsonElement.toURL() = dynamicCast<URL>()
 fun JsonElement?.toURLOrNull() = dynamicCast<URL?>()
@@ -243,3 +318,6 @@ val JsonElement.url: URL
     get() = toURL()
 val JsonElement?.nullableUrl: URL?
     get() = toURLOrNull()
+fun JsonElement.toURLList() = dynamicCastList<URL>()
+val JsonElement.urlList: List<URL>
+    get() = toURLList()
