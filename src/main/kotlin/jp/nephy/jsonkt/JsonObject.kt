@@ -1,10 +1,11 @@
 package jp.nephy.jsonkt
 
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
-fun jsonObject(vararg elements: Pair<String, Any?>): JsonObject {
-    return JsonKt.toJsonObject(elements.toMap())
+fun jsonObject(vararg elements: Pair<String, Any?>, builder: (GsonBuilder.() -> Unit)? = null): JsonObject {
+    return elements.toMap().toJsonObject(builder)
 }
 
 val JsonObject.size: Int
