@@ -7,6 +7,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.net.URI
 import java.net.URL
+import kotlin.reflect.KClass
 
 fun <T> JsonElement.byLambda(key: String? = null, default: (JsonObject.() -> T)? = null, lambda: JsonElement.() -> T) = JsonDelegate(jsonObject, key, default, lambda)
 fun <T> JsonElement.byNullableLambda(key: String? = null, default: (JsonObject.() -> T?)? = null, lambda: JsonElement.() -> T?) = JsonDelegate(jsonObject, key, default, lambda)
@@ -15,6 +16,15 @@ fun <T> JsonElement.byLambdaList(key: String? = null, default: (JsonObject.() ->
 fun <T> JsonElement.byNullableLambdaList(key: String? = null, default: (JsonObject.() -> Collection<T?>)? = null, lambda: JsonElement.() -> T?) = JsonArrayDelegate(jsonObject, key, default, lambda)
 
 fun <T> JsonElement.byMap(key: String? = null, default: (JsonObject.() -> List<T>)? = null, operation: (it: Map.Entry<String, JsonElement>) -> T) = JsonArrayDelegate(jsonObject, key, default, null, operation)
+
+inline fun <reified T, R: JsonEnum<T>> JsonElement.byEnum(enum: KClass<R>, key: String? = null, noinline default: () -> R) = JsonDelegate(jsonObject, key, { default() }, {
+    val casted = dynamicCast<T>()
+    enum.java.enumConstants.find { it.value == casted } ?: default()
+})
+inline fun <reified T, R: JsonEnum<T>> JsonElement.byEnumList(enum: KClass<R>, key: String? = null, unknown: R, noinline default: () -> List<R> = { emptyList() }) = JsonArrayDelegate(jsonObject, key, { default() }, {
+    val casted = dynamicCast<T>()
+    enum.java.enumConstants.find { it.value == casted } ?: unknown
+})
 
 inline fun <reified T: JsonModel?> JsonElement.byModel(key: String? = null, noinline default: (JsonObject.() -> T)? = null) = JsonDelegate(jsonObject, key, default, null, T::class.java)
 inline fun <reified T: JsonModel?> JsonElement.byModel(vararg args: Any, key: String? = null, noinline default: (JsonObject.() -> T)? = null) = JsonDelegate(jsonObject, key, default, null, T::class.java, *args)
