@@ -1,7 +1,18 @@
 package jp.nephy.jsonkt
 
-fun main(args: Array<String>) {
-    println(JsonKt.toModelString("{\"x\": 4, \"y\": 6, \"z\": 0.1, \"url\": \"https://www.google.co.jp\", \"array\": [1, 2, 3], \"array3\": [9, 19, 29], \"innermodel\": {\"deep\": \"You found me!\"}, \"objectsArray\": [{\"key\": \"a\"}, {\"key\": \"b\"}], \"valueRequiredModel\": {\"a\": 4}}"))
+import com.google.gson.JsonObject
 
-    DelegateTest()
+fun main(args: Array<String>) {
+    val json = "{\"enum\":1,\"enums\":[2,3]}".parse<Model>()
+    println(json.enum)
+    println(json.enums)
+}
+
+enum class Test(override val value: Int): JsonEnum<Int> {
+    A(1), B(2), C(3), D(0)
+}
+
+class Model(override val json: JsonObject): JsonModel {
+    val enum by json.byEnum(Test::class) { Test.D }
+    val enums by json.byEnumList(Test::class, unknown = Test.D)
 }

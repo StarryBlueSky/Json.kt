@@ -11,8 +11,7 @@ import kotlin.reflect.jvm.javaType
 class DelegateTest {
     init {
         val json = makeJsonObject()
-        val model = JsonKt.parse<ExampleModel>(json)
-        println(JsonKt.toPrettyString(model))
+        val model = json.parse<ExampleModel>()
 
         model::class.memberProperties.forEach {
             if (it.visibility?.name == "PRIVATE") {
