@@ -164,7 +164,7 @@ fun JsonKt.Companion.toJsonArray(vararg source: JsonPair, builder: Gson? = null)
 }
 
 fun File.toJsonArray(builder: Gson? = null): JsonArray {
-    return reader().use { 
+    return reader().use {
         it.readText().toJsonArray(builder)
     }
 }
@@ -254,7 +254,7 @@ fun <T: JsonModel> JsonKt.Companion.parse(vararg source: JsonPair, model: KClass
 }
 
 fun <T: JsonModel> File.parse(model: Class<T>, builder: Gson? = null): T {
-    return reader().use { 
+    return reader().use {
         it.readText().parse(model, builder)
     }
 }
@@ -341,7 +341,7 @@ inline fun <reified T: JsonModel> JsonKt.Companion.parse(source: Path, noinline 
  */
 
 fun <T: JsonModel> JsonArray.parseList(model: Class<T>): List<T> {
-    return map { model.getConstructor(JsonObject::class.java).newInstance(this) }
+    return map { model.getConstructor(JsonObject::class.java).newInstance(it.jsonObject) }
 }
 fun <T: JsonModel> JsonKt.Companion.parseList(source: JsonArray, model: Class<T>): List<T> {
     return source.parseList(model)
