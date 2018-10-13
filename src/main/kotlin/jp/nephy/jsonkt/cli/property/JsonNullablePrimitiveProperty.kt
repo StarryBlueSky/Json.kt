@@ -1,6 +1,6 @@
-package jp.nephy.jsonkt.property
+package jp.nephy.jsonkt.cli.property
 
-import com.google.gson.JsonElement
+import jp.nephy.jsonkt.JsonElement
 import jp.nephy.jsonkt.jsonPrimitive
 
 internal class JsonNullablePrimitiveProperty(pair: Map.Entry<String, JsonElement>): AbstractJsonProperty(pair) {

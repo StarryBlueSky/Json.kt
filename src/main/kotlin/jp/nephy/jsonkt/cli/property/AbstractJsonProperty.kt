@@ -1,7 +1,5 @@
-package jp.nephy.jsonkt.property
+package jp.nephy.jsonkt.cli.property
 
-import com.google.gson.JsonElement
-import com.google.gson.JsonPrimitive
 import jp.nephy.jsonkt.*
 
 internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement>) {
@@ -60,16 +58,16 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
 
     private fun JsonElement.toKotlinComment(): String {
         return when {
-            isJsonObject -> "  // {...}"
-            isJsonArray -> {
-                if (jsonArray.isEmpty()) {
+            isJsonObject() -> "  // {...}"
+            isJsonArray() -> {
+                if (immutableJsonArray.isEmpty()) {
                     "  // []"
                 } else {
-                    val element = jsonArray.first().toString()
+                    val element = immutableJsonArray.first().toString()
                     when {
                         element.length > 50 -> "  // [...]"
-                        jsonArray.size == 1 -> "  // [$element]"
-                        else -> "  // [${jsonArray.first()}, ...]"
+                        immutableJsonArray.size == 1 -> "  // [$element]"
+                        else -> "  // [${immutableJsonArray.first()}, ...]"
                     }
                 }
             }
