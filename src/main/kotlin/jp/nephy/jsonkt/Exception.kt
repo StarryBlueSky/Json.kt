@@ -4,7 +4,7 @@ open class JsonKtException(override val message: String): Exception()
 
 class JsonCastException(json: JsonElement, type: Class<*>): JsonKtException("JsonKt cannot cast to ${type.canonicalName}: $json")
 
-class JsonNullPointerException(key: String, json: JsonObject): JsonKtException("\"$key\" value is null or not found but return type does not be marked nullable: $json")
+class JsonNullPointerException(key: String, json: JsonObject): JsonKtException("json[\"$key\"] is null or not found but return type does not be marked nullable: $json")
 
 class JsonConversionException(type: Class<*>): JsonKtException("${type.canonicalName} cannot be converted to json.")
 

@@ -55,6 +55,18 @@ open class ImmutableJsonObject(private val elements: Map<String, JsonElement>): 
     fun toMutableJsonObject(): MutableJsonObject {
         return MutableJsonObject(toGsonObject())
     }
+
+    override fun equals(other: Any?): Boolean {
+        return elements == (other as? ImmutableJsonObject)?.elements
+    }
+
+    override fun hashCode(): Int {
+        return elements.hashCode()
+    }
+
+    override fun toString(): String {
+        return elements.toString()
+    }
 }
 
 class MutableJsonObject(private val elements: MutableMap<String, JsonElement>): ImmutableJsonObject(elements), MutableMap<String, JsonElement> {
@@ -113,6 +125,18 @@ class MutableJsonObject(private val elements: MutableMap<String, JsonElement>): 
 
     fun toImmutableJsonObject(): ImmutableJsonObject {
         return ImmutableJsonObject(toGsonObject())
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return elements == (other as? MutableJsonObject)?.elements
+    }
+
+    override fun hashCode(): Int {
+        return elements.hashCode()
+    }
+
+    override fun toString(): String {
+        return elements.toString()
     }
 }
 

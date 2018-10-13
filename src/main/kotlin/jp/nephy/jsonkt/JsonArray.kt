@@ -1,6 +1,9 @@
 @file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 package jp.nephy.jsonkt
 
+import java.math.BigDecimal
+import java.math.BigInteger
+
 fun jsonArrayOf(vararg elements: Any?) = immutableJsonArrayOf(*elements)
 
 fun immutableJsonArrayOf(vararg elements: Any?): ImmutableJsonArray {
@@ -12,7 +15,7 @@ fun mutableJsonArrayOf(vararg elements: Any?): MutableJsonArray {
 }
 
 typealias JsonArray = ImmutableJsonArray
-typealias GsonJsonArray = com.google.gson.JsonArray
+private typealias GsonJsonArray = com.google.gson.JsonArray
 
 open class ImmutableJsonArray(private val elements: List<JsonElement>): GsonCompatible<GsonJsonArray>, List<JsonElement> {
     constructor(json: GsonJsonArray): this(json.map { JsonElement(it) })
@@ -71,6 +74,90 @@ open class ImmutableJsonArray(private val elements: List<JsonElement>): GsonComp
 
     fun toMutableJsonArray(): MutableJsonArray {
         return MutableJsonArray(toGsonObject())
+    }
+
+    private inline fun <reified T> cast(operation: (JsonElement) -> T): List<T> {
+        return try {
+            elements.map { operation(it) }
+        } catch (e: TypeCastException) {
+            emptyList()
+        }
+    }
+
+    fun toImmutableJsonObjectList(): List<ImmutableJsonObject> {
+        return cast { it.immutableJsonObject }
+    }
+
+    fun toMutableJsonObjectList(): List<MutableJsonObject> {
+        return cast { it.mutableJsonObject }
+    }
+
+    fun toImmutableJsonArrayList(): List<ImmutableJsonArray> {
+        return cast { it.immutableJsonArray }
+    }
+
+    fun toMutableJsonArrayList(): List<MutableJsonArray> {
+        return cast { it.mutableJsonArray }
+    }
+
+    fun toJsonPrimitiveList(): List<JsonPrimitive> {
+        return cast { it.jsonPrimitive }
+    }
+
+    fun toBooleanList(): List<Boolean> {
+        return cast { it.boolean }
+    }
+
+    fun toByteList(): List<Byte> {
+        return cast { it.byte }
+    }
+
+    fun toCharList(): List<Char> {
+        return cast { it.char }
+    }
+
+    fun toShortList(): List<Short> {
+        return cast { it.short }
+    }
+
+    fun toIntList(): List<Int> {
+        return cast { it.int }
+    }
+
+    fun toLongList(): List<Long> {
+        return cast { it.long }
+    }
+
+    fun toBigIntegerList(): List<BigInteger> {
+        return cast { it.bigInteger }
+    }
+
+    fun toFloatList(): List<Float> {
+        return cast { it.float }
+    }
+
+    fun toDoubleList(): List<Double> {
+        return cast { it.double }
+    }
+
+    fun toBigDecimalList(): List<BigDecimal> {
+        return cast { it.bigDecimal }
+    }
+
+    fun toStringValueList(): List<String> {
+        return cast { it.string }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return elements == (other as? ImmutableJsonArray)?.elements
+    }
+
+    override fun hashCode(): Int {
+        return elements.hashCode()
+    }
+
+    override fun toString(): String {
+        return elements.toString()
     }
 }
 
@@ -172,11 +259,69 @@ class MutableJsonArray(private val elements: MutableList<JsonElement>): Immutabl
     fun toImmutableJsonArray(): ImmutableJsonArray {
         return ImmutableJsonArray(toGsonObject())
     }
+
+    override fun equals(other: Any?): Boolean {
+        return elements == (other as? MutableJsonArray)?.elements
+    }
+
+    override fun hashCode(): Int {
+        return elements.hashCode()
+    }
+
+    override fun toString(): String {
+        return elements.toString()
+    }
 }
 
 // TODO: check
 inline fun MutableJsonArray.add(value: Any?) = add(value.toJsonElement())
-
 inline fun MutableJsonArray.addAll(vararg values: Any?) = addAll(elements = values.map { it.toJsonElement() })
 
 
+inline val JsonArray.immutableJsonObjectList: List<ImmutableJsonObject>
+    get() = toImmutableJsonObjectList()
+
+inline val JsonArray.mutableJsonObjectList: List<MutableJsonObject>
+    get() = toMutableJsonObjectList()
+
+inline val JsonArray.immutableJsonArrayList: List<ImmutableJsonArray>
+    get() = toImmutableJsonArrayList()
+
+inline val JsonArray.mutableJsonArrayList: List<MutableJsonArray>
+    get() = toMutableJsonArrayList()
+
+inline val JsonArray.jsonPrimitiveList: List<JsonPrimitive>
+    get() = toJsonPrimitiveList()
+
+inline val JsonArray.booleanList: List<Boolean>
+    get() = toBooleanList()
+
+inline val JsonArray.byteList: List<Byte>
+    get() = toByteList()
+
+inline val JsonArray.charList: List<Char>
+    get() = toCharList()
+
+inline val JsonArray.shortList: List<Short>
+    get() = toShortList()
+
+inline val JsonArray.intList: List<Int>
+    get() = toIntList()
+
+inline val JsonArray.longList: List<Long>
+    get() = toLongList()
+
+inline val JsonArray.bigIntegerList: List<BigInteger>
+    get() = toBigIntegerList()
+
+inline val JsonArray.floatList: List<Float>
+    get() = toFloatList()
+
+inline val JsonArray.doubleList: List<Double>
+    get() = toDoubleList()
+
+inline val JsonArray.bigDecimalList: List<BigDecimal>
+    get() = toBigDecimalList()
+
+inline val JsonArray.stringList: List<String>
+    get() = toStringValueList()
