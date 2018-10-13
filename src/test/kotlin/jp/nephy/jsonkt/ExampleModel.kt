@@ -1,35 +1,32 @@
 package jp.nephy.jsonkt
 
-import com.google.gson.JsonObject
+import jp.nephy.jsonkt.delegate.*
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.net.URI
-import java.net.URL
 
 @Suppress("UNUSED")
 class ExampleModel(override val json: JsonObject): JsonModel {
     class InnerModel(override val json: JsonObject): JsonModel {
         private val x by json.byInt
-        val y by json.byLambda { x * int }
-        val z by json.byLambdaList { int + 10 }
+        val y by json.byLambda { x * it.int }
+        val z by json.byLambdaList { it.int + 10 }
     }
 
     class ValueRequiredModel(val a: String, val b: String, val c: String, override val json: JsonObject): JsonModel {
         private val x by json.byInt
-        val y by json.byLambda { x * int }
-        val z by json.byLambdaList { int + 10 }
+        val y by json.byLambda { x * it.int }
+        val z by json.byLambdaList { it.int + 10 }
     }
 
-    val model by json.byMap { it.key }
     val model2 by json.byModel<ValueRequiredModel>("aaa", "bbb", "ccc")
 
-    val bool by json.byBool
-    val boolKey by json.byBool("bool")
-    val boolNullable by json.byNullableBool
-    val boolDefault by json.byBool { false }
-    val boolListKey by json.byBoolList("boolList")
-    val boolListNullable by json.byBoolList
-    val boolListDefault by json.byBoolList { listOf(true, false) }
+    val bool by json.byBoolean
+    val boolKey by json.byBoolean("bool")
+    val boolNullable by json.byNullableBoolean
+    val boolDefault by json.byBoolean { false }
+    val boolListKey by json.byBooleanList("boolList")
+    val boolListNullable by json.byBooleanList
+    val boolListDefault by json.byBooleanList { listOf(true, false) }
 
     val byte by json.byByte
     val byteKey by json.byByte("byte")
@@ -110,20 +107,4 @@ class ExampleModel(override val json: JsonObject): JsonModel {
     val stringListKey by json.byStringList("stringList")
     val stringListNullable by json.byStringList
     val stringListDefault by json.byStringList { listOf("aaa") }
-
-    val uri by json.byUri
-    val uriKey by json.byUri("uri")
-    val uriNullable by json.byNullableUri
-    val uriDefault by json.byUri { URI("https://www.google.co.jp") }
-    val uriListKey by json.byUriList("uriList")
-    val uriListNullable by json.byUriList
-    val uriListDefault by json.byUriList { listOf(URI("https://www.google.com")) }
-
-    val url by json.byUrl
-    val urlKey by json.byUrl("url")
-    val urlNullable by json.byNullableUrl
-    val urlDefault by json.byUrl { URL("https://www.google.co.jp") }
-    val urlListKey by json.byUrlList("urlList")
-    val urlListNullable by json.byUrlList
-    val urlListDefault by json.byUrlList { listOf(URL("https://www.google.com")) }
 }

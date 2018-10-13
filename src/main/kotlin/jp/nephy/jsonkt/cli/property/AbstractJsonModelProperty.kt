@@ -1,6 +1,6 @@
-package jp.nephy.jsonkt.property
+package jp.nephy.jsonkt.cli.property
 
-import com.google.gson.JsonElement
+import jp.nephy.jsonkt.JsonElement
 
 internal abstract class AbstractJsonModelProperty(pair: Map.Entry<String, JsonElement>): AbstractJsonProperty(pair) {
     val modelName = key.toSafeKotlinLiteral().toLowerCamelCase().capitalize()

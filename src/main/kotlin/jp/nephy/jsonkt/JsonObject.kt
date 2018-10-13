@@ -1,55 +1,128 @@
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 package jp.nephy.jsonkt
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
+fun jsonObjectOf(vararg elements: Pair<String, Any?>) = immutableJsonObjectOf(*elements)
 
-fun jsonObject(vararg elements: Pair<String, Any?>, builder: (GsonBuilder.() -> Unit)? = null): JsonObject {
-    return elements.toMap().toJsonObject(builder)
+fun immutableJsonObjectOf(vararg elements: Pair<String, Any?>): ImmutableJsonObject {
+    return ImmutableJsonObject(elements.map { it.first to it.second.toJsonElement() }.toMap())
 }
 
-val JsonObject.size: Int
-    get() = entrySet().size
-fun JsonObject.isEmpty() = entrySet().isEmpty()
-fun JsonObject.isNotEmpty() = ! isEmpty()
-fun JsonObject.contains(key: String) = has(key)
-fun JsonObject.containsKey(key: String) = contains(key)
-fun JsonObject.containsValue(value: JsonElement) = entrySet().any { it.value == value }
-fun JsonObject.getOrNull(key: String): JsonElement? {
-    return if (contains(key)) {
-        get(key)
-    } else {
-        null
+fun mutableJsonObjectOf(vararg elements: Pair<String, Any?>): MutableJsonObject {
+    return MutableJsonObject(elements.map { it.first to it.second.toJsonElement() }.toMap().toMutableMap())
+}
+
+typealias JsonObject = ImmutableJsonObject
+private typealias GsonJsonObject = com.google.gson.JsonObject
+
+open class ImmutableJsonObject(private val elements: Map<String, JsonElement>): GsonCompatible<GsonJsonObject>, Map<String, JsonElement> {
+    constructor(json: GsonJsonObject): this(json.entrySet().map { it.key to it.value.toJsonElement() }.toMap())
+    constructor(vararg pairs: Pair<String, JsonElement>): this(pairs.toMap())
+
+    override fun toGsonObject(): GsonJsonObject {
+        val json = GsonJsonObject()
+        for (element in elements) {
+            json.add(element.key, element.value.toGsonObject())
+        }
+        return json
+    }
+
+    override val size: Int
+        get() = elements.size
+
+    override fun isEmpty(): Boolean {
+        return elements.isEmpty()
+    }
+
+    override fun containsKey(key: String): Boolean {
+        return elements.containsKey(key)
+    }
+
+    override fun containsValue(value: JsonElement): Boolean {
+        return elements.containsValue(value)
+    }
+
+    override fun get(key: String): JsonElement? {
+        return elements[key]
+    }
+
+    override val entries: Set<Map.Entry<String, JsonElement>>
+        get() = elements.entries
+    override val keys: Set<String>
+        get() = elements.keys
+    override val values: Collection<JsonElement>
+        get() = elements.values
+
+    fun toMutableJsonObject(): MutableJsonObject {
+        return MutableJsonObject(toGsonObject())
     }
 }
-fun JsonObject.getOrDefault(key: String, default: JsonElement) = getOrNull(key) ?: default
-fun JsonObject.getOrElse(key: String, default: () -> JsonElement) = getOrNull(key) ?: default()
-val JsonObject.keys: Set<String>
-    get() = entrySet().map { it.key }.toSet()
-val JsonObject.values: Collection<JsonElement>
-    get() = entrySet().map { it.value }
-val JsonObject.entries: Set<Map.Entry<String, JsonElement>>
-    get() = entrySet()
-fun JsonObject.forEach(operation: (it: Map.Entry<String, JsonElement>) -> Unit) = entries.forEach { operation(it) }
-fun JsonObject.forEach(operation: (k: String, v: JsonElement) -> Unit) = entries.forEach { operation(it.key, it.value) }
-fun <R> JsonObject.map(operation: (it: Map.Entry<String, JsonElement>) -> R) = entries.map { operation(it) }
-fun JsonObject.toMap() = entries.associateBy({ it.key }, { it.value })
 
-fun JsonObject.put(it: Pair<String, Any?>) = add(it.first, it.second.toJsonElement())
-fun JsonObject.put(it: Map.Entry<String, Any?>) = add(it.key, it.value.toJsonElement())
+class MutableJsonObject(private val elements: MutableMap<String, JsonElement>): ImmutableJsonObject(elements), MutableMap<String, JsonElement> {
+    constructor(json: GsonJsonObject): this(json.entrySet().map { it.key to it.value.toJsonElement() }.toMap().toMutableMap())
+    constructor(vararg pairs: Pair<String, JsonElement>): this(pairs.toMap().toMutableMap())
 
-fun JsonObject.putAll(vararg pairs: Pair<String, Any?>) = pairs.forEach { put(it) }
-fun JsonObject.putAll(vararg entries: Map.Entry<String, Any?>) = entries.forEach { put(it) }
-fun JsonObject.putAll(map: Map<String, Any?>) = map.entries.forEach { put(it) }
-fun JsonObject.putAll(obj: JsonObject) = obj.entrySet().forEach { put(it) }
-fun JsonObject.putAll(pairs: Sequence<Pair<String, Any?>>) = pairs.forEach { put(it) }
-fun JsonObject.putAll(pairs: Iterable<Pair<String, Any?>>) = pairs.forEach { put(it) }
-fun JsonObject.putAllEntries(entries: Sequence<Map.Entry<String, Any?>>) = entries.forEach { put(it) }
-fun JsonObject.putAllEntries(entries: Iterable<Map.Entry<String, Any?>>) = entries.forEach { put(it) }
+    override fun toGsonObject(): GsonJsonObject {
+        val json = GsonJsonObject()
+        for (element in elements) {
+            json.add(element.key, element.value.toGsonObject())
+        }
+        return json
+    }
 
-fun JsonObject.removeAll(vararg keys: String) = keys.forEach { remove(it) }
-fun JsonObject.removeAll(keys: Iterable<String>) = keys.forEach { remove(it) }
-fun JsonObject.removeAll(keys: Sequence<String>) = keys.forEach { remove(it) }
-fun JsonObject.removeAllJsonKeys(vararg keys: JsonElement) = keys.forEach { remove(it.string) }
-fun JsonObject.removeAllJsonKeys(keys: Iterable<JsonElement>) = keys.forEach { remove(it.string) }
-fun JsonObject.removeAllJsonKeys(keys: Sequence<JsonElement>) = keys.forEach { remove(it.string) }
+    override val size: Int
+        get() = elements.size
+
+    override fun isEmpty(): Boolean {
+        return elements.isEmpty()
+    }
+
+    override fun containsKey(key: String): Boolean {
+        return elements.containsKey(key)
+    }
+
+    override fun containsValue(value: JsonElement): Boolean {
+        return elements.containsValue(value)
+    }
+
+    override fun get(key: String): JsonElement? {
+        return elements[key]
+    }
+
+    override val entries: MutableSet<MutableMap.MutableEntry<String, JsonElement>>
+        get() = elements.entries
+    override val keys: MutableSet<String>
+        get() = elements.keys
+    override val values: MutableCollection<JsonElement>
+        get() = elements.values
+
+    override fun put(key: String, value: JsonElement): JsonElement? {
+        return elements.put(key, value)
+    }
+
+    override fun putAll(from: Map<out String, JsonElement>) {
+        return elements.putAll(from)
+    }
+
+    override fun remove(key: String): JsonElement? {
+        return elements.remove(key)
+    }
+
+    override fun clear() {
+        return elements.clear()
+    }
+
+    fun toImmutableJsonObject(): ImmutableJsonObject {
+        return ImmutableJsonObject(toGsonObject())
+    }
+}
+
+// TODO: check
+inline fun MutableJsonObject.put(key: String, value: Any?) = put(key, value.toJsonElement())
+inline fun MutableJsonObject.put(pair: Pair<String, Any?>) = put(pair.first, pair.second.toJsonElement())
+inline fun MutableJsonObject.put(entry: Map.Entry<String, Any?>) = put(entry.key, entry.value.toJsonElement())
+
+inline fun MutableJsonObject.putAll(vararg pairs: Pair<String, Any?>) = pairs.forEach { put(it) }
+inline fun MutableJsonObject.putAll(vararg entries: Map.Entry<String, Any?>) = entries.forEach { put(it) }
+inline fun MutableJsonObject.putAll(map: Map<String, Any?>) = map.entries.forEach { put(it) }
+inline fun MutableJsonObject.putAll(pairs: Sequence<Pair<String, Any?>>) = pairs.forEach { put(it) }
+inline fun MutableJsonObject.putAll(pairs: Iterable<Pair<String, Any?>>) = pairs.forEach { put(it) }

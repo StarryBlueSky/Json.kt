@@ -1,6 +1,6 @@
 package jp.nephy.jsonkt
 
-import com.google.gson.JsonObject
+import jp.nephy.jsonkt.delegate.JsonModel
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.reflect.full.createType
@@ -34,7 +34,7 @@ class DelegateTest {
     }
 
     private fun makeJsonObject(): JsonObject {
-        return jsonObject(
+        return jsonObjectOf(
                 "model" to mapOf(
                         "x" to 5,
                         "y" to 2,
