@@ -11,130 +11,153 @@ class JsonPrimitive(private val value: GsonJsonPrimitive): GsonCompatible<GsonJs
         return value
     }
 
-    val jsonValue = value.javaClass.getDeclaredField("value").also { it.isAccessible = true }.get(value)!!
+    val jsonValue: Any
+        get() = value.javaClass.getDeclaredField("value").also { it.isAccessible = true }.get(value)!!
 
-    val javaPrimitiveClass: Class<*>
-        get() = jsonValue.javaClass
-
-    private inline fun <reified T> safeCast(): T? {
-        return jsonValue as? T
+    private inline fun <reified T> safeCast(operation: (GsonJsonPrimitive) -> T?): T? {
+        return try {
+            operation(value)
+        } catch (e: Exception) {
+            null
+        }
     }
-    private inline fun <reified T> cast(): T {
-        return safeCast() ?: throw JsonCastException(value.toJsonElement(), T::class.java)
+    private inline fun <reified T> cast(operation: (GsonJsonPrimitive) -> T?): T {
+        return safeCast(operation) ?: throw JsonCastException(value.toJsonElement(), T::class.java)
     }
 
     fun isBoolean(): Boolean {
         return value.isBoolean
     }
     fun toBoolean(): Boolean {
-        return cast()
+        return cast { it.asBoolean }
     }
     fun toBooleanOrNull(): Boolean? {
-        return safeCast()
+        return safeCast { it.asBoolean }
     }
 
     fun isByte(): Boolean {
-        return jsonValue is Byte
+        return if (isNumber() && '.' !in toString()) {
+            val value = toNumber().toLong()
+            Byte.MIN_VALUE <= value && value <= Byte.MAX_VALUE
+        } else {
+            false
+        }
     }
     fun toByte(): Byte {
-        return cast()
+        return cast { it.asByte }
     }
     fun toByteOrNull(): Byte? {
-        return safeCast()
+        return safeCast { it.asByte }
     }
 
     fun isShort(): Boolean {
-        return jsonValue is Short
+        return if (isNumber() && '.' !in toString()) {
+            val value = toNumber().toLong()
+            Short.MIN_VALUE <= value && value <= Short.MAX_VALUE
+        } else {
+            false
+        }
     }
     fun toShort(): Short {
-        return cast()
+        return cast { it.asShort }
     }
     fun toShortOrNull(): Short? {
-        return safeCast()
+        return safeCast { it.asShort }
     }
 
     fun isInt(): Boolean {
-        return jsonValue is Int
+        return if (isNumber() && '.' !in toString()) {
+            val value = toNumber().toLong()
+            Int.MIN_VALUE <= value && value <= Int.MAX_VALUE
+        } else {
+            false
+        }
     }
     fun toInt(): Int {
-        return cast()
+        return cast { it.asInt }
     }
     fun toIntOrNull(): Int? {
-        return safeCast()
+        return safeCast { it.asInt }
     }
 
     fun isLong(): Boolean {
-        return jsonValue is Long
+        return isNumber() && '.' !in toString() && toString() == toNumber().toLong().toString()
     }
     fun toLong(): Long {
-        return cast()
+        return cast { it.asLong }
     }
     fun toLongOrNull(): Long? {
-        return safeCast()
+        return safeCast { it.asLong }
     }
 
-    fun isBigInteger(): Boolean {
-        return jsonValue is BigInteger
-    }
     fun toBigInteger(): BigInteger {
-        return cast()
+        return cast { it.asBigInteger }
     }
     fun toBigIntegerOrNull(): BigInteger? {
-        return safeCast()
+        return safeCast { it.asBigInteger }
     }
 
     fun isFloat(): Boolean {
-        return jsonValue is Float
+        return if (isNumber() && '.' in toString()) {
+            val number = toNumber()
+            val value = number.toDouble()
+            value.toString() == number.toFloat().toString()
+        } else {
+            false
+        }
     }
     fun toFloat(): Float {
-        return cast()
+        return cast { it.asFloat }
     }
     fun toFloatOrNull(): Float? {
-        return safeCast()
+        return safeCast { it.asFloat }
     }
 
     fun isDouble(): Boolean {
-        return jsonValue is Double
+        return isNumber() && '.' in toString() && !isFloat
     }
     fun toDouble(): Double {
-        return cast()
+        return cast { it.asDouble }
     }
     fun toDoubleOrNull(): Double? {
-        return safeCast()
+        return safeCast { it.asDouble }
     }
 
-    fun isBigDecimal(): Boolean {
-        return jsonValue is BigDecimal
-    }
     fun toBigDecimal(): BigDecimal {
-        return cast()
+        return cast { it.asBigDecimal }
     }
     fun toBigDecimalOrNull(): BigDecimal? {
-        return safeCast()
+        return safeCast { it.asBigDecimal }
     }
 
     fun isNumber(): Boolean {
         return value.isNumber
     }
+    fun toNumber(): Number {
+        return cast { it.asNumber }
+    }
+    fun toNumberOrNull(): Number? {
+        return safeCast { it.asNumber }
+    }
 
     fun isChar(): Boolean {
-        return jsonValue is Char
+        return isString && string.length == 1
     }
     fun toChar(): Char {
-        return cast()
+        return cast { it.asCharacter }
     }
     fun toCharOrNull(): Char? {
-        return safeCast()
+        return safeCast { it.asCharacter }
     }
 
     fun isString(): Boolean {
         return value.isString
     }
     fun toStringValue(): String {
-        return cast()
+        return cast { it.asString }
     }
     fun toStringValueOrNull(): String? {
-        return safeCast()
+        return safeCast { it.asString }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -195,8 +218,6 @@ inline val JsonPrimitive.nullableLong: Long?
 inline fun JsonPrimitive.toLongOrDefault(defaultValue: Long) = toLongOrNull() ?: defaultValue
 inline fun JsonPrimitive.toLongOrElse(defaultValue: () -> Long) = toLongOrNull() ?: defaultValue()
 
-inline val JsonPrimitive.isBigInteger: Boolean
-    get() = isBigInteger()
 inline val JsonPrimitive.bigInteger: BigInteger
     get() = toBigInteger()
 inline val JsonPrimitive.nullableBigInteger: BigInteger?
@@ -222,8 +243,6 @@ inline val JsonPrimitive.nullableDouble: Double?
 inline fun JsonPrimitive.toDoubleOrDefault(defaultValue: Double) = toDoubleOrNull() ?: defaultValue
 inline fun JsonPrimitive.toDoubleOrElse(defaultValue: () -> Double) = toDoubleOrNull() ?: defaultValue()
 
-inline val JsonPrimitive.isBigDecimal: Boolean
-    get() = isBigDecimal()
 inline val JsonPrimitive.bigDecimal: BigDecimal
     get() = toBigDecimal()
 inline val JsonPrimitive.nullableBigDecimal: BigDecimal?

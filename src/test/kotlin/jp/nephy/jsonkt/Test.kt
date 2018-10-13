@@ -1,13 +1,14 @@
 package jp.nephy.jsonkt
 
-import jp.nephy.jsonkt.delegate.byInt
 import kotlin.system.measureTimeMillis
+
+// TODO: Kotlin 1.3でinline classをサポート
 
 fun main(args: Array<String>) {
     val time = measureTimeMillis {
-        val json = jsonObjectOf("a" to 1, "b" to 2)
-        val b by json.byInt
-        println(b)
+        val json = jsonObjectOf("a" to 24)
+        val a by json
+        println(a.jsonPrimitive)
     }
     print("$time ms")
 }

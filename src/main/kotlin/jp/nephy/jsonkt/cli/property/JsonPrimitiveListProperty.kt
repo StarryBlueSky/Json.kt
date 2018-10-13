@@ -10,7 +10,7 @@ internal class JsonPrimitiveListProperty(pair: Map.Entry<String, JsonElement>, t
 
     init {
         if (! element.immutableJsonArray.all { it.jsonPrimitive.toMethodName(strict = typeStrict) == candidateMethodName }) {
-            throw IllegalArgumentException("Not all elements are same type. These must be ${element.immutableJsonArray.first().jsonPrimitive.javaPrimitiveClass.simpleName}.")
+            throw IllegalArgumentException("Not all elements are same type. These must be ${element.immutableJsonArray.first().jsonPrimitive.jsonValue.javaClass.simpleName}.")
         }
     }
 }

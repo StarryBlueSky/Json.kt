@@ -1,7 +1,7 @@
-@file:Suppress("UNUSED")
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 package jp.nephy.jsonkt
 
-import jp.nephy.jsonkt.delegate.JsonModel
+import jp.nephy.jsonkt.delegation.JsonModel
 import java.io.File
 import java.nio.file.Path
 import kotlin.reflect.KClass
@@ -14,23 +14,23 @@ private typealias JsonPair = Pair<String, Any?>
  * toJsonString
  */
 
-fun JsonElement.toJsonString(builder: GsonBuilder = {}): String {
+inline fun JsonElement.toJsonString(noinline builder: GsonBuilder = {}): String {
     return gson(builder).toJson(this)
 }
 
-fun JsonModel.toJsonString(builder: GsonBuilder = {}): String {
+inline fun JsonModel.toJsonString(noinline builder: GsonBuilder = {}): String {
     return json.toJsonString(builder)
 }
 
-fun JsonMap.toJsonString(builder: GsonBuilder = {}): String {
+inline fun JsonMap.toJsonString(noinline builder: GsonBuilder = {}): String {
     return gson(builder).toJson(this)
 }
 
-fun Iterable<JsonPair>.toJsonString(builder: GsonBuilder = {}): String {
+inline fun Iterable<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): String {
     return toMap().toJsonString(builder)
 }
 
-fun Array<JsonPair>.toJsonString(builder: GsonBuilder = {}): String {
+inline fun Array<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): String {
     return toMap().toJsonString(builder)
 }
 
@@ -38,29 +38,29 @@ fun Array<JsonPair>.toJsonString(builder: GsonBuilder = {}): String {
  * toJsonObject
  */
 
-fun String.toJsonObject(builder: GsonBuilder = {}): ImmutableJsonObject {
-    return ImmutableJsonObject(gson(builder).fromJson(this, com.google.gson.JsonObject::class.java))
+inline fun String.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
+    return gson(builder).fromJson(this, com.google.gson.JsonObject::class.java).toJsonKt()
 }
 
-fun JsonMap.toJsonObject(builder: GsonBuilder = {}): ImmutableJsonObject {
+inline fun JsonMap.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
     return toJsonString(builder).toJsonObject(builder)
 }
 
-fun Iterable<JsonPair>.toJsonObject(builder: GsonBuilder = {}): ImmutableJsonObject {
+inline fun Iterable<JsonPair>.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
     return toJsonString(builder).toJsonObject(builder)
 }
 
-fun Array<JsonPair>.toJsonObject(builder: GsonBuilder = {}): ImmutableJsonObject {
+inline fun Array<JsonPair>.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
     return toJsonString(builder).toJsonObject(builder)
 }
 
-fun File.toJsonObject(builder: GsonBuilder = {}): ImmutableJsonObject {
+inline fun File.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
     return reader().use {
         it.readText().toJsonObject(builder)
     }
 }
 
-fun Path.toJsonObject(builder: GsonBuilder = {}): ImmutableJsonObject {
+inline fun Path.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
     return toFile().toJsonObject(builder)
 }
 
@@ -68,33 +68,33 @@ fun Path.toJsonObject(builder: GsonBuilder = {}): ImmutableJsonObject {
  * toJsonArray
  */
 
-fun String.toJsonArray(builder: GsonBuilder = {}): ImmutableJsonArray {
-    return ImmutableJsonArray(gson(builder).fromJson(this, com.google.gson.JsonArray::class.java))
+inline fun String.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
+    return gson(builder).fromJson(this, com.google.gson.JsonArray::class.java).toJsonKt()
 }
 
-fun JsonMap.toJsonArray(builder: GsonBuilder = {}): ImmutableJsonArray {
+inline fun JsonMap.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
     return toJsonString(builder).toJsonArray(builder)
 }
 
-fun Iterable<JsonPair>.toJsonArray(builder: GsonBuilder = {}): ImmutableJsonArray {
+inline fun Iterable<JsonPair>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
     return toJsonString(builder).toJsonArray(builder)
 }
 
-fun Array<JsonPair>.toJsonArray(builder: GsonBuilder = {}): ImmutableJsonArray {
+inline fun Array<JsonPair>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
     return toJsonString(builder).toJsonArray(builder)
 }
 
-fun File.toJsonArray(builder: GsonBuilder = {}): ImmutableJsonArray {
+inline fun File.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
     return reader().use {
         it.readText().toJsonArray(builder)
     }
 }
 
-fun Path.toJsonArray(builder: GsonBuilder = {}): ImmutableJsonArray {
+inline fun Path.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
     return toFile().toJsonArray(builder)
 }
 
-//fun Iterable<JsonObject>.toJsonArray(builder: GsonBuilder = {}): ImmutableJsonArray {
+//fun Iterable<JsonObject>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
 //    TODO()
 //}
 
@@ -104,61 +104,61 @@ fun Path.toJsonArray(builder: GsonBuilder = {}): ImmutableJsonArray {
  * parse
  */
 
-fun <T: JsonModel> JsonObject.parse(model: Class<T>): T {
+inline fun <T: JsonModel> JsonObject.parse(model: Class<T>): T {
     return model.getConstructor(ImmutableJsonObject::class.java).newInstance(this)
 }
 
-fun <T: JsonModel> JsonObject.parse(model: KClass<T>): T {
+inline fun <T: JsonModel> JsonObject.parse(model: KClass<T>): T {
     return parse(model.java)
 }
 
-fun <T: JsonModel> String.parse(model: Class<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> String.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
     return toJsonObject(builder).parse(model)
 }
 
-fun <T: JsonModel> String.parse(model: KClass<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> String.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
     return parse(model.java, builder)
 }
 
-fun <T: JsonModel> JsonMap.parse(model: Class<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> JsonMap.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
     return toJsonObject(builder).parse(model)
 }
 
-fun <T: JsonModel> JsonMap.parse(model: KClass<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> JsonMap.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
     return parse(model.java, builder)
 }
 
-fun <T: JsonModel> Iterable<JsonPair>.parse(model: Class<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> Iterable<JsonPair>.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
     return toJsonObject(builder).parse(model)
 }
 
-fun <T: JsonModel> Iterable<JsonPair>.parse(model: KClass<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> Iterable<JsonPair>.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
     return parse(model.java, builder)
 }
 
-fun <T: JsonModel> Array<JsonPair>.parse(model: Class<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> Array<JsonPair>.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
     return toJsonObject(builder).parse(model)
 }
 
-fun <T: JsonModel> Array<JsonPair>.parse(model: KClass<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> Array<JsonPair>.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
     return parse(model.java, builder)
 }
 
-fun <T: JsonModel> File.parse(model: Class<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> File.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
     return reader().use {
         it.readText().parse(model, builder)
     }
 }
 
-fun <T: JsonModel> File.parse(model: KClass<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> File.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
     return parse(model.java, builder)
 }
 
-fun <T: JsonModel> Path.parse(model: Class<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> Path.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
     return toFile().parse(model, builder)
 }
 
-fun <T: JsonModel> Path.parse(model: KClass<T>, builder: GsonBuilder = {}): T {
+inline fun <T: JsonModel> Path.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
     return parse(model.java, builder)
 }
 
@@ -198,37 +198,37 @@ inline fun <reified T: JsonModel> Path.parse(noinline builder: GsonBuilder = {})
  * parseList
  */
 
-fun <T: JsonModel> JsonArray.parseList(model: Class<T>): List<T> {
+inline fun <T: JsonModel> JsonArray.parseList(model: Class<T>): List<T> {
     return map { it.immutableJsonObject.parse(model) }
 }
 
-fun <T: JsonModel> JsonArray.parseList(model: KClass<T>): List<T> {
+inline fun <T: JsonModel> JsonArray.parseList(model: KClass<T>): List<T> {
     return parseList(model.java)
 }
 
-fun <T: JsonModel> String.parseList(model: Class<T>, builder: GsonBuilder = {}): List<T> {
+inline fun <T: JsonModel> String.parseList(model: Class<T>, noinline builder: GsonBuilder = {}): List<T> {
     return toJsonArray(builder).parseList(model)
 }
 
-fun <T: JsonModel> String.parseList(model: KClass<T>, builder: GsonBuilder = {}): List<T> {
+inline fun <T: JsonModel> String.parseList(model: KClass<T>, noinline builder: GsonBuilder = {}): List<T> {
     return parseList(model.java, builder)
 }
 
-fun <T: JsonModel> File.parseList(model: Class<T>, builder: GsonBuilder = {}): List<T> {
+inline fun <T: JsonModel> File.parseList(model: Class<T>, noinline builder: GsonBuilder = {}): List<T> {
     return reader().use {
         it.readText().parseList(model, builder)
     }
 }
 
-fun <T: JsonModel> File.parseList(model: KClass<T>, builder: GsonBuilder = {}): List<T> {
+inline fun <T: JsonModel> File.parseList(model: KClass<T>, noinline builder: GsonBuilder = {}): List<T> {
     return parseList(model.java, builder)
 }
 
-fun <T: JsonModel> Path.parseList(model: Class<T>, builder: GsonBuilder = {}): List<T> {
+inline fun <T: JsonModel> Path.parseList(model: Class<T>, noinline builder: GsonBuilder = {}): List<T> {
     return toFile().parseList(model, builder)
 }
 
-fun <T: JsonModel> Path.parseList(model: KClass<T>, builder: GsonBuilder = {}): List<T> {
+inline fun <T: JsonModel> Path.parseList(model: KClass<T>, noinline builder: GsonBuilder = {}): List<T> {
     return parseList(model.java, builder)
 }
 

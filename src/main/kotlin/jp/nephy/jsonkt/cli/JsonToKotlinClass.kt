@@ -49,18 +49,18 @@ fun File.toModelString(modelName: String? = null, typeStrict: Boolean? = null, b
     return toJsonObject(builder).toModelString(modelName, typeStrict)
 }
 
-fun Path.toModelString(modelName: String? = null, typeStrict: Boolean? = null): String {
-    return toFile().toModelString(modelName, typeStrict)
+fun Path.toModelString(modelName: String? = null, typeStrict: Boolean? = null, builder: GsonBuilder = {}): String {
+    return toFile().toModelString(modelName, typeStrict, builder)
 }
 
-internal class JsonToKotlinClass(private val json: JsonObject) {
+class JsonToKotlinClass(private val json: JsonObject) {
     fun convert(targetModelName: String?, typeStrict: Boolean?): String {
         val modelName = targetModelName.run {
-            if (isNullOrEmpty()) {
+            if (this == null || isBlank()) {
                 "Model"
             } else {
                 this
-            }!!
+            }
         }
 
         val result = mutableListOf<String>()
@@ -70,10 +70,10 @@ internal class JsonToKotlinClass(private val json: JsonObject) {
 
         if (result.isNotEmpty()) {
             result.add(0, "import jp.nephy.jsonkt.*")
-            result.add(1, "import com.google.gson.JsonObject\n")
+            result.add(1, "import jp.nephy.jsonkt.delegation.*\n")
         }
 
-        return result.joinToString("\n")
+        return result.joinToString("\n").trimEnd()
     }
 
     private class JsonObjectParser(private val json: JsonObject, private val typeStrict: Boolean) {

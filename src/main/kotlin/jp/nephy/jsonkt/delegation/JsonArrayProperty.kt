@@ -1,12 +1,13 @@
-package jp.nephy.jsonkt.delegate
+package jp.nephy.jsonkt.delegation
 
 import jp.nephy.jsonkt.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 internal typealias JsonArraySelector<T> = (ImmutableJsonObject) -> List<T>
+internal typealias JsonArrayOperation<T> = (it: Map.Entry<String, JsonElement>) -> T
 
-class JsonArrayDelegate<T>(private val json: ImmutableJsonObject, private val key: String?, private val modelClass: Class<T>?, private val default: JsonArraySelector<T>?, private val converter: JsonElementConverter<T>?, private vararg val params: Any): ReadOnlyProperty<Any?, List<T>> {
+class JsonArrayProperty<T>(private val json: ImmutableJsonObject, private val key: String?, private val modelClass: Class<T>?, private val default: JsonArraySelector<T>?, private val converter: JsonElementConverter<T>?, private val operation: JsonArrayOperation<T>?, private vararg val params: Any): ReadOnlyProperty<Any?, List<T>> {
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): List<T> {
         val jsonKey = key ?: property.name
         val jsonValue = json[jsonKey]
@@ -23,9 +24,9 @@ class JsonArrayDelegate<T>(private val json: ImmutableJsonObject, private val ke
                 default?.invoke(json).orEmpty()
             }
             !jsonValue.isJsonArray() -> {
-                if (jsonValue.isJsonObject() && converter != null) {
+                if (jsonValue.isJsonObject() && operation != null) {
                     jsonValue.immutableJsonObject.map {
-                        converter.invoke(it.value)
+                        operation.invoke(it)
                     }
                 } else {
                     default?.invoke(json).orEmpty()
