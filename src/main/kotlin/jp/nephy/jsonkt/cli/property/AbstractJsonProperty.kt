@@ -1,7 +1,5 @@
-package jp.nephy.jsonkt.property
+package jp.nephy.jsonkt.cli.property
 
-import com.google.gson.JsonElement
-import com.google.gson.JsonPrimitive
 import jp.nephy.jsonkt.*
 
 internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement>) {
@@ -18,7 +16,7 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
             delegationName.contains("<") -> "$delegationName()"
             else -> delegationName
         }
-        return "val $propertyName by json.$method${element.toKotlinComment()}"
+        return "val $propertyName by $method${element.toKotlinComment()}"
     }
 
     fun JsonPrimitive.toMethodName(strict: Boolean = false, nullable: Boolean = false): String {
@@ -26,21 +24,26 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
             this@AbstractJsonProperty.nullable = true
         }
         return when {
-            isBoolean -> "byBool"
-            strict && isByte -> "byByte"
-            strict && isShort -> "byShort"
-            isInt -> "byInt"
-            isLong -> "byLong"
-            isFloat -> "byFloat"
-            isDouble -> "byDouble"
-            strict && isChar -> "byChar"
-            isString -> "byString"
-            else -> throw IllegalArgumentException("Unknown type: $this.")
-        }.run {
+            isBoolean -> "boolean"
+            isNumber() -> {
+                when {
+                    strict && isByte -> "byte"
+                    strict && isShort -> "short"
+                    isInt -> "int"
+                    isLong -> "long"
+                    isFloat -> "float"
+                    isDouble -> "double"
+                    else -> throw IllegalStateException("Unknown type: ${this.javaClass.canonicalName}.")
+                }
+            }
+            strict && isChar -> "char"
+            isString -> "string"
+            else -> throw IllegalStateException("Unknown type: ${this.javaClass.canonicalName}.")
+        }.let {
             if (nullable) {
-                this.replace("by", "byNullable")
+                "nullable${it.capitalize()}"
             } else {
-                this
+                it
             }
         }
     }
@@ -60,16 +63,16 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
 
     private fun JsonElement.toKotlinComment(): String {
         return when {
-            isJsonObject -> "  // {...}"
-            isJsonArray -> {
-                if (jsonArray.isEmpty()) {
+            isJsonObject() -> "  // {...}"
+            isJsonArray() -> {
+                if (immutableJsonArray.isEmpty()) {
                     "  // []"
                 } else {
-                    val element = jsonArray.first().toString()
+                    val element = immutableJsonArray.first().toString()
                     when {
                         element.length > 50 -> "  // [...]"
-                        jsonArray.size == 1 -> "  // [$element]"
-                        else -> "  // [${jsonArray.first()}, ...]"
+                        immutableJsonArray.size == 1 -> "  // [$element]"
+                        else -> "  // [${immutableJsonArray.first()}, ...]"
                     }
                 }
             }
