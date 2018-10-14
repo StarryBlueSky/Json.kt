@@ -1,323 +1,327 @@
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 package jp.nephy.jsonkt
 
-import com.google.gson.*
-import jp.nephy.jsonkt.exception.AnyTypeCastException
-import jp.nephy.jsonkt.exception.JsonTypeCastException
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.net.URI
-import java.net.URL
 
-val jsonNull = JsonNull.INSTANCE!!
+private typealias GsonJsonElement = com.google.gson.JsonElement
 
-fun Boolean.toJson() = JsonPrimitive(this)
-fun Number.toJson() = JsonPrimitive(this)
-fun Char.toJson() = JsonPrimitive(this)
-fun String.toJson() = JsonPrimitive(this)
-
-fun Any?.toJsonElement(): JsonElement {
-    if (this == null) {
-        return jsonNull
+class JsonElement(private val value: GsonJsonElement): GsonCompatible<GsonJsonElement> {
+    override fun toGsonObject(): GsonJsonElement {
+        return value
     }
 
-    return when (this) {
-        is JsonElement -> this
-        is Boolean -> toJson()
-        is Number -> toJson()
-        is Char -> toJson()
-        is String -> toJson()
-        else -> throw AnyTypeCastException(this::class.java.canonicalName)
+    fun isJsonObject(): Boolean {
+        return value.isJsonObject
+    }
+    fun toImmutableJsonObject(): ImmutableJsonObject {
+        return ImmutableJsonObject(value.asJsonObject)
+    }
+    fun toMutableJsonObject(): MutableJsonObject {
+        return MutableJsonObject(value.asJsonObject)
+    }
+
+    fun isJsonArray(): Boolean {
+        return value.isJsonArray
+    }
+    fun toImmutableJsonArray(): ImmutableJsonArray {
+        return ImmutableJsonArray(value.asJsonArray)
+    }
+    fun toMutableJsonArray(): MutableJsonArray {
+        return MutableJsonArray(value.asJsonArray)
+    }
+
+    fun isJsonPrimitive(): Boolean {
+        return value.isJsonPrimitive
+    }
+    fun toJsonPrimitive(): JsonPrimitive {
+        return JsonPrimitive(value.asJsonPrimitive)
+    }
+
+    fun isJsonNull(): Boolean {
+        return value.isJsonNull
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return value == (other as? JsonElement)?.value
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
+
+    override fun toString(): String {
+        return value.toString()
     }
 }
 
-inline fun <reified T: Any?> JsonElement?.dynamicCast(): T {
+val jsonNull = JsonElement(com.google.gson.JsonNull.INSTANCE)
+
+inline fun Any?.toJsonElement(): JsonElement {
+    return JsonElement(when (this) {
+        null -> return jsonNull
+        is JsonElement -> return this
+        is GsonJsonElement -> this
+        is Boolean -> GsonJsonPrimitive(this)
+        is Number -> GsonJsonPrimitive(this)
+        is Char -> GsonJsonPrimitive(this)
+        is String -> GsonJsonPrimitive(this)
+        is GsonCompatible<*> -> toGsonObject()
+        else -> throw JsonConversionException(this::class.java)
+    })
+}
+
+/*
+  Operator functions
+ */
+
+@Throws(JsonKtException::class)
+inline operator fun JsonElement.get(key: String): JsonElement? {
+    return immutableJsonObject[key]
+}
+
+@Throws(JsonKtException::class, IndexOutOfBoundsException::class)
+inline operator fun JsonElement.get(index: Int): JsonElement {
+    return immutableJsonArray[index]
+}
+
+@Throws(JsonKtException::class)
+inline operator fun JsonElement.set(key: String, value: Any?) {
+    mutableJsonObject[key] = value.toJsonElement()
+}
+
+@Throws(JsonKtException::class)
+inline operator fun JsonElement.set(index: Int, value: Any?) {
+    mutableJsonArray[index] = value.toJsonElement()
+}
+
+
+inline val JsonElement.jsonString: String
+    get() = toString()
+
+
+inline val JsonElement.isJsonObject: Boolean
+    get() = isJsonObject()
+inline val JsonElement.immutableJsonObject: ImmutableJsonObject
+    get() = toImmutableJsonObject()
+inline val JsonElement.nullableImmutableJsonObject: ImmutableJsonObject?
+    get() = toImmutableJsonObjectOrNull()
+inline val JsonElement.immutableJsonObjectList: List<ImmutableJsonObject>
+    get() = toImmutableJsonObjectList()
+inline fun JsonElement.toImmutableJsonObjectOrNull(): ImmutableJsonObject? {
     return try {
-        if (this == null) {
-            throw UnsupportedOperationException()
-        }
-
-        @Suppress("IMPLICIT_CAST_TO_ANY")
-        when (T::class.java) {
-            com.google.gson.JsonObject::class.java -> asJsonObject
-            com.google.gson.JsonArray::class.java -> asJsonArray
-            com.google.gson.JsonPrimitive::class.java -> asJsonPrimitive
-            com.google.gson.JsonNull::class.java -> asJsonNull
-            java.lang.Boolean::class.java -> asBoolean
-            java.lang.Byte::class.java -> asByte
-            java.lang.Character::class.java -> asCharacter
-            java.lang.Short::class.java -> asShort
-            java.lang.Integer::class.java -> asInt
-            java.lang.Long::class.java -> asLong
-            java.math.BigInteger::class.java -> asBigInteger
-            java.lang.Float::class.java -> asFloat
-            java.lang.Double::class.java -> asDouble
-            java.math.BigDecimal::class.java -> asBigDecimal
-            java.lang.Number::class.java -> asNumber
-            java.lang.String::class.java -> asString
-            java.net.URI::class.java -> URI(asString)
-            java.net.URL::class.java -> URL(asString)
-            else -> throw UnsupportedOperationException()
-        } as T
-    } catch (e: UnsupportedOperationException) {
-        try {
-            null as T
-        } catch (e: TypeCastException) {
-            throw JsonTypeCastException(this, T::class.simpleName!!)
-        }
+        toImmutableJsonObject()
+    } catch (e: Exception) {
+        null
     }
 }
+inline fun JsonElement.toImmutableJsonObjectOrDefault(defaultValue: ImmutableJsonObject) = toImmutableJsonObjectOrNull() ?: defaultValue
+inline fun JsonElement.toImmutableJsonObjectOrElse(defaultValue: () -> ImmutableJsonObject) = toImmutableJsonObjectOrNull() ?: defaultValue()
+inline fun JsonElement.toImmutableJsonObjectList() = immutableJsonArray.immutableJsonObjectList
 
-inline fun <reified T: Any?> JsonElement?.dynamicCastList(): List<T> {
+inline val JsonElement.mutableJsonObject: MutableJsonObject
+    get() = toMutableJsonObject()
+inline val JsonElement.nullableMutableJsonObject: MutableJsonObject?
+    get() = toMutableJsonObjectOrNull()
+inline val JsonElement.mutableJsonObjectList: List<MutableJsonObject>
+    get() = toMutableJsonObjectList()
+inline fun JsonElement.toMutableJsonObjectOrNull(): MutableJsonObject? {
     return try {
-        if (this == null || !isJsonArray) {
-            return emptyList()
-        }
-
-        jsonArray.map {
-            it.dynamicCast<T>()
-        }
-    } catch (e: UnsupportedOperationException) {
-        emptyList()
+        toMutableJsonObject()
+    } catch (e: Exception) {
+        null
     }
 }
+inline fun JsonElement.toMutableJsonObjectOrDefault(defaultValue: MutableJsonObject) = toMutableJsonObjectOrNull() ?: defaultValue
+inline fun JsonElement.toMutableJsonObjectOrElse(defaultValue: () -> MutableJsonObject) = toMutableJsonObjectOrNull() ?: defaultValue()
+inline fun JsonElement.toMutableJsonObjectList() = immutableJsonArray.mutableJsonObjectList
 
-operator fun JsonElement.get(key: String): JsonElement {
-    return jsonObject.get(key) ?: throw NoSuchElementException(key)
+inline val JsonElement.isJsonArray: Boolean
+    get() = isJsonArray()
+inline val JsonElement.immutableJsonArray: ImmutableJsonArray
+    get() = toImmutableJsonArray()
+inline val JsonElement.nullableImmutableJsonArray: ImmutableJsonArray?
+    get() = toImmutableJsonArrayOrNull()
+inline val JsonElement.immutableJsonArrayList: List<ImmutableJsonArray>
+    get() = toImmutableJsonArrayList()
+inline fun JsonElement.toImmutableJsonArrayOrNull(): ImmutableJsonArray? {
+    return try {
+        toImmutableJsonArray()
+    } catch (e: Exception) {
+        null
+    }
 }
-operator fun JsonElement.get(index: Int): JsonElement {
-    return jsonArray.get(index)
-}
+inline fun JsonElement.toImmutableJsonArrayOrDefault(defaultValue: ImmutableJsonArray) = toImmutableJsonArrayOrNull() ?: defaultValue
+inline fun JsonElement.toImmutableJsonArrayOrElse(defaultValue: () -> ImmutableJsonArray) = toImmutableJsonArrayOrNull() ?: defaultValue()
+inline fun JsonElement.toImmutableJsonArrayList() = immutableJsonArray.immutableJsonArrayList
 
-operator fun JsonElement.set(key: String, value: Any?) {
-    jsonObject.add(key, value.toJsonElement())
-}
-operator fun JsonElement.set(index: Int, value: Any?) {
-    jsonArray.set(index, value.toJsonElement())
-}
-
-fun JsonElement.toJsonElement() = dynamicCast<JsonElement>()
-fun JsonElement?.toJsonElementOrNull() = dynamicCast<JsonElement?>()
-fun JsonElement?.toJsonElementOrDefault(default: JsonElement) = toJsonElementOrNull() ?: default
-fun JsonElement?.toJsonElementOrElse(default: () -> JsonElement) = toJsonElementOrNull() ?: default()
-val JsonElement.jsonElement: JsonElement
-    get() = toJsonElement()
-val JsonElement?.nullableJsonElement: JsonElement?
-    get() = toJsonElementOrNull()
-fun JsonElement.toJsonElementList() = dynamicCastList<JsonElement>()
-val JsonElement.jsonElementList: List<JsonElement>
-    get() = toJsonElementList()
-
-fun JsonElement.toJsonObject() = dynamicCast<JsonObject>()
-fun JsonElement?.toJsonObjectOrNull() = dynamicCast<JsonObject?>()
-fun JsonElement?.toJsonObjectOrDefault(default: JsonObject) = toJsonObjectOrNull() ?: default
-fun JsonElement?.toJsonObjectOrElse(default: () -> JsonObject) = toJsonObjectOrNull() ?: default()
-val JsonElement.jsonObject: JsonObject
-    get() = toJsonObject()
-val JsonElement?.nullableJsonObject: JsonObject?
-    get() = toJsonObjectOrNull()
-fun JsonElement.toJsonObjectList() = dynamicCastList<JsonObject>()
-val JsonElement.jsonObjectList: List<JsonObject>
-    get() = toJsonObjectList()
-
-fun JsonElement.toJsonArray() = dynamicCast<JsonArray>()
-fun JsonElement?.toJsonArrayOrNull() = dynamicCast<JsonArray?>()
-fun JsonElement?.toJsonArrayOrDefault(default: JsonArray) = toJsonArrayOrNull() ?: default
-fun JsonElement?.toJsonArrayOrElse(default: () -> JsonArray) = toJsonArrayOrNull() ?: default()
-val JsonElement.jsonArray: JsonArray
-    get() = toJsonArray()
-val JsonElement?.nullableJsonArray: JsonArray?
-    get() = toJsonArrayOrNull()
-fun JsonElement.toJsonArrayList() = dynamicCastList<JsonArray>()
-val JsonElement.jsonArrayList: List<JsonArray>
+inline val JsonElement.mutableJsonArray: MutableJsonArray
+    get() = toMutableJsonArray()
+inline val JsonElement.nullableMutableJsonArray: MutableJsonArray?
+    get() = toMutableJsonArrayOrNull()
+inline val JsonElement.mutableJsonArrayList: List<MutableJsonArray>
     get() = toJsonArrayList()
+inline fun JsonElement.toMutableJsonArrayOrNull(): MutableJsonArray? {
+    return try {
+        toMutableJsonArray()
+    } catch (e: Exception) {
+        null
+    }
+}
+inline fun JsonElement.toMutableJsonArrayOrDefault(defaultValue: MutableJsonArray) = toMutableJsonArrayOrNull() ?: defaultValue
+inline fun JsonElement.toMutableJsonArrayOrElse(defaultValue: () -> MutableJsonArray) = toMutableJsonArrayOrNull() ?: defaultValue()
+inline fun JsonElement.toJsonArrayList() = immutableJsonArray.mutableJsonArrayList
 
-fun JsonElement.toJsonPrimitive() = dynamicCast<JsonPrimitive>()
-fun JsonElement?.toJsonPrimitiveOrNull() = dynamicCast<JsonPrimitive?>()
-fun JsonElement?.toJsonPrimitiveOrDefault(default: JsonPrimitive) = toJsonPrimitiveOrNull() ?: default
-fun JsonElement?.toJsonPrimitiveOrElse(default: () -> JsonPrimitive) = toJsonPrimitiveOrNull() ?: default()
-val JsonElement.jsonPrimitive: JsonPrimitive
+inline val JsonElement.isJsonPrimitive: Boolean
+    get() = isJsonPrimitive()
+inline val JsonElement.jsonPrimitive: JsonPrimitive
     get() = toJsonPrimitive()
-val JsonElement?.nullableJsonPrimitive: JsonPrimitive?
+inline val JsonElement.nullableJsonPrimitive: JsonPrimitive?
     get() = toJsonPrimitiveOrNull()
-fun JsonElement.toJsonPrimitiveList() = dynamicCastList<JsonPrimitive>()
-val JsonElement.jsonPrimitiveList: List<JsonPrimitive>
+inline val JsonElement.jsonPrimitiveList: List<JsonPrimitive>
     get() = toJsonPrimitiveList()
+inline fun JsonElement.toJsonPrimitiveOrNull(): JsonPrimitive? {
+    return try {
+        toJsonPrimitive()
+    } catch (e: Exception) {
+        null
+    }
+}
+inline fun JsonElement.toJsonPrimitiveOrDefault(defaultValue: JsonPrimitive) = toJsonPrimitiveOrNull() ?: defaultValue
+inline fun JsonElement.toJsonPrimitiveOrElse(defaultValue: () -> JsonPrimitive) = toJsonPrimitiveOrNull() ?: defaultValue()
+inline fun JsonElement.toJsonPrimitiveList() = immutableJsonArray.jsonPrimitiveList
 
-fun JsonElement.toJsonNull() = dynamicCast<JsonNull>()
-fun JsonElement?.toJsonNullOrNull() = dynamicCast<JsonNull?>()
-fun JsonElement?.toJsonNullOrDefault(default: JsonNull) = toJsonNullOrNull() ?: default
-fun JsonElement?.toJsonNullOrElse(default: () -> JsonNull) = toJsonNullOrNull() ?: default()
-val JsonElement.jsonNull: JsonNull
-    get() = toJsonNull()
-val JsonElement?.nullableJsonNull: JsonNull?
-    get() = toJsonNullOrNull()
-fun JsonElement.toJsonNullList() = dynamicCastList<JsonNull>()
-val JsonElement.jsonNullList: List<JsonNull>
-    get() = toJsonNullList()
+inline val JsonElement.isJsonNull: Boolean
+    get() = isJsonNull()
 
-fun JsonElement.toBool() = dynamicCast<Boolean>()
-fun JsonElement?.toBoolOrNull() = dynamicCast<Boolean?>()
-fun JsonElement?.toBoolOrDefault(default: Boolean) = toBoolOrNull() ?: default
-fun JsonElement?.toBoolOrElse(default: () -> Boolean) = toBoolOrNull() ?: default()
-val JsonElement.bool: Boolean
-    get() = toBool()
-val JsonElement?.nullableBool: Boolean?
-    get() = toBoolOrNull()
-fun JsonElement.toBoolList() = dynamicCastList<Boolean>()
-val JsonElement.boolList: List<Boolean>
-    get() = toBoolList()
+inline val JsonElement.boolean: Boolean
+    get() = toBoolean()
+inline val JsonElement.nullableBool: Boolean?
+    get() = toBooleanOrNull()
+inline val JsonElement.booleanList: List<Boolean>
+    get() = toBooleanList()
+inline fun JsonElement.toBoolean() = jsonPrimitive.boolean
+inline fun JsonElement.toBooleanOrNull() = jsonPrimitive.nullableBoolean
+inline fun JsonElement.toBooleanOrDefault(defaultValue: Boolean) = toBooleanOrNull() ?: defaultValue
+inline fun JsonElement.toBooleanOrElse(defaultValue: () -> Boolean) = toBooleanOrNull() ?: defaultValue()
+inline fun JsonElement.toBooleanList() = immutableJsonArray.booleanList
 
-fun JsonElement.toByte() = dynamicCast<Byte>()
-fun JsonElement?.toByteOrNull() = dynamicCast<Byte?>()
-fun JsonElement?.toByteOrDefault(default: Byte) = toByteOrNull() ?: default
-fun JsonElement?.toByteOrElse(default: () -> Byte) = toByteOrNull() ?: default()
-val JsonElement.byte: Byte
+inline val JsonElement.byte: Byte
     get() = toByte()
-val JsonElement?.nullableByte: Byte?
+inline val JsonElement.nullableByte: Byte?
     get() = toByteOrNull()
-fun JsonElement.toByteList() = dynamicCastList<Byte>()
-val JsonElement.byteList: List<Byte>
+inline val JsonElement.byteList: List<Byte>
     get() = toByteList()
+inline fun JsonElement.toByte() = jsonPrimitive.byte
+inline fun JsonElement.toByteOrNull() = jsonPrimitive.nullableByte
+inline fun JsonElement.toByteOrDefault(defaultValue: Byte) = toByteOrNull() ?: defaultValue
+inline fun JsonElement.toByteOrElse(defaultValue: () -> Byte) = toByteOrNull() ?: defaultValue()
+inline fun JsonElement.toByteList() = immutableJsonArray.byteList
 
-fun JsonElement.toChar() = dynamicCast<Char>()
-fun JsonElement?.toCharOrNull() = dynamicCast<Char?>()
-fun JsonElement?.toCharOrDefault(default: Char) = toCharOrNull() ?: default
-fun JsonElement?.toCharOrElse(default: () -> Char) = toCharOrNull() ?: default()
-val JsonElement.char: Char
+inline val JsonElement.char: Char
     get() = toChar()
-val JsonElement?.nullableChar: Char?
+inline val JsonElement.nullableChar: Char?
     get() = toCharOrNull()
-fun JsonElement.toCharList() = dynamicCastList<Char>()
-val JsonElement.charList: List<Char>
+inline val JsonElement.charList: List<Char>
     get() = toCharList()
+inline fun JsonElement.toChar() = jsonPrimitive.char
+inline fun JsonElement.toCharOrNull() = jsonPrimitive.nullableChar
+inline fun JsonElement.toCharOrDefault(defaultValue: Char) = toCharOrNull() ?: defaultValue
+inline fun JsonElement.toCharOrElse(defaultValue: () -> Char) = toCharOrNull() ?: defaultValue()
+inline fun JsonElement.toCharList() = immutableJsonArray.charList
 
-fun JsonElement.toShort() = dynamicCast<Short>()
-fun JsonElement?.toShortOrNull() = dynamicCast<Short?>()
-fun JsonElement?.toShortOrDefault(default: Short) = toShortOrNull() ?: default
-fun JsonElement?.toShortOrElse(default: () -> Short) = toShortOrNull() ?: default()
-val JsonElement.short: Short
+inline val JsonElement.short: Short
     get() = toShort()
-val JsonElement?.nullableShort: Short?
+inline val JsonElement.nullableShort: Short?
     get() = toShortOrNull()
-fun JsonElement.toShortList() = dynamicCastList<Short>()
-val JsonElement.shortList: List<Short>
+inline val JsonElement.shortList: List<Short>
     get() = toShortList()
+inline fun JsonElement.toShort() = jsonPrimitive.short
+inline fun JsonElement.toShortOrNull() = jsonPrimitive.nullableShort
+inline fun JsonElement.toShortOrDefault(defaultValue: Short) = toShortOrNull() ?: defaultValue
+inline fun JsonElement.toShortOrElse(defaultValue: () -> Short) = toShortOrNull() ?: defaultValue()
+inline fun JsonElement.toShortList() = immutableJsonArray.shortList
 
-fun JsonElement.toInt() = dynamicCast<Int>()
-fun JsonElement?.toIntOrNull() = dynamicCast<Int?>()
-fun JsonElement?.toIntOrDefault(default: Int) = toIntOrNull() ?: default
-fun JsonElement?.toIntOrElse(default: () -> Int) = toIntOrNull() ?: default()
-val JsonElement.int: Int
+inline val JsonElement.int: Int
     get() = toInt()
-val JsonElement?.nullableInt: Int?
+inline val JsonElement.nullableInt: Int?
     get() = toIntOrNull()
-fun JsonElement.toIntList() = dynamicCastList<Int>()
-val JsonElement.intList: List<Int>
+inline val JsonElement.intList: List<Int>
     get() = toIntList()
+inline fun JsonElement.toInt() = jsonPrimitive.int
+inline fun JsonElement.toIntOrNull() = jsonPrimitive.nullableInt
+inline fun JsonElement.toIntOrDefault(defaultValue: Int) = toIntOrNull() ?: defaultValue
+inline fun JsonElement.toIntOrElse(defaultValue: () -> Int) = toIntOrNull() ?: defaultValue()
+inline fun JsonElement.toIntList() = immutableJsonArray.intList
 
-fun JsonElement.toLong() = dynamicCast<Long>()
-fun JsonElement?.toLongOrNull() = dynamicCast<Long?>()
-fun JsonElement?.toLongOrDefault(default: Long) = toLongOrNull() ?: default
-fun JsonElement?.toLongOrElse(default: () -> Long) = toLongOrNull() ?: default()
-val JsonElement.long: Long
+inline val JsonElement.long: Long
     get() = toLong()
-val JsonElement?.nullableLong: Long?
+inline val JsonElement.nullableLong: Long?
     get() = toLongOrNull()
-fun JsonElement.toLongList() = dynamicCastList<Long>()
-val JsonElement.longList: List<Long>
+inline val JsonElement.longList: List<Long>
     get() = toLongList()
+inline fun JsonElement.toLong() = jsonPrimitive.long
+inline fun JsonElement.toLongOrNull() = jsonPrimitive.nullableLong
+inline fun JsonElement.toLongOrDefault(defaultValue: Long) = toLongOrNull() ?: defaultValue
+inline fun JsonElement.toLongOrElse(defaultValue: () -> Long) = toLongOrNull() ?: defaultValue()
+inline fun JsonElement.toLongList() = immutableJsonArray.longList
 
-fun JsonElement.toBigInteger() = dynamicCast<BigInteger>()
-fun JsonElement?.toBigIntegerOrNull() = dynamicCast<BigInteger?>()
-fun JsonElement?.toBigIntegerOrDefault(default: BigInteger) = toBigIntegerOrNull() ?: default
-fun JsonElement?.toBigIntegerOrElse(default: () -> BigInteger) = toBigIntegerOrNull() ?: default()
-val JsonElement.bigInteger: BigInteger
+inline val JsonElement.bigInteger: BigInteger
     get() = toBigInteger()
-val JsonElement?.nullableBigInteger: BigInteger?
+inline val JsonElement.nullableBigInteger: BigInteger?
     get() = toBigIntegerOrNull()
-fun JsonElement.toBigIntegerList() = dynamicCastList<BigInteger>()
-val JsonElement.bigIntegerList: List<BigInteger>
+inline val JsonElement.bigIntegerList: List<BigInteger>
     get() = toBigIntegerList()
+inline fun JsonElement.toBigInteger() = jsonPrimitive.bigInteger
+inline fun JsonElement.toBigIntegerOrNull() = jsonPrimitive.nullableBigInteger
+inline fun JsonElement.toBigIntegerOrDefault(defaultValue: BigInteger) = toBigIntegerOrNull() ?: defaultValue
+inline fun JsonElement.toBigIntegerOrElse(defaultValue: () -> BigInteger) = toBigIntegerOrNull() ?: defaultValue()
+inline fun JsonElement.toBigIntegerList() = immutableJsonArray.bigIntegerList
 
-fun JsonElement.toFloat() = dynamicCast<Float>()
-fun JsonElement?.toFloatOrNull() = dynamicCast<Float?>()
-fun JsonElement?.toFloatOrDefault(default: Float) = toFloatOrNull() ?: default
-fun JsonElement?.toFloatOrElse(default: () -> Float) = toFloatOrNull() ?: default()
-val JsonElement.float: Float
+inline val JsonElement.float: Float
     get() = toFloat()
-val JsonElement?.nullableFloat: Float?
+inline val JsonElement.nullableFloat: Float?
     get() = toFloatOrNull()
-fun JsonElement.toFloatList() = dynamicCastList<Float>()
-val JsonElement.floatList: List<Float>
+inline val JsonElement.floatList: List<Float>
     get() = toFloatList()
+inline fun JsonElement.toFloat() = jsonPrimitive.float
+inline fun JsonElement.toFloatOrNull() = jsonPrimitive.nullableFloat
+inline fun JsonElement.toFloatOrDefault(defaultValue: Float) = toFloatOrNull() ?: defaultValue
+inline fun JsonElement.toFloatOrElse(defaultValue: () -> Float) = toFloatOrNull() ?: defaultValue()
+inline fun JsonElement.toFloatList() = immutableJsonArray.floatList
 
-fun JsonElement.toDouble() = dynamicCast<Double>()
-fun JsonElement?.toDoubleOrNull() = dynamicCast<Double?>()
-fun JsonElement?.toDoubleOrDefault(default: Double) = toDoubleOrNull() ?: default
-fun JsonElement?.toDoubleOrElse(default: () -> Double) = toDoubleOrNull() ?: default()
-val JsonElement.double: Double
+inline val JsonElement.double: Double
     get() = toDouble()
-val JsonElement?.nullableDouble: Double?
+inline val JsonElement.nullableDouble: Double?
     get() = toDoubleOrNull()
-fun JsonElement.toDoubleList() = dynamicCastList<Double>()
-val JsonElement.doubleList: List<Double>
+inline val JsonElement.doubleList: List<Double>
     get() = toDoubleList()
+inline fun JsonElement.toDouble() = jsonPrimitive.double
+inline fun JsonElement.toDoubleOrNull() = jsonPrimitive.nullableDouble
+inline fun JsonElement.toDoubleOrDefault(defaultValue: Double) = toDoubleOrNull() ?: defaultValue
+inline fun JsonElement.toDoubleOrElse(defaultValue: () -> Double) = toDoubleOrNull() ?: defaultValue()
+inline fun JsonElement.toDoubleList() = immutableJsonArray.doubleList
 
-fun JsonElement.toBigDecimal() = dynamicCast<BigDecimal>()
-fun JsonElement?.toBigDecimalOrNull() = dynamicCast<BigDecimal?>()
-fun JsonElement?.toBigDecimalOrDefault(default: BigDecimal) = toBigDecimalOrNull() ?: default
-fun JsonElement?.toBigDecimalOrElse(default: () -> BigDecimal) = toBigDecimalOrNull() ?: default()
-val JsonElement.bigDecimal: BigDecimal
+inline val JsonElement.bigDecimal: BigDecimal
     get() = toBigDecimal()
-val JsonElement?.nullableBigDecimal: BigDecimal?
+inline val JsonElement.nullableBigDecimal: BigDecimal?
     get() = toBigDecimalOrNull()
-fun JsonElement.toBigDecimalList() = dynamicCastList<BigDecimal>()
-val JsonElement.bigDecimalList: List<BigDecimal>
+inline val JsonElement.bigDecimalList: List<BigDecimal>
     get() = toBigDecimalList()
+inline fun JsonElement.toBigDecimal() = jsonPrimitive.bigDecimal
+inline fun JsonElement.toBigDecimalOrNull() = jsonPrimitive.nullableBigDecimal
+inline fun JsonElement.toBigDecimalOrDefault(defaultValue: BigDecimal) = toBigDecimalOrNull() ?: defaultValue
+inline fun JsonElement.toBigDecimalOrElse(defaultValue: () -> BigDecimal) = toBigDecimalOrNull() ?: defaultValue()
+inline fun JsonElement.toBigDecimalList() = immutableJsonArray.bigDecimalList
 
-fun JsonElement.toNumber() = dynamicCast<Number>()
-fun JsonElement?.toNumberOrNull() = dynamicCast<Number?>()
-fun JsonElement?.toNumberOrDefault(default: Number) = toNumberOrNull() ?: default
-fun JsonElement?.toNumberOrElse(default: () -> Number) = toNumberOrNull() ?: default()
-val JsonElement.number: Number
-    get() = toNumber()
-val JsonElement?.nullableNumber: Number?
-    get() = toNumberOrNull()
-fun JsonElement.toNumberList() = dynamicCastList<Number>()
-val JsonElement.numberList: List<Number>
-    get() = toNumberList()
-
-fun JsonElement?.toStringOrNull() = dynamicCast<String?>()
-fun JsonElement?.toStringOrDefault(default: String) = toStringOrNull() ?: default
-fun JsonElement?.toStringOrElse(default: () -> String) = toStringOrNull() ?: default()
-val JsonElement.string: String
-    get() = dynamicCast()
-val JsonElement?.nullableString: String?
-    get() = toStringOrNull()
-fun JsonElement.toStringList() = dynamicCastList<String>()
-val JsonElement.stringList: List<String>
-    get() = toStringList()
-
-fun JsonElement.toURI() = dynamicCast<URI>()
-fun JsonElement?.toURIOrNull() = dynamicCast<URI?>()
-fun JsonElement?.toURIOrDefault(default: URI) = toURIOrNull() ?: default
-fun JsonElement?.toURIOrElse(default: () -> URI) = toURIOrNull() ?: default()
-val JsonElement.uri: URI
-    get() = toURI()
-val JsonElement?.nullableUri: URI?
-    get() = toURIOrNull()
-fun JsonElement.toURIList() = dynamicCastList<URI>()
-val JsonElement.uriList: List<URI>
-    get() = toURIList()
-
-fun JsonElement.toURL() = dynamicCast<URL>()
-fun JsonElement?.toURLOrNull() = dynamicCast<URL?>()
-fun JsonElement?.toURLOrDefault(default: URL) = toURLOrNull() ?: default
-fun JsonElement?.toURLOrElse(default: () -> URL) = toURLOrNull() ?: default()
-val JsonElement.url: URL
-    get() = toURL()
-val JsonElement?.nullableUrl: URL?
-    get() = toURLOrNull()
-fun JsonElement.toURLList() = dynamicCastList<URL>()
-val JsonElement.urlList: List<URL>
-    get() = toURLList()
+inline val JsonElement.string: String
+    get() = toStringValue()
+inline val JsonElement.nullableString: String?
+    get() = toStringValueOrNull()
+inline val JsonElement.stringList: List<String>
+    get() = toStringValueList()
+inline fun JsonElement.toStringValue() = jsonPrimitive.string
+inline fun JsonElement.toStringValueOrNull() = jsonPrimitive.nullableString
+inline fun JsonElement.toStringValueOrDefault(defaultValue: String) = toStringValueOrNull() ?: defaultValue
+inline fun JsonElement.toStringValueOrElse(defaultValue: () -> String) = toStringValueOrNull() ?: defaultValue()
+inline fun JsonElement.toStringValueList() = immutableJsonArray.stringList
