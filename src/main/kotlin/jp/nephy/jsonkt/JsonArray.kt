@@ -256,6 +256,10 @@ class MutableJsonArray(private val elements: MutableList<JsonElement>): Immutabl
         return elements.set(index, element)
     }
 
+    operator fun set(index: Int, element: Any?) {
+        set(index, element.toJsonElement())
+    }
+
     fun toImmutableJsonArray(): ImmutableJsonArray {
         return ImmutableJsonArray(toGsonObject())
     }
@@ -273,10 +277,8 @@ class MutableJsonArray(private val elements: MutableList<JsonElement>): Immutabl
     }
 }
 
-// TODO: check
-inline fun MutableJsonArray.add(value: Any?) = add(value.toJsonElement())
+inline fun MutableJsonArray.add(element: Any?) = add(element.toJsonElement())
 inline fun MutableJsonArray.addAll(vararg values: Any?) = addAll(elements = values.map { it.toJsonElement() })
-
 
 inline val JsonArray.immutableJsonObjectList: List<ImmutableJsonObject>
     get() = toImmutableJsonObjectList()

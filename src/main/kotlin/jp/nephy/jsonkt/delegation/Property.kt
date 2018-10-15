@@ -18,7 +18,8 @@ inline fun <T> JsonModel.lambdaList(key: String? = null, noinline default: JsonA
 inline fun <T> JsonObject.byNullableLambdaList(key: String? = null, noinline default: JsonArraySelector<T>? = null, noinline converter: JsonElementConverter<T?>) = JsonArrayProperty(this, key, null, default, converter, null)
 inline fun <T> JsonModel.nullableLambdaList(key: String? = null, noinline default: JsonArraySelector<T>? = null, noinline converter: JsonElementConverter<T?>) = JsonArrayProperty(json, key, null, default, converter, null)
 
-fun <T> JsonElement.byMap(key: String? = null, default: JsonArraySelector<T>? = null, operation: (it: Map.Entry<String, JsonElement>) -> T) = JsonArrayProperty(immutableJsonObject, key, null, default, null, operation)
+inline fun <T> JsonElement.byMap(key: String? = null, noinline default: JsonArraySelector<T>? = null, noinline operation: JsonArrayOperation<T>? = null) = JsonArrayProperty(immutableJsonObject, key, null, default, null, operation)
+inline fun <T> JsonModel.map(key: String? = null, noinline default: JsonArraySelector<T>? = null, noinline operation: JsonArrayOperation<T>? = null) = JsonArrayProperty(json, key, null, default, null, operation)
 
 inline fun <reified T, R: JsonEnum<T>> JsonObject.byEnum(enum: KClass<R>, key: String? = null, default: R) = JsonObjectProperty(this, key, null, { default }, {
     val casted = it.jsonPrimitive.jsonValue.toString()
@@ -33,7 +34,7 @@ inline fun <reified T, R: JsonEnum<T>> JsonObject.byEnumList(enum: KClass<R>, ke
     val casted = it.jsonPrimitive.jsonValue.toString()
     enum.java.enumConstants.find { const -> const.value.toString() == casted } ?: unknown
 }, null)
-inline fun <reified T, R: JsonEnum<T>> JsonModel.byEnumList(enum: KClass<R>, key: String? = null, unknown: R, noinline default: () -> List<R> = { emptyList() }) = JsonArrayProperty(json, key, null, { default() }, {
+inline fun <reified T, R: JsonEnum<T>> JsonModel.enumList(enum: KClass<R>, key: String? = null, unknown: R, noinline default: () -> List<R> = { emptyList() }) = JsonArrayProperty(json, key, null, { default() }, {
     val casted = it.jsonPrimitive.jsonValue.toString()
     enum.java.enumConstants.find { const -> const.value.toString() == casted } ?: unknown
 }, null)
@@ -61,16 +62,16 @@ inline fun JsonObject.byNullableImmutableJsonObjectList(key: String? = null, noi
 inline val JsonObject.byNullableImmutableJsonObjectList: JsonArrayProperty<ImmutableJsonObject?>
     get() = byNullableImmutableJsonObjectList()
 inline fun JsonModel.immutableJsonObject(key: String? = null, noinline default: JsonObjectSelector<ImmutableJsonObject>? = null) = lambda(key, default) { it.immutableJsonObject }
-inline val JsonModel.ImmutableJsonObject: JsonObjectProperty<ImmutableJsonObject>
+inline val JsonModel.immutableJsonObject: JsonObjectProperty<ImmutableJsonObject>
     get() = immutableJsonObject()
 inline fun JsonModel.nullableImmutableJsonObject(key: String? = null, noinline default: JsonObjectSelector<ImmutableJsonObject?>? = null) = nullableLambda(key, default) { it.immutableJsonObject }
-inline val JsonModel.NullableImmutableJsonObject: JsonObjectProperty<ImmutableJsonObject?>
+inline val JsonModel.nullableImmutableJsonObject: JsonObjectProperty<ImmutableJsonObject?>
     get() = nullableImmutableJsonObject()
 inline fun JsonModel.immutableJsonObjectList(key: String? = null, noinline default: JsonArraySelector<ImmutableJsonObject>? = null) = lambdaList(key, default) { it.immutableJsonObject }
-inline val JsonModel.ImmutableJsonObjectList: JsonArrayProperty<ImmutableJsonObject>
+inline val JsonModel.immutableJsonObjectList: JsonArrayProperty<ImmutableJsonObject>
     get() = immutableJsonObjectList()
 inline fun JsonModel.nullableImmutableJsonObjectList(key: String? = null, noinline default: JsonArraySelector<ImmutableJsonObject?>? = null) = nullableLambdaList(key, default) { it.immutableJsonObject }
-inline val JsonModel.NullableImmutableJsonObjectList: JsonArrayProperty<ImmutableJsonObject?>
+inline val JsonModel.nullableImmutableJsonObjectList: JsonArrayProperty<ImmutableJsonObject?>
     get() = nullableImmutableJsonObjectList()
 
 inline fun JsonObject.byMutableJsonObject(key: String? = null, noinline default: JsonObjectSelector<MutableJsonObject>? = null) = byLambda(key, default) { it.mutableJsonObject }
@@ -86,16 +87,16 @@ inline fun JsonObject.byNullableMutableJsonObjectList(key: String? = null, noinl
 inline val JsonObject.byNullableMutableJsonObjectList: JsonArrayProperty<MutableJsonObject?>
     get() = byNullableMutableJsonObjectList()
 inline fun JsonModel.mutableJsonObject(key: String? = null, noinline default: JsonObjectSelector<MutableJsonObject>? = null) = lambda(key, default) { it.mutableJsonObject }
-inline val JsonModel.MutableJsonObject: JsonObjectProperty<MutableJsonObject>
+inline val JsonModel.mutableJsonObject: JsonObjectProperty<MutableJsonObject>
     get() = mutableJsonObject()
 inline fun JsonModel.nullableMutableJsonObject(key: String? = null, noinline default: JsonObjectSelector<MutableJsonObject?>? = null) = nullableLambda(key, default) { it.mutableJsonObject }
-inline val JsonModel.NullableMutableJsonObject: JsonObjectProperty<MutableJsonObject?>
+inline val JsonModel.nullableMutableJsonObject: JsonObjectProperty<MutableJsonObject?>
     get() = nullableMutableJsonObject()
 inline fun JsonModel.mutableJsonObjectList(key: String? = null, noinline default: JsonArraySelector<MutableJsonObject>? = null) = lambdaList(key, default) { it.mutableJsonObject }
-inline val JsonModel.MutableJsonObjectList: JsonArrayProperty<MutableJsonObject>
+inline val JsonModel.mutableJsonObjectList: JsonArrayProperty<MutableJsonObject>
     get() = mutableJsonObjectList()
 inline fun JsonModel.nullableMutableJsonObjectList(key: String? = null, noinline default: JsonArraySelector<MutableJsonObject?>? = null) = nullableLambdaList(key, default) { it.mutableJsonObject }
-inline val JsonModel.NullableMutableJsonObjectList: JsonArrayProperty<MutableJsonObject?>
+inline val JsonModel.nullableMutableJsonObjectList: JsonArrayProperty<MutableJsonObject?>
     get() = nullableMutableJsonObjectList()
 
 inline fun JsonObject.byImmutableJsonArray(key: String? = null, noinline default: JsonObjectSelector<ImmutableJsonArray>? = null) = byLambda(key, default) { it.immutableJsonArray }
@@ -111,16 +112,16 @@ inline fun JsonObject.byNullableImmutableJsonArrayList(key: String? = null, noin
 inline val JsonObject.byNullableImmutableJsonArrayList: JsonArrayProperty<ImmutableJsonArray?>
     get() = byNullableImmutableJsonArrayList()
 inline fun JsonModel.immutableJsonArray(key: String? = null, noinline default: JsonObjectSelector<ImmutableJsonArray>? = null) = lambda(key, default) { it.immutableJsonArray }
-inline val JsonModel.ImmutableJsonArray: JsonObjectProperty<ImmutableJsonArray>
+inline val JsonModel.immutableJsonArray: JsonObjectProperty<ImmutableJsonArray>
     get() = immutableJsonArray()
 inline fun JsonModel.nullableImmutableJsonArray(key: String? = null, noinline default: JsonObjectSelector<ImmutableJsonArray?>? = null) = nullableLambda(key, default) { it.immutableJsonArray }
-inline val JsonModel.NullableImmutableJsonArray: JsonObjectProperty<ImmutableJsonArray?>
+inline val JsonModel.nullableImmutableJsonArray: JsonObjectProperty<ImmutableJsonArray?>
     get() = nullableImmutableJsonArray()
 inline fun JsonModel.immutableJsonArrayList(key: String? = null, noinline default: JsonArraySelector<ImmutableJsonArray>? = null) = lambdaList(key, default) { it.immutableJsonArray }
 inline val JsonModel.immutableJsonArrayList: JsonArrayProperty<ImmutableJsonArray>
     get() = immutableJsonArrayList()
 inline fun JsonModel.nullableImmutableJsonArrayList(key: String? = null, noinline default: JsonArraySelector<ImmutableJsonArray?>? = null) = nullableLambdaList(key, default) { it.immutableJsonArray }
-inline val JsonModel.NullableImmutableJsonArrayList: JsonArrayProperty<ImmutableJsonArray?>
+inline val JsonModel.nullableImmutableJsonArrayList: JsonArrayProperty<ImmutableJsonArray?>
     get() = nullableImmutableJsonArrayList()
 
 inline fun JsonObject.byMutableJsonArray(key: String? = null, noinline default: JsonObjectSelector<MutableJsonArray>? = null) = byLambda(key, default) { it.mutableJsonArray }
@@ -136,16 +137,16 @@ inline fun JsonObject.byNullableMutableJsonArrayList(key: String? = null, noinli
 inline val JsonObject.byNullableMutableJsonArrayList: JsonArrayProperty<MutableJsonArray?>
     get() = byNullableMutableJsonArrayList()
 inline fun JsonModel.mutableJsonArray(key: String? = null, noinline default: JsonObjectSelector<MutableJsonArray>? = null) = lambda(key, default) { it.mutableJsonArray }
-inline val JsonModel.MutableJsonArray: JsonObjectProperty<MutableJsonArray>
+inline val JsonModel.mutableJsonArray: JsonObjectProperty<MutableJsonArray>
     get() = mutableJsonArray()
 inline fun JsonModel.nullableMutableJsonArray(key: String? = null, noinline default: JsonObjectSelector<MutableJsonArray?>? = null) = nullableLambda(key, default) { it.mutableJsonArray }
-inline val JsonModel.NullableMutableJsonArray: JsonObjectProperty<MutableJsonArray?>
+inline val JsonModel.nullableMutableJsonArray: JsonObjectProperty<MutableJsonArray?>
     get() = nullableMutableJsonArray()
 inline fun JsonModel.mutableJsonArrayList(key: String? = null, noinline default: JsonArraySelector<MutableJsonArray>? = null) = lambdaList(key, default) { it.mutableJsonArray }
-inline val JsonModel.MutableJsonArrayList: JsonArrayProperty<MutableJsonArray>
+inline val JsonModel.mutableJsonArrayList: JsonArrayProperty<MutableJsonArray>
     get() = mutableJsonArrayList()
 inline fun JsonModel.nullableMutableJsonArrayList(key: String? = null, noinline default: JsonArraySelector<MutableJsonArray?>? = null) = nullableLambdaList(key, default) { it.mutableJsonArray }
-inline val JsonModel.NullableMutableJsonArrayList: JsonArrayProperty<MutableJsonArray?>
+inline val JsonModel.nullableMutableJsonArrayList: JsonArrayProperty<MutableJsonArray?>
     get() = nullableMutableJsonArrayList()
 
 inline fun JsonObject.byJsonPrimitive(key: String? = null, noinline default: JsonObjectSelector<JsonPrimitive>? = null) = byLambda(key, default) { it.jsonPrimitive }

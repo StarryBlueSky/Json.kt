@@ -7,8 +7,9 @@ import java.nio.file.Path
 import kotlin.reflect.KClass
 
 internal typealias GsonBuilder = com.google.gson.GsonBuilder.() -> Unit
-private typealias JsonMap = Map<String, Any?>
-private typealias JsonPair = Pair<String, Any?>
+internal typealias JsonMap = Map<String, Any?>
+internal typealias JsonPair = Pair<String, Any?>
+internal typealias JsonMapEntry = Map.Entry<String, Any?>
 
 /*
  * toJsonString
@@ -30,6 +31,10 @@ inline fun Iterable<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): 
     return toMap().toJsonString(builder)
 }
 
+inline fun Sequence<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): String {
+    return toMap().toJsonString(builder)
+}
+
 inline fun Array<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): String {
     return toMap().toJsonString(builder)
 }
@@ -47,6 +52,10 @@ inline fun JsonMap.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJs
 }
 
 inline fun Iterable<JsonPair>.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
+    return toJsonString(builder).toJsonObject(builder)
+}
+
+inline fun Sequence<JsonPair>.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
     return toJsonString(builder).toJsonObject(builder)
 }
 
@@ -80,6 +89,10 @@ inline fun Iterable<JsonPair>.toJsonArray(noinline builder: GsonBuilder = {}): I
     return toJsonString(builder).toJsonArray(builder)
 }
 
+inline fun Sequence<JsonPair>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
+    return toJsonString(builder).toJsonArray(builder)
+}
+
 inline fun Array<JsonPair>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
     return toJsonString(builder).toJsonArray(builder)
 }
@@ -94,11 +107,13 @@ inline fun Path.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonAr
     return toFile().toJsonArray(builder)
 }
 
-//fun Iterable<JsonObject>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
-//    TODO()
-//}
+inline fun Iterable<JsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
+    return immutableJsonArrayOf(*toList().toTypedArray())
+}
 
-// TODO: Any
+inline fun Sequence<JsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
+    return immutableJsonArrayOf(*toList().toTypedArray())
+}
 
 /*
  * parse
@@ -132,7 +147,15 @@ inline fun <T: JsonModel> Iterable<JsonPair>.parse(model: Class<T>, noinline bui
     return toJsonObject(builder).parse(model)
 }
 
+inline fun <T: JsonModel> Sequence<JsonPair>.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
+    return toJsonObject(builder).parse(model)
+}
+
 inline fun <T: JsonModel> Iterable<JsonPair>.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
+    return parse(model.java, builder)
+}
+
+inline fun <T: JsonModel> Sequence<JsonPair>.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
     return parse(model.java, builder)
 }
 
@@ -182,6 +205,10 @@ inline fun <reified T: JsonModel> Iterable<JsonPair>.parse(noinline builder: Gso
     return parse(T::class.java, builder)
 }
 
+inline fun <reified T: JsonModel> Sequence<JsonPair>.parse(noinline builder: GsonBuilder = {}): T {
+    return parse(T::class.java, builder)
+}
+
 inline fun <reified T: JsonModel> Array<JsonPair>.parse(noinline builder: GsonBuilder = {}): T {
     return parse(T::class.java, builder)
 }
@@ -203,6 +230,22 @@ inline fun <T: JsonModel> JsonArray.parseList(model: Class<T>): List<T> {
 }
 
 inline fun <T: JsonModel> JsonArray.parseList(model: KClass<T>): List<T> {
+    return parseList(model.java)
+}
+
+inline fun <T: JsonModel> Iterable<JsonObject>.parseList(model: Class<T>): List<T> {
+    return map { it.parse(model) }
+}
+
+inline fun <T: JsonModel> Iterable<JsonObject>.parseList(model: KClass<T>): List<T> {
+    return parseList(model.java)
+}
+
+inline fun <T: JsonModel> Sequence<JsonObject>.parseList(model: Class<T>): Sequence<T> {
+    return map { it.parse(model) }
+}
+
+inline fun <T: JsonModel> Sequence<JsonObject>.parseList(model: KClass<T>): Sequence<T> {
     return parseList(model.java)
 }
 
@@ -237,6 +280,14 @@ inline fun <T: JsonModel> Path.parseList(model: KClass<T>, noinline builder: Gso
  */
 
 inline fun <reified T: JsonModel> JsonArray.parseList(): List<T> {
+    return parseList(T::class.java)
+}
+
+inline fun <reified T: JsonModel> Iterable<JsonObject>.parseList(): List<T> {
+    return parseList(T::class.java)
+}
+
+inline fun <reified T: JsonModel> Sequence<JsonObject>.parseList(): Sequence<T> {
     return parseList(T::class.java)
 }
 
