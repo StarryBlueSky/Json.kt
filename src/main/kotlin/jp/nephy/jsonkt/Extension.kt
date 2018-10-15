@@ -16,7 +16,15 @@ internal typealias JsonMapEntry = Map.Entry<String, Any?>
  */
 
 inline fun JsonElement.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return gson(builder).toJson(this)
+    return gson(builder).toJson(toGsonObject())
+}
+
+inline fun JsonObject.toJsonString(noinline builder: GsonBuilder = {}): String {
+    return gson(builder).toJson(toGsonObject())
+}
+
+inline fun JsonArray.toJsonString(noinline builder: GsonBuilder = {}): String {
+    return gson(builder).toJson(toGsonObject())
 }
 
 inline fun JsonModel.toJsonString(noinline builder: GsonBuilder = {}): String {
@@ -24,7 +32,7 @@ inline fun JsonModel.toJsonString(noinline builder: GsonBuilder = {}): String {
 }
 
 inline fun JsonMap.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return gson(builder).toJson(this)
+    return gson(builder).toJson(map { it.key to it.value.toJsonElement().toGsonObject() }.toMap())
 }
 
 inline fun Iterable<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): String {
