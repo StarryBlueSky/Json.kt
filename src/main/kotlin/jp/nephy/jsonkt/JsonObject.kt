@@ -1,13 +1,13 @@
 @file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 package jp.nephy.jsonkt
 
-fun jsonObjectOf(vararg elements: Pair<String, Any?>) = immutableJsonObjectOf(*elements)
+fun jsonObjectOf(vararg elements: JsonPair) = immutableJsonObjectOf(*elements)
 
-fun immutableJsonObjectOf(vararg elements: Pair<String, Any?>): ImmutableJsonObject {
+fun immutableJsonObjectOf(vararg elements: JsonPair): ImmutableJsonObject {
     return ImmutableJsonObject(elements.map { it.first to it.second.toJsonElement() }.toMap())
 }
 
-fun mutableJsonObjectOf(vararg elements: Pair<String, Any?>): MutableJsonObject {
+fun mutableJsonObjectOf(vararg elements: JsonPair): MutableJsonObject {
     return MutableJsonObject(elements.map { it.first to it.second.toJsonElement() }.toMap().toMutableMap())
 }
 
@@ -111,6 +111,14 @@ class MutableJsonObject(private val elements: MutableMap<String, JsonElement>): 
         return elements.put(key, value)
     }
 
+    fun put(key: String, value: Any?): JsonElement? {
+        return put(key, value.toJsonElement())
+    }
+
+    operator fun set(key: String, value: Any?) {
+        set(key, value.toJsonElement())
+    }
+
     override fun putAll(from: Map<out String, JsonElement>) {
         return elements.putAll(from)
     }
@@ -140,13 +148,11 @@ class MutableJsonObject(private val elements: MutableMap<String, JsonElement>): 
     }
 }
 
-// TODO: check
-inline fun MutableJsonObject.put(key: String, value: Any?) = put(key, value.toJsonElement())
-inline fun MutableJsonObject.put(pair: Pair<String, Any?>) = put(pair.first, pair.second.toJsonElement())
-inline fun MutableJsonObject.put(entry: Map.Entry<String, Any?>) = put(entry.key, entry.value.toJsonElement())
+inline fun MutableJsonObject.put(pair: JsonPair) = put(pair.first, pair.second)
+inline fun MutableJsonObject.put(entry: JsonMapEntry) = put(entry.key, entry.value)
 
-inline fun MutableJsonObject.putAll(vararg pairs: Pair<String, Any?>) = pairs.forEach { put(it) }
-inline fun MutableJsonObject.putAll(vararg entries: Map.Entry<String, Any?>) = entries.forEach { put(it) }
-inline fun MutableJsonObject.putAll(map: Map<String, Any?>) = map.entries.forEach { put(it) }
-inline fun MutableJsonObject.putAll(pairs: Sequence<Pair<String, Any?>>) = pairs.forEach { put(it) }
-inline fun MutableJsonObject.putAll(pairs: Iterable<Pair<String, Any?>>) = pairs.forEach { put(it) }
+inline fun MutableJsonObject.putAll(map: JsonMap) = map.entries.forEach { put(it) }
+inline fun MutableJsonObject.putAll(pairs: Iterable<JsonPair>) = pairs.forEach { put(it) }
+inline fun MutableJsonObject.putAll(pairs: Sequence<JsonPair>) = pairs.forEach { put(it) }
+inline fun MutableJsonObject.putAll(vararg pairs: JsonPair) = pairs.forEach { put(it) }
+inline fun MutableJsonObject.putAll(vararg entries: JsonMapEntry) = entries.forEach { put(it) }
