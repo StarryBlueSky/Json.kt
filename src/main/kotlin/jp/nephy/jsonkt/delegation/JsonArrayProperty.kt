@@ -12,7 +12,7 @@ internal typealias JsonArrayOperation<T> = (it: Map.Entry<String, JsonElement>) 
 inline fun <T> JsonArrayProperty(json: ImmutableJsonObject, key: String?, modelClass: Class<T>?, noinline default: JsonArraySelector<T>?, noinline converter: JsonElementConverter<T>?, noinline operation: JsonArrayOperation<T>?, vararg params: Any) = object: JsonArrayProperty<T> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): List<T> {
         val jsonKey = key ?: property.name
-        val jsonValue = json[jsonKey]
+        val jsonValue = json.getOrNull(jsonKey)
         val isMarkedNullable = try {
             null as T
             true

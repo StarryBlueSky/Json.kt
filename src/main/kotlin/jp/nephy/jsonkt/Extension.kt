@@ -19,11 +19,11 @@ inline fun JsonElement.toJsonString(noinline builder: GsonBuilder = {}): String 
     return gson(builder).toJson(toGsonObject())
 }
 
-inline fun JsonObject.toJsonString(noinline builder: GsonBuilder = {}): String {
+inline fun ImmutableJsonObject.toJsonString(noinline builder: GsonBuilder = {}): String {
     return gson(builder).toJson(toGsonObject())
 }
 
-inline fun JsonArray.toJsonString(noinline builder: GsonBuilder = {}): String {
+inline fun ImmutableJsonArray.toJsonString(noinline builder: GsonBuilder = {}): String {
     return gson(builder).toJson(toGsonObject())
 }
 
@@ -115,11 +115,11 @@ inline fun Path.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonAr
     return toFile().toJsonArray(builder)
 }
 
-inline fun Iterable<JsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
+inline fun Iterable<ImmutableJsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
     return immutableJsonArrayOf(*toList().toTypedArray())
 }
 
-inline fun Sequence<JsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
+inline fun Sequence<ImmutableJsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
     return immutableJsonArrayOf(*toList().toTypedArray())
 }
 
@@ -127,11 +127,11 @@ inline fun Sequence<JsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
  * parse
  */
 
-inline fun <T: JsonModel> JsonObject.parse(model: Class<T>): T {
+inline fun <T: JsonModel> ImmutableJsonObject.parse(model: Class<T>): T {
     return model.getConstructor(ImmutableJsonObject::class.java).newInstance(this)
 }
 
-inline fun <T: JsonModel> JsonObject.parse(model: KClass<T>): T {
+inline fun <T: JsonModel> ImmutableJsonObject.parse(model: KClass<T>): T {
     return parse(model.java)
 }
 
@@ -197,7 +197,7 @@ inline fun <T: JsonModel> Path.parse(model: KClass<T>, noinline builder: GsonBui
  * inline parse
  */
 
-inline fun <reified T: JsonModel> JsonObject.parse(): T {
+inline fun <reified T: JsonModel> ImmutableJsonObject.parse(): T {
     return parse(T::class.java)
 }
 
@@ -233,27 +233,27 @@ inline fun <reified T: JsonModel> Path.parse(noinline builder: GsonBuilder = {})
  * parseList
  */
 
-inline fun <T: JsonModel> JsonArray.parseList(model: Class<T>): List<T> {
+inline fun <T: JsonModel> ImmutableJsonArray.parseList(model: Class<T>): List<T> {
     return map { it.immutableJsonObject.parse(model) }
 }
 
-inline fun <T: JsonModel> JsonArray.parseList(model: KClass<T>): List<T> {
+inline fun <T: JsonModel> ImmutableJsonArray.parseList(model: KClass<T>): List<T> {
     return parseList(model.java)
 }
 
-inline fun <T: JsonModel> Iterable<JsonObject>.parseList(model: Class<T>): List<T> {
+inline fun <T: JsonModel> Iterable<ImmutableJsonObject>.parseList(model: Class<T>): List<T> {
     return map { it.parse(model) }
 }
 
-inline fun <T: JsonModel> Iterable<JsonObject>.parseList(model: KClass<T>): List<T> {
+inline fun <T: JsonModel> Iterable<ImmutableJsonObject>.parseList(model: KClass<T>): List<T> {
     return parseList(model.java)
 }
 
-inline fun <T: JsonModel> Sequence<JsonObject>.parseList(model: Class<T>): Sequence<T> {
+inline fun <T: JsonModel> Sequence<ImmutableJsonObject>.parseList(model: Class<T>): Sequence<T> {
     return map { it.parse(model) }
 }
 
-inline fun <T: JsonModel> Sequence<JsonObject>.parseList(model: KClass<T>): Sequence<T> {
+inline fun <T: JsonModel> Sequence<ImmutableJsonObject>.parseList(model: KClass<T>): Sequence<T> {
     return parseList(model.java)
 }
 
@@ -287,15 +287,15 @@ inline fun <T: JsonModel> Path.parseList(model: KClass<T>, noinline builder: Gso
  * inline parseList
  */
 
-inline fun <reified T: JsonModel> JsonArray.parseList(): List<T> {
+inline fun <reified T: JsonModel> ImmutableJsonArray.parseList(): List<T> {
     return parseList(T::class.java)
 }
 
-inline fun <reified T: JsonModel> Iterable<JsonObject>.parseList(): List<T> {
+inline fun <reified T: JsonModel> Iterable<ImmutableJsonObject>.parseList(): List<T> {
     return parseList(T::class.java)
 }
 
-inline fun <reified T: JsonModel> Sequence<JsonObject>.parseList(): Sequence<T> {
+inline fun <reified T: JsonModel> Sequence<ImmutableJsonObject>.parseList(): Sequence<T> {
     return parseList(T::class.java)
 }
 

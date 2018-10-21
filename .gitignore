@@ -6,6 +6,8 @@
 .idea/
 build/
 out/
+test.json
+src/test/
 
 # Log file
 *.log

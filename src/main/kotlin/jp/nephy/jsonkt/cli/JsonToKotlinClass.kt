@@ -37,7 +37,7 @@ fun generateModelClass(): String {
  * toModelString
  */
 
-fun JsonObject.toModelString(modelName: String? = null, typeStrict: Boolean? = null): String {
+fun ImmutableJsonObject.toModelString(modelName: String? = null, typeStrict: Boolean? = null): String {
     return JsonToKotlinClass(this).convert(modelName, typeStrict)
 }
 
@@ -53,7 +53,7 @@ fun Path.toModelString(modelName: String? = null, typeStrict: Boolean? = null, b
     return toFile().toModelString(modelName, typeStrict, builder)
 }
 
-class JsonToKotlinClass(private val json: JsonObject) {
+class JsonToKotlinClass(private val json: ImmutableJsonObject) {
     fun convert(targetModelName: String?, typeStrict: Boolean?): String {
         val modelName = targetModelName.run {
             if (this == null || isBlank()) {
@@ -76,7 +76,7 @@ class JsonToKotlinClass(private val json: JsonObject) {
         return result.joinToString("\n").trimEnd()
     }
 
-    private class JsonObjectParser(private val json: JsonObject, private val typeStrict: Boolean) {
+    private class JsonObjectParser(private val json: ImmutableJsonObject, private val typeStrict: Boolean) {
         fun toModelString(name: String): String {
             return buildString {
                 val subModels = mutableListOf<String>()
@@ -152,7 +152,7 @@ class JsonToKotlinClass(private val json: JsonObject) {
                                         first()
                                     }
                                 }
-                                v.all { element -> element.isJsonNull() } -> k to jsonNull
+                                v.all { element -> element.isJsonNull() } -> k to JsonElement.jsonNull
                                 else -> k to v.find { element -> !element.isJsonNull() }!!.apply {
                                     jsonPrimitive.isNullable = true
                                 }
@@ -179,12 +179,12 @@ private var JsonPrimitive.isNullable: Boolean
     get() = nullablePrimitiveCache[this] ?: false
     set(value) = nullablePrimitiveCache.set(this, value)
 
-private val nullableObjectCache = mutableMapOf<JsonObject, Boolean>()
+private val nullableObjectCache = mutableMapOf<ImmutableJsonObject, Boolean>()
 private var ImmutableJsonObject.isNullable: Boolean
     get() = nullableObjectCache[this] ?: false
     set(value) = nullableObjectCache.set(this, value)
 
-private val nullableArrayCache = mutableMapOf<JsonArray, Boolean>()
+private val nullableArrayCache = mutableMapOf<ImmutableJsonArray, Boolean>()
 private var ImmutableJsonArray.isNullable: Boolean
     get() = nullableArrayCache[this] ?: false
     set(value) = nullableArrayCache.set(this, value)

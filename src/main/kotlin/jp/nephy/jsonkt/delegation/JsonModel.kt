@@ -1,7 +1,7 @@
 package jp.nephy.jsonkt.delegation
 
-import jp.nephy.jsonkt.JsonObject
+import jp.nephy.jsonkt.ImmutableJsonObject
 
 interface JsonModel {
-    val json: JsonObject
+    val json: ImmutableJsonObject
 }

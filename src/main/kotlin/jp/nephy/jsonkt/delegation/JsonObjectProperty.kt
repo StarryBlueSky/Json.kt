@@ -12,7 +12,7 @@ internal typealias JsonElementConverter<T> = (JsonElement) -> T
 inline fun <T> JsonObjectProperty(json: ImmutableJsonObject, key: String?, modelClass: Class<T>?, noinline default: JsonObjectSelector<T>?, noinline converter: JsonElementConverter<T>?, vararg params: Any) = object: JsonObjectProperty<T> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         val jsonKey = key ?: property.name
-        val jsonValue = json[jsonKey]
+        val jsonValue = json.getOrNull(jsonKey)
 
         return when {
             jsonValue == null || jsonValue.isJsonNull() -> {
