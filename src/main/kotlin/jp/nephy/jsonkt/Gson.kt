@@ -10,15 +10,15 @@ interface GsonCompatible<T: com.google.gson.JsonElement> {
 }
 
 inline fun com.google.gson.JsonElement.toJsonKt(): JsonElement {
-    return JsonElement(this)
+    return toJsonElement()
 }
 
 inline fun com.google.gson.JsonObject.toJsonKt(): ImmutableJsonObject {
-    return JsonObject(this)
+    return immutableJsonObjectOf(*entrySet().map { it.key to it.value }.toTypedArray())
 }
 
 inline fun com.google.gson.JsonArray.toJsonKt(): ImmutableJsonArray {
-    return JsonArray(this)
+    return immutableJsonArrayOf(*toList().toTypedArray())
 }
 
 inline fun com.google.gson.JsonPrimitive.toJsonKt(): JsonPrimitive {
@@ -26,5 +26,5 @@ inline fun com.google.gson.JsonPrimitive.toJsonKt(): JsonPrimitive {
 }
 
 inline fun com.google.gson.JsonNull.toJsonKt(): JsonElement {
-    return jsonNull
+    return JsonElement.jsonNull
 }

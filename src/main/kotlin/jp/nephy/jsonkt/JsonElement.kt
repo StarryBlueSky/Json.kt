@@ -4,42 +4,57 @@ package jp.nephy.jsonkt
 import java.math.BigDecimal
 import java.math.BigInteger
 
-private typealias GsonJsonElement = com.google.gson.JsonElement
+typealias GsonJsonElement = com.google.gson.JsonElement
+typealias GsonJsonNull = com.google.gson.JsonNull
 
-class JsonElement(private val value: GsonJsonElement): GsonCompatible<GsonJsonElement> {
+class JsonElement private constructor(private val value: Any?): GsonCompatible<GsonJsonElement> {
+    constructor(json: ImmutableJsonObject): this(value = json)
+    constructor(json: ImmutableJsonArray): this(value = json)
+    constructor(json: JsonPrimitive): this(value = json)
+
+    companion object {
+        val jsonNull = JsonElement(null)
+    }
+
     override fun toGsonObject(): GsonJsonElement {
-        return value
+        return when (value) {
+            is ImmutableJsonObject -> toGsonObject()
+            is ImmutableJsonArray -> toGsonObject()
+            is JsonPrimitive -> toGsonObject()
+            null -> GsonJsonNull.INSTANCE
+            else -> throw IllegalArgumentException()
+        }
     }
 
     fun isJsonObject(): Boolean {
-        return value.isJsonObject
+        return value is ImmutableJsonObject
     }
-    fun toImmutableJsonObject(): ImmutableJsonObject {
-        return ImmutableJsonObject(value.asJsonObject)
+    fun asImmutableJsonObject(): ImmutableJsonObject {
+        return value as? ImmutableJsonObject ?: throw JsonCastException(value.toString(), ImmutableJsonObject::class.java)
     }
-    fun toMutableJsonObject(): MutableJsonObject {
-        return MutableJsonObject(value.asJsonObject)
+    fun asMutableJsonObject(): MutableJsonObject {
+        return value as? MutableJsonObject ?: throw JsonCastException(value.toString(), MutableJsonObject::class.java)
     }
 
     fun isJsonArray(): Boolean {
-        return value.isJsonArray
+        return value is ImmutableJsonArray
     }
-    fun toImmutableJsonArray(): ImmutableJsonArray {
-        return ImmutableJsonArray(value.asJsonArray)
+    fun asImmutableJsonArray(): ImmutableJsonArray {
+        return value as? ImmutableJsonArray ?: throw JsonCastException(value.toString(), ImmutableJsonArray::class.java)
     }
-    fun toMutableJsonArray(): MutableJsonArray {
-        return MutableJsonArray(value.asJsonArray)
+    fun asMutableJsonArray(): MutableJsonArray {
+        return value as? MutableJsonArray ?: throw JsonCastException(value.toString(), MutableJsonArray::class.java)
     }
 
     fun isJsonPrimitive(): Boolean {
-        return value.isJsonPrimitive
+        return value is JsonPrimitive
     }
-    fun toJsonPrimitive(): JsonPrimitive {
-        return JsonPrimitive(value.asJsonPrimitive)
+    fun asJsonPrimitive(): JsonPrimitive {
+        return value as? JsonPrimitive ?: throw JsonCastException(value.toString(), JsonPrimitive::class.java)
     }
 
     fun isJsonNull(): Boolean {
-        return value.isJsonNull
+        return value == null
     }
 
     override fun equals(other: Any?): Boolean {
@@ -47,7 +62,7 @@ class JsonElement(private val value: GsonJsonElement): GsonCompatible<GsonJsonEl
     }
 
     override fun hashCode(): Int {
-        return value.hashCode()
+        return value?.hashCode() ?: 0
     }
 
     override fun toString(): String {
@@ -55,20 +70,28 @@ class JsonElement(private val value: GsonJsonElement): GsonCompatible<GsonJsonEl
     }
 }
 
-val jsonNull = JsonElement(com.google.gson.JsonNull.INSTANCE)
-
 inline fun Any?.toJsonElement(): JsonElement {
-    return JsonElement(when (this) {
-        null -> return jsonNull
-        is JsonElement -> return this
-        is GsonJsonElement -> this
-        is Boolean -> GsonJsonPrimitive(this)
-        is Number -> GsonJsonPrimitive(this)
-        is Char -> GsonJsonPrimitive(this)
-        is String -> GsonJsonPrimitive(this)
-        is GsonCompatible<*> -> toGsonObject()
+    return when (this) {
+        null, is GsonJsonNull -> JsonElement.jsonNull
+        is ImmutableJsonObject -> JsonElement(this)
+        is ImmutableJsonArray -> JsonElement(this)
+        is JsonPrimitive -> JsonElement(this)
+        is JsonElement -> this
+        is GsonJsonObject -> {
+            JsonElement(toJsonKt())
+        }
+        is GsonJsonArray -> {
+            JsonElement(toJsonKt())
+        }
+        is GsonJsonPrimitive -> {
+            JsonElement(toJsonKt())
+        }
+        is Boolean -> JsonElement(GsonJsonPrimitive(this).toJsonKt())
+        is Number -> JsonElement(GsonJsonPrimitive(this).toJsonKt())
+        is Char -> JsonElement(GsonJsonPrimitive(this).toJsonKt())
+        is String -> JsonElement(GsonJsonPrimitive(this).toJsonKt())
         else -> throw JsonConversionException(this::class.java)
-    })
+    }
 }
 
 /*
@@ -76,7 +99,7 @@ inline fun Any?.toJsonElement(): JsonElement {
  */
 
 @Throws(JsonKtException::class)
-inline operator fun JsonElement.get(key: String): JsonElement? {
+inline operator fun JsonElement.get(key: String): JsonElement {
     return immutableJsonObject[key]
 }
 
@@ -103,14 +126,14 @@ inline val JsonElement.jsonString: String
 inline val JsonElement.isJsonObject: Boolean
     get() = isJsonObject()
 inline val JsonElement.immutableJsonObject: ImmutableJsonObject
-    get() = toImmutableJsonObject()
+    get() = asImmutableJsonObject()
 inline val JsonElement.nullableImmutableJsonObject: ImmutableJsonObject?
     get() = toImmutableJsonObjectOrNull()
 inline val JsonElement.immutableJsonObjectList: List<ImmutableJsonObject>
     get() = toImmutableJsonObjectList()
 inline fun JsonElement.toImmutableJsonObjectOrNull(): ImmutableJsonObject? {
     return try {
-        toImmutableJsonObject()
+        asImmutableJsonObject()
     } catch (e: Exception) {
         null
     }
@@ -120,14 +143,14 @@ inline fun JsonElement.toImmutableJsonObjectOrElse(defaultValue: () -> Immutable
 inline fun JsonElement.toImmutableJsonObjectList() = immutableJsonArray.immutableJsonObjectList
 
 inline val JsonElement.mutableJsonObject: MutableJsonObject
-    get() = toMutableJsonObject()
+    get() = asMutableJsonObject()
 inline val JsonElement.nullableMutableJsonObject: MutableJsonObject?
     get() = toMutableJsonObjectOrNull()
 inline val JsonElement.mutableJsonObjectList: List<MutableJsonObject>
     get() = toMutableJsonObjectList()
 inline fun JsonElement.toMutableJsonObjectOrNull(): MutableJsonObject? {
     return try {
-        toMutableJsonObject()
+        asMutableJsonObject()
     } catch (e: Exception) {
         null
     }
@@ -139,14 +162,14 @@ inline fun JsonElement.toMutableJsonObjectList() = immutableJsonArray.mutableJso
 inline val JsonElement.isJsonArray: Boolean
     get() = isJsonArray()
 inline val JsonElement.immutableJsonArray: ImmutableJsonArray
-    get() = toImmutableJsonArray()
+    get() = asImmutableJsonArray()
 inline val JsonElement.nullableImmutableJsonArray: ImmutableJsonArray?
     get() = toImmutableJsonArrayOrNull()
 inline val JsonElement.immutableJsonArrayList: List<ImmutableJsonArray>
     get() = toImmutableJsonArrayList()
 inline fun JsonElement.toImmutableJsonArrayOrNull(): ImmutableJsonArray? {
     return try {
-        toImmutableJsonArray()
+        asImmutableJsonArray()
     } catch (e: Exception) {
         null
     }
@@ -156,33 +179,33 @@ inline fun JsonElement.toImmutableJsonArrayOrElse(defaultValue: () -> ImmutableJ
 inline fun JsonElement.toImmutableJsonArrayList() = immutableJsonArray.immutableJsonArrayList
 
 inline val JsonElement.mutableJsonArray: MutableJsonArray
-    get() = toMutableJsonArray()
+    get() = asMutableJsonArray()
 inline val JsonElement.nullableMutableJsonArray: MutableJsonArray?
     get() = toMutableJsonArrayOrNull()
 inline val JsonElement.mutableJsonArrayList: List<MutableJsonArray>
-    get() = toJsonArrayList()
+    get() = toMutableJsonArrayList()
 inline fun JsonElement.toMutableJsonArrayOrNull(): MutableJsonArray? {
     return try {
-        toMutableJsonArray()
+        asMutableJsonArray()
     } catch (e: Exception) {
         null
     }
 }
 inline fun JsonElement.toMutableJsonArrayOrDefault(defaultValue: MutableJsonArray) = toMutableJsonArrayOrNull() ?: defaultValue
 inline fun JsonElement.toMutableJsonArrayOrElse(defaultValue: () -> MutableJsonArray) = toMutableJsonArrayOrNull() ?: defaultValue()
-inline fun JsonElement.toJsonArrayList() = immutableJsonArray.mutableJsonArrayList
+inline fun JsonElement.toMutableJsonArrayList() = immutableJsonArray.mutableJsonArrayList
 
 inline val JsonElement.isJsonPrimitive: Boolean
     get() = isJsonPrimitive()
 inline val JsonElement.jsonPrimitive: JsonPrimitive
-    get() = toJsonPrimitive()
+    get() = asJsonPrimitive()
 inline val JsonElement.nullableJsonPrimitive: JsonPrimitive?
     get() = toJsonPrimitiveOrNull()
 inline val JsonElement.jsonPrimitiveList: List<JsonPrimitive>
     get() = toJsonPrimitiveList()
 inline fun JsonElement.toJsonPrimitiveOrNull(): JsonPrimitive? {
     return try {
-        toJsonPrimitive()
+        asJsonPrimitive()
     } catch (e: Exception) {
         null
     }
