@@ -18,9 +18,9 @@ class JsonElement private constructor(private val value: Any?): GsonCompatible<G
 
     override fun toGsonObject(): GsonJsonElement {
         return when (value) {
-            is ImmutableJsonObject -> toGsonObject()
-            is ImmutableJsonArray -> toGsonObject()
-            is JsonPrimitive -> toGsonObject()
+            is ImmutableJsonObject -> value.toGsonObject()
+            is ImmutableJsonArray -> value.toGsonObject()
+            is JsonPrimitive -> value.toGsonObject()
             null -> GsonJsonNull.INSTANCE
             else -> throw IllegalArgumentException()
         }
@@ -86,6 +86,8 @@ inline fun Any?.toJsonElement(): JsonElement {
         is GsonJsonPrimitive -> {
             JsonElement(toJsonKt())
         }
+        is Map<*, *> -> JsonElement(immutableJsonObjectOf(*this.toList().map { it.first.toString() to it.second }.toTypedArray()))
+        is List<*> -> JsonElement(immutableJsonArrayOf(*this.toList().toTypedArray()))
         is Boolean -> JsonElement(GsonJsonPrimitive(this).toJsonKt())
         is Number -> JsonElement(GsonJsonPrimitive(this).toJsonKt())
         is Char -> JsonElement(GsonJsonPrimitive(this).toJsonKt())
