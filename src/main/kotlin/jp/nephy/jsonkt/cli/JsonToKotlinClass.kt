@@ -80,7 +80,7 @@ class JsonToKotlinClass(private val json: ImmutableJsonObject) {
         fun toModelString(name: String): String {
             return buildString {
                 val subModels = mutableListOf<String>()
-                append("class $name(override val json: JsonObject): JsonModel {\n")
+                append("class $name(override val json: ImmutableJsonObject): JsonModel {\n")
                 json.map {
                     when {
                         it.value.isJsonObject() -> when {
