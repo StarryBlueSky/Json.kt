@@ -1,14 +1,14 @@
 # Json.kt
-[![Kotlin 1.2.70](https://img.shields.io/badge/Kotlin-1.2.70-blue.svg)](http://kotlinlang.org)
+[![Kotlin 1.3.10](https://img.shields.io/badge/Kotlin-1.3.10-blue.svg)](http://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/jp.nephy/jsonkt.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22jp.nephy%22)
 [![Travis](https://img.shields.io/travis/NephyProject/Json.kt.svg)](https://travis-ci.org/NephyProject/Json.kt/builds)
 [![MIT License](https://img.shields.io/github/license/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/blob/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/issues)
 
-Json.kt: Json Bindings for Kotlin.  
+Json.kt: Json Bindings for Kotlin.
 ===========================
 
-シンプルな記法でJsonをKotlinのクラスに変換できます. 委譲プロパティを使用しているためJsonのパースに時間が掛かる心配はありません.    
+シンプルな記法でJsonをKotlinのクラスに変換できます。委譲プロパティを使用しているためパフォーマンスの心配はいりません。
 ```kotlin
 import jp.nephy.jsonkt.*
 import jp.nephy.jsonkt.delegation.*
@@ -116,12 +116,13 @@ fun main(args: Array<String>) {
 }
 ```
 
-もっとほかのサンプルを参照したい方は, [Penicillin](https://github.com/NephyProject/Penicillin) や [KChroner](https://github.com/NephyProject/KChroner) の内部でも使用していますのでご覧ください.
+もっとほかのサンプルを参照したい方は, [Penicillin](https://github.com/NephyProject/Penicillin) や [GLaDOS-bot](https://github.com/NephyProject/GLaDOS-bot) の内部でも使用していますのでご覧ください。
 
-Prepare
--------
+Get Started
+-----------
 最新バージョンは [![Maven Central](https://img.shields.io/maven-central/v/jp.nephy/jsonkt.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22jp.nephy%22)
- です.
+ です。
+[kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization#gradlejvm) の依存関係を追加する必要があります。
 
 Gradle:
 ```groovy
@@ -137,15 +138,10 @@ Maven:
 </dependency>
 ```
 
-Credits
----------
-Json.ktは次のサードパーティソフトウェアを利用しています.
-- Gson (https://github.com/google/gson) by Google, Inc.
-
 License
 ---------
-Json.ktはMITライセンスのもとで公開されています.  
-Json.kt is provided under MIT License.  
+Json.kt は MIT ライセンスのもとで公開されています.
+Json.kt is provided under MIT License.
 
 
 Copyright (c) 2018 Nephy Project.

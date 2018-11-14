@@ -1,8 +1,7 @@
 package jp.nephy.jsonkt.cli.property
 
-import jp.nephy.jsonkt.JsonElement
-import jp.nephy.jsonkt.jsonPrimitive
+import kotlinx.serialization.json.JsonElement
 
-internal class JsonPrimitiveProperty(pair: Map.Entry<String, JsonElement>, typeStrict: Boolean): AbstractJsonProperty(pair) {
-    override val delegationName = element.jsonPrimitive.toMethodName(strict = typeStrict)
+internal class JsonPrimitiveProperty(pair: Map.Entry<String, JsonElement>, printComments: Boolean): AbstractJsonProperty(pair, printComments) {
+    override val delegationName = toMethodName(jsonPrimitive = element.primitive)
 }

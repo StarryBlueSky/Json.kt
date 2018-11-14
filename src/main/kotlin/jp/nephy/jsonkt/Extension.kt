@@ -1,312 +1,358 @@
 @file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+
 package jp.nephy.jsonkt
 
 import jp.nephy.jsonkt.delegation.JsonModel
+import kotlinx.serialization.json.*
 import java.io.File
 import java.nio.file.Path
 import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
-internal typealias GsonBuilder = com.google.gson.GsonBuilder.() -> Unit
-internal typealias JsonMap = Map<String, Any?>
-internal typealias JsonPair = Pair<String, Any?>
-internal typealias JsonMapEntry = Map.Entry<String, Any?>
+internal typealias JsonKey = String
+internal typealias JsonValue = Any?
+
+internal typealias JsonMap = Map<JsonKey, JsonValue>
+internal typealias JsonPair = Pair<JsonKey, JsonValue>
+internal typealias JsonIterable = Iterable<JsonValue>
 
 /*
  * toJsonString
  */
 
-inline fun JsonElement.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return gson(builder).toJson(toGsonObject())
+inline fun JsonObject.toJsonString(): String {
+    // TODO
+    return toString()
 }
 
-inline fun ImmutableJsonObject.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return gson(builder).toJson(toGsonObject())
+inline fun JsonArray.toJsonString(): String {
+    // TODO
+    return toString()
 }
 
-inline fun ImmutableJsonArray.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return gson(builder).toJson(toGsonObject())
+inline fun JsonModel.toJsonString(): String {
+    return json.toJsonString()
 }
 
-inline fun JsonModel.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return json.toJsonString(builder)
+@Throws(JsonCastException::class)
+inline fun JsonMap.toJsonString(): String {
+    return toJsonObject().toJsonString()
 }
 
-inline fun JsonMap.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return gson(builder).toJson(map { it.key to it.value.toJsonElement().toGsonObject() }.toMap())
+@Throws(JsonCastException::class)
+inline fun Iterable<JsonPair>.toJsonString(): String {
+    return toMap().toJsonString()
 }
 
-inline fun Iterable<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return toMap().toJsonString(builder)
+@Throws(JsonCastException::class)
+inline fun Sequence<JsonPair>.toJsonString(): String {
+    return toMap().toJsonString()
 }
 
-inline fun Sequence<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return toMap().toJsonString(builder)
+@Throws(JsonCastException::class)
+inline fun Array<out JsonPair>.toJsonString(): String {
+    return toMap().toJsonString()
 }
 
-inline fun Array<JsonPair>.toJsonString(noinline builder: GsonBuilder = {}): String {
-    return toMap().toJsonString(builder)
+/*
+ * toJsonElement
+ */
+
+@Throws(JsonCastException::class)
+inline fun String.toJsonElement(): JsonElement {
+    return try {
+        JsonTreeParser(this).readFully()
+    } catch (e: Throwable) {
+        throw JsonCastException(this, JsonElement::class.qualifiedName.orEmpty())
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+@Throws(JsonConversionException::class)
+fun <T: Any> T?.asJsonElement(): JsonElement {
+    return when (this) {
+        null -> JsonNull
+        is JsonElement -> this
+
+        /* Collections */
+        is Map<*, *> -> JsonObject(this.toList().map { it.first.toString() to it.second.asJsonElement() }.toMap())
+        is Iterable<*> -> JsonArray(this.toList().map { it.asJsonElement() })
+        is Sequence<*> -> JsonArray(this.toList().map { it.asJsonElement() })
+        is Array<*> -> JsonArray(this.toList().map { it.asJsonElement() })
+
+        /* Primitives */
+        is Boolean -> JsonPrimitive(this)
+        is Number -> JsonPrimitive(this)
+        is Char -> JsonPrimitive(this.toString())
+        is String -> JsonPrimitive(this)
+
+        else -> (JsonKt.serializers[this::class] as? JsonKt.Serializer<T>)?.encode(this)?.toJsonElement() ?: throw JsonConversionException(this::class.qualifiedName.orEmpty())
+    }
+}
+
+/*
+ * toJsonPrimitive
+ */
+
+@Throws(JsonCastException::class)
+inline fun String.toJsonPrimitive(): JsonPrimitive {
+    return toJsonElement() as? JsonPrimitive ?: throw JsonCastException(this, JsonPrimitive::class.qualifiedName.orEmpty())
+}
+
+/*
+ * toJsonLiteral
+ */
+
+@Throws(JsonCastException::class)
+inline fun String.toJsonLiteral(): JsonLiteral {
+    return toJsonElement() as? JsonLiteral ?: throw JsonCastException(this, JsonLiteral::class.qualifiedName.orEmpty())
 }
 
 /*
  * toJsonObject
  */
 
-inline fun String.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
-    return gson(builder).fromJson(this, com.google.gson.JsonObject::class.java).toJsonKt()
+@Throws(JsonCastException::class)
+inline fun String.toJsonObject(): JsonObject {
+    return toJsonElement() as? JsonObject ?: throw JsonCastException(this, JsonObject::class.qualifiedName.orEmpty())
 }
 
-inline fun JsonMap.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
-    return toJsonString(builder).toJsonObject(builder)
+@Throws(JsonCastException::class)
+inline fun JsonMap.toJsonObject(): JsonObject {
+    return JsonObject(map { it.key to it.value.asJsonElement() }.toMap())
 }
 
-inline fun Iterable<JsonPair>.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
-    return toJsonString(builder).toJsonObject(builder)
+@Throws(JsonCastException::class)
+inline fun Iterable<JsonPair>.toJsonObject(): JsonObject {
+    return toMap().toJsonObject()
 }
 
-inline fun Sequence<JsonPair>.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
-    return toJsonString(builder).toJsonObject(builder)
+@Throws(JsonCastException::class)
+inline fun Sequence<JsonPair>.toJsonObject(): JsonObject {
+    return toMap().toJsonObject()
 }
 
-inline fun Array<JsonPair>.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
-    return toJsonString(builder).toJsonObject(builder)
+@Throws(JsonCastException::class)
+inline fun Array<out JsonPair>.toJsonObject(): JsonObject {
+    return toMap().toJsonObject()
 }
 
-inline fun File.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
+@Throws(JsonCastException::class)
+inline fun File.toJsonObject(): JsonObject {
     return reader().use {
-        it.readText().toJsonObject(builder)
+        it.readText().toJsonObject()
     }
 }
 
-inline fun Path.toJsonObject(noinline builder: GsonBuilder = {}): ImmutableJsonObject {
-    return toFile().toJsonObject(builder)
+@Throws(JsonCastException::class)
+inline fun Path.toJsonObject(): JsonObject {
+    return toFile().toJsonObject()
 }
 
 /*
  * toJsonArray
  */
 
-inline fun String.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
-    return gson(builder).fromJson(this, com.google.gson.JsonArray::class.java).toJsonKt()
+@Throws(JsonCastException::class)
+inline fun String.toJsonArray(): JsonArray {
+    return toJsonElement() as? JsonArray ?: throw JsonCastException(this, JsonArray::class.qualifiedName.orEmpty())
 }
 
-inline fun JsonMap.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
-    return toJsonString(builder).toJsonArray(builder)
+@Throws(JsonCastException::class)
+inline fun JsonIterable.toJsonArray(): JsonArray {
+    return JsonArray(map { it.asJsonElement() })
 }
 
-inline fun Iterable<JsonPair>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
-    return toJsonString(builder).toJsonArray(builder)
+@Throws(JsonCastException::class)
+inline fun Sequence<JsonValue>.toJsonArray(): JsonArray {
+    return toList().toJsonArray()
 }
 
-inline fun Sequence<JsonPair>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
-    return toJsonString(builder).toJsonArray(builder)
+@Throws(JsonCastException::class)
+inline fun Array<out JsonValue>.toJsonArray(): JsonArray {
+    return toList().toJsonArray()
 }
 
-inline fun Array<JsonPair>.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
-    return toJsonString(builder).toJsonArray(builder)
-}
-
-inline fun File.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
+@Throws(JsonCastException::class)
+inline fun File.toJsonArray(): JsonArray {
     return reader().use {
-        it.readText().toJsonArray(builder)
+        it.readText().toJsonArray()
     }
 }
 
-inline fun Path.toJsonArray(noinline builder: GsonBuilder = {}): ImmutableJsonArray {
-    return toFile().toJsonArray(builder)
-}
-
-inline fun Iterable<ImmutableJsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
-    return immutableJsonArrayOf(*toList().toTypedArray())
-}
-
-inline fun Sequence<ImmutableJsonObject>.toImmutableJsonArray(): ImmutableJsonArray {
-    return immutableJsonArrayOf(*toList().toTypedArray())
+@Throws(JsonCastException::class)
+inline fun Path.toJsonArray(): JsonArray {
+    return toFile().toJsonArray()
 }
 
 /*
  * parse
  */
 
-inline fun <T: JsonModel> ImmutableJsonObject.parse(model: Class<T>): T {
-    return model.getConstructor(ImmutableJsonObject::class.java).newInstance(this)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> JsonObject.parse(model: KClass<T>): T {
+    return runCatching {
+        model.primaryConstructor?.call(this)
+    }.getOrNull() ?: throw InvalidJsonModelException(model.qualifiedName.orEmpty())
 }
 
-inline fun <T: JsonModel> ImmutableJsonObject.parse(model: KClass<T>): T {
-    return parse(model.java)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> String.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
 }
 
-inline fun <T: JsonModel> String.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
-    return toJsonObject(builder).parse(model)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> JsonMap.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
 }
 
-inline fun <T: JsonModel> String.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
-    return parse(model.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> Iterable<JsonPair>.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
 }
 
-inline fun <T: JsonModel> JsonMap.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
-    return toJsonObject(builder).parse(model)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> Sequence<JsonPair>.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
 }
 
-inline fun <T: JsonModel> JsonMap.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
-    return parse(model.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> Array<out JsonPair>.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
 }
 
-inline fun <T: JsonModel> Iterable<JsonPair>.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
-    return toJsonObject(builder).parse(model)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> File.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
 }
 
-inline fun <T: JsonModel> Sequence<JsonPair>.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
-    return toJsonObject(builder).parse(model)
-}
-
-inline fun <T: JsonModel> Iterable<JsonPair>.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
-    return parse(model.java, builder)
-}
-
-inline fun <T: JsonModel> Sequence<JsonPair>.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
-    return parse(model.java, builder)
-}
-
-inline fun <T: JsonModel> Array<JsonPair>.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
-    return toJsonObject(builder).parse(model)
-}
-
-inline fun <T: JsonModel> Array<JsonPair>.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
-    return parse(model.java, builder)
-}
-
-inline fun <T: JsonModel> File.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
-    return reader().use {
-        it.readText().parse(model, builder)
-    }
-}
-
-inline fun <T: JsonModel> File.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
-    return parse(model.java, builder)
-}
-
-inline fun <T: JsonModel> Path.parse(model: Class<T>, noinline builder: GsonBuilder = {}): T {
-    return toFile().parse(model, builder)
-}
-
-inline fun <T: JsonModel> Path.parse(model: KClass<T>, noinline builder: GsonBuilder = {}): T {
-    return parse(model.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> Path.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
 }
 
 /*
  * inline parse
  */
 
-inline fun <reified T: JsonModel> ImmutableJsonObject.parse(): T {
-    return parse(T::class.java)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> JsonObject.parse(): T {
+    return parse(T::class)
 }
 
-inline fun <reified T: JsonModel> String.parse(noinline builder: GsonBuilder = {}): T {
-    return parse(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> String.parse(): T {
+    return parse(T::class)
 }
 
-inline fun <reified T: JsonModel> JsonMap.parse(noinline builder: GsonBuilder = {}): T {
-    return parse(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> JsonMap.parse(): T {
+    return parse(T::class)
 }
 
-inline fun <reified T: JsonModel> Iterable<JsonPair>.parse(noinline builder: GsonBuilder = {}): T {
-    return parse(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> Iterable<JsonPair>.parse(): T {
+    return parse(T::class)
 }
 
-inline fun <reified T: JsonModel> Sequence<JsonPair>.parse(noinline builder: GsonBuilder = {}): T {
-    return parse(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> Sequence<JsonPair>.parse(): T {
+    return parse(T::class)
 }
 
-inline fun <reified T: JsonModel> Array<JsonPair>.parse(noinline builder: GsonBuilder = {}): T {
-    return parse(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> Array<out JsonPair>.parse(): T {
+    return parse(T::class)
 }
 
-inline fun <reified T: JsonModel> File.parse(noinline builder: GsonBuilder = {}): T {
-    return parse(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> File.parse(): T {
+    return parse(T::class)
 }
 
-inline fun <reified T: JsonModel> Path.parse(noinline builder: GsonBuilder = {}): T {
-    return parse(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> Path.parse(): T {
+    return parse(T::class)
 }
 
 /*
  * parseList
  */
 
-inline fun <T: JsonModel> ImmutableJsonArray.parseList(model: Class<T>): List<T> {
-    return map { it.immutableJsonObject.parse(model) }
-}
-
-inline fun <T: JsonModel> ImmutableJsonArray.parseList(model: KClass<T>): List<T> {
-    return parseList(model.java)
-}
-
-inline fun <T: JsonModel> Iterable<ImmutableJsonObject>.parseList(model: Class<T>): List<T> {
-    return map { it.parse(model) }
-}
-
-inline fun <T: JsonModel> Iterable<ImmutableJsonObject>.parseList(model: KClass<T>): List<T> {
-    return parseList(model.java)
-}
-
-inline fun <T: JsonModel> Sequence<ImmutableJsonObject>.parseList(model: Class<T>): Sequence<T> {
-    return map { it.parse(model) }
-}
-
-inline fun <T: JsonModel> Sequence<ImmutableJsonObject>.parseList(model: KClass<T>): Sequence<T> {
-    return parseList(model.java)
-}
-
-inline fun <T: JsonModel> String.parseList(model: Class<T>, noinline builder: GsonBuilder = {}): List<T> {
-    return toJsonArray(builder).parseList(model)
-}
-
-inline fun <T: JsonModel> String.parseList(model: KClass<T>, noinline builder: GsonBuilder = {}): List<T> {
-    return parseList(model.java, builder)
-}
-
-inline fun <T: JsonModel> File.parseList(model: Class<T>, noinline builder: GsonBuilder = {}): List<T> {
-    return reader().use {
-        it.readText().parseList(model, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> JsonArray.parseList(model: KClass<T>): List<T> {
+    return map {
+        runCatching {
+            it.jsonObject.parse(model)
+        }.getOrNull() ?: throw InvalidJsonModelException(model.qualifiedName.orEmpty())
     }
 }
 
-inline fun <T: JsonModel> File.parseList(model: KClass<T>, noinline builder: GsonBuilder = {}): List<T> {
-    return parseList(model.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> String.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
 }
 
-inline fun <T: JsonModel> Path.parseList(model: Class<T>, noinline builder: GsonBuilder = {}): List<T> {
-    return toFile().parseList(model, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> JsonIterable.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
 }
 
-inline fun <T: JsonModel> Path.parseList(model: KClass<T>, noinline builder: GsonBuilder = {}): List<T> {
-    return parseList(model.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> Sequence<JsonValue>.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
+}
+
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> Array<out JsonValue>.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
+}
+
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> File.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
+}
+
+@Throws(InvalidJsonModelException::class)
+inline fun <T: JsonModel> Path.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
 }
 
 /*
  * inline parseList
  */
 
-inline fun <reified T: JsonModel> ImmutableJsonArray.parseList(): List<T> {
-    return parseList(T::class.java)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> JsonArray.parseList(): List<T> {
+    return parseList(T::class)
 }
 
-inline fun <reified T: JsonModel> Iterable<ImmutableJsonObject>.parseList(): List<T> {
-    return parseList(T::class.java)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> String.parseList(): List<T> {
+    return parseList(T::class)
 }
 
-inline fun <reified T: JsonModel> Sequence<ImmutableJsonObject>.parseList(): Sequence<T> {
-    return parseList(T::class.java)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> JsonIterable.parseList(): List<T> {
+    return parseList(T::class)
 }
 
-inline fun <reified T: JsonModel> String.parseList(noinline builder: GsonBuilder = {}): List<T> {
-    return parseList(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> Sequence<JsonValue>.parseList(): List<T> {
+    return parseList(T::class)
 }
 
-inline fun <reified T: JsonModel> File.parseList(noinline builder: GsonBuilder = {}): List<T> {
-    return parseList(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> Array<out JsonValue>.parseList(): List<T> {
+    return parseList(T::class)
 }
 
-inline fun <reified T: JsonModel> Path.parseList(noinline builder: GsonBuilder = {}): List<T> {
-    return parseList(T::class.java, builder)
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> File.parseList(): List<T> {
+    return parseList(T::class)
+}
+
+@Throws(InvalidJsonModelException::class)
+inline fun <reified T: JsonModel> Path.parseList(): List<T> {
+    return parseList(T::class)
 }

@@ -1,18 +1,22 @@
 package jp.nephy.jsonkt.delegation
 
-import jp.nephy.jsonkt.*
+import jp.nephy.jsonkt.InvalidJsonModelException
+import jp.nephy.jsonkt.JsonNullPointerException
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 internal typealias JsonArrayProperty<T> = ReadOnlyProperty<Any?, List<T>>
-internal typealias JsonArraySelector<T> = (ImmutableJsonObject) -> List<T>
+internal typealias JsonArraySelector<T> = (JsonObject) -> List<T>
 internal typealias JsonArrayOperation<T> = (it: Map.Entry<String, JsonElement>) -> T
 
 @Suppress("FUNCTIONNAME", "NOTHING_TO_INLINE", "UNCHECKED_CAST")
-inline fun <T> JsonArrayProperty(json: ImmutableJsonObject, key: String?, modelClass: Class<T>?, noinline default: JsonArraySelector<T>?, noinline converter: JsonElementConverter<T>?, noinline operation: JsonArrayOperation<T>?, vararg params: Any) = object: JsonArrayProperty<T> {
+inline fun <T> JsonObject.JsonArrayProperty(key: String?, modelClass: Class<T>?, noinline default: JsonArraySelector<T>?, noinline converter: JsonElementConverter<T>?, noinline operation: JsonArrayOperation<T>?, vararg params: Any) = object: JsonArrayProperty<T> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): List<T> {
         val jsonKey = key ?: property.name
-        val jsonValue = json.getOrNull(jsonKey)
+        val jsonValue = getOrNull(jsonKey)
         val isMarkedNullable = try {
             null as T
             true
@@ -21,32 +25,32 @@ inline fun <T> JsonArrayProperty(json: ImmutableJsonObject, key: String?, modelC
         }
 
         return when {
-            jsonValue == null || jsonValue.isJsonNull() -> {
-                default?.invoke(json).orEmpty()
+            jsonValue == null || jsonValue.isNull -> {
+                default?.invoke(this@JsonArrayProperty).orEmpty()
             }
-            !jsonValue.isJsonArray() -> {
-                if (jsonValue.isJsonObject() && operation != null) {
-                    jsonValue.immutableJsonObject.map {
+            jsonValue !is JsonArray -> {
+                if (jsonValue is JsonObject && operation != null) {
+                    jsonValue.map {
                         operation.invoke(it)
                     }
                 } else {
-                    default?.invoke(json).orEmpty()
+                    default?.invoke(this@JsonArrayProperty).orEmpty()
                 }
             }
             modelClass != null -> {
                 val constructor = try {
-                    modelClass.getConstructor(*params.map { it.javaClass }.toTypedArray(), ImmutableJsonObject::class.java)
+                    modelClass.getConstructor(*params.map { it.javaClass }.toTypedArray(), JsonObject::class.java)
                 } catch (e: NoSuchMethodException) {
-                    throw InvalidJsonModelException(modelClass)
+                    throw InvalidJsonModelException(modelClass.canonicalName)
                 }
 
-                jsonValue.immutableJsonArray.map {
-                    constructor.newInstance(*params, it.immutableJsonObject)
+                jsonValue.map {
+                    constructor.newInstance(*params, it.jsonObject)
                 }
             }
             else -> {
-                jsonValue.immutableJsonArray.map {
-                    if (it.isJsonNull()) {
+                jsonValue.map {
+                    if (it.isNull) {
                         null
                     } else {
                         converter?.invoke(it)
@@ -55,7 +59,7 @@ inline fun <T> JsonArrayProperty(json: ImmutableJsonObject, key: String?, modelC
             }
         }.map {
             if (it == null && !isMarkedNullable) {
-                throw JsonNullPointerException(jsonKey, json)
+                throw JsonNullPointerException(jsonKey, this@JsonArrayProperty)
             }
 
             it as T

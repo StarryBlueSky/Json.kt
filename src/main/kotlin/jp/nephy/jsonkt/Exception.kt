@@ -1,13 +1,13 @@
 package jp.nephy.jsonkt
 
-open class JsonKtException(override val message: String): Exception()
+import kotlinx.serialization.json.JsonObject
 
-class JsonCastException(json: String, type: Class<*>): JsonKtException("JsonKt cannot cast to ${type.canonicalName}: $json") {
-    constructor(json: JsonElement, type: Class<*>): this(json.toString(), type)
-}
+open class JsonKtException internal constructor(override val message: String): Exception()
 
-class JsonNullPointerException(key: String, json: ImmutableJsonObject): JsonKtException("json[\"$key\"] is null or not found but return type is non-null: $json")
+class JsonCastException(json: String, type: String): JsonKtException("JsonKt cannot cast to $type: $json")
 
-class JsonConversionException(type: Class<*>): JsonKtException("${type.canonicalName} cannot be converted to json.")
+class JsonNullPointerException(key: String, json: JsonObject): JsonKtException("json[\"$key\"] is null or is not present but return type is non-null: $json")
 
-class InvalidJsonModelException(type: Class<*>): JsonKtException("${type.canonicalName} does not have (jp.nephy.jsonkt.JsonObject) constructor.")
+class JsonConversionException(type: String): JsonKtException("$type cannot be converted to json. Please install JsonKt.Serializer to handle.")
+
+class InvalidJsonModelException(type: String): JsonKtException("$type does not have (jp.nephy.jsonkt.gson.JsonObject) constructor.")
