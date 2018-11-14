@@ -1,8 +1,11 @@
 package jp.nephy.jsonkt.cli.property
 
-import jp.nephy.jsonkt.*
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
-internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement>) {
+internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement>, private val printComments: Boolean) {
     val key = pair.key
     val element = pair.value
     private var nullable = false
@@ -19,26 +22,18 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
         return "val $propertyName by $method${element.toKotlinComment()}"
     }
 
-    fun JsonPrimitive.toMethodName(strict: Boolean = false, nullable: Boolean = false): String {
+    fun toMethodName(jsonPrimitive: JsonPrimitive, nullable: Boolean = false): String {
         if (nullable) {
-            this@AbstractJsonProperty.nullable = true
+            this.nullable = true
         }
         return when {
-            isBoolean -> "boolean"
-            isNumber() -> {
-                when {
-                    strict && isByte -> "byte"
-                    strict && isShort -> "short"
-                    isInt -> "int"
-                    isLong -> "long"
-                    isFloat -> "float"
-                    isDouble -> "double"
-                    else -> throw IllegalStateException("Unknown type: ${this.javaClass.canonicalName}.")
-                }
-            }
-            strict && isChar -> "char"
-            isString -> "string"
-            else -> throw IllegalStateException("Unknown type: ${this.javaClass.canonicalName}.")
+            jsonPrimitive.booleanOrNull != null -> "boolean"
+            jsonPrimitive.intOrNull != null -> "int"
+            jsonPrimitive.longOrNull != null -> "long"
+            jsonPrimitive.floatOrNull != null -> "float"
+            jsonPrimitive.doubleOrNull != null -> "double"
+            jsonPrimitive.contentOrNull != null -> "string"
+            else -> throw IllegalStateException("Unknown type: ${jsonPrimitive::class.qualifiedName}.")
         }.let {
             if (nullable) {
                 "nullable${it.capitalize()}"
@@ -62,18 +57,19 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
     }
 
     private fun JsonElement.toKotlinComment(): String {
+        if (!printComments) {
+            return ""
+        }
+
         return when {
-            isJsonObject() -> "  // {...}"
-            isJsonArray() -> {
-                if (immutableJsonArray.isEmpty()) {
-                    "  // []"
-                } else {
-                    val element = immutableJsonArray.first().toString()
-                    when {
-                        element.length > 50 -> "  // [...]"
-                        immutableJsonArray.size == 1 -> "  // [$element]"
-                        else -> "  // [${immutableJsonArray.first()}, ...]"
-                    }
+            this is JsonObject -> "  // {...}"
+            this is JsonArray -> {
+                val element = this.firstOrNull()?.toString()
+                when {
+                    element == null -> "  // []"
+                    element.length > 50 -> "  // [...]"
+                    size == 1 -> "  // [$element]"
+                    else -> "  // [${this.first()}, ...]"
                 }
             }
             nullable -> "  // ${toString()} or null"

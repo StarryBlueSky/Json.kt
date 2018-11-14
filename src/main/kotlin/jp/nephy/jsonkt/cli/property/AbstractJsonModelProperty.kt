@@ -1,7 +1,7 @@
 package jp.nephy.jsonkt.cli.property
 
-import jp.nephy.jsonkt.JsonElement
+import kotlinx.serialization.json.JsonElement
 
-internal abstract class AbstractJsonModelProperty(pair: Map.Entry<String, JsonElement>): AbstractJsonProperty(pair) {
+internal abstract class AbstractJsonModelProperty(pair: Map.Entry<String, JsonElement>, printComments: Boolean): AbstractJsonProperty(pair, printComments) {
     val modelName = key.toSafeKotlinLiteral().toLowerCamelCase().capitalize()
 }

@@ -1,17 +1,23 @@
 @file:Suppress("UNUSED")
+
 package jp.nephy.jsonkt.cli
 
-import com.google.gson.JsonSyntaxException
-import jp.nephy.jsonkt.*
 import jp.nephy.jsonkt.cli.property.*
+import jp.nephy.jsonkt.jsonObjectOf
+import jp.nephy.jsonkt.toJsonObject
+import kotlinx.serialization.json.*
+import java.io.Closeable
 import java.io.File
 import java.nio.file.Path
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 fun generateModelClass(): String {
     print("Model name? (Optional): ")
     val modelName = readLine().orEmpty()
     print("Use type strict mode? (Y/n): ")
-    val typeStrict = readLine().orEmpty().toLowerCase() == "y"
+    val printComments = readLine().orEmpty().toLowerCase() == "y"
     println("Input json string. If blank line is input, quit.")
 
     while (true) {
@@ -25,8 +31,8 @@ fun generateModelClass(): String {
         }
 
         try {
-            return text.toModelString(modelName, typeStrict)
-        } catch (e: JsonSyntaxException) {
+            return text.toModelString(modelName, printComments)
+        } catch (e: Throwable) {
             System.err.write("Invalid json format: ${e.localizedMessage}\n".toByteArray())
             continue
         }
@@ -37,82 +43,73 @@ fun generateModelClass(): String {
  * toModelString
  */
 
-fun ImmutableJsonObject.toModelString(modelName: String? = null, typeStrict: Boolean? = null): String {
-    return JsonToKotlinClass(this).convert(modelName, typeStrict)
+fun JsonObject.toModelString(modelName: String? = null, printComments: Boolean? = null): String {
+    return JsonToKotlinClass(this).convert(modelName, printComments)
 }
 
-fun String.toModelString(modelName: String? = null, typeStrict: Boolean? = null, builder: GsonBuilder = {}): String {
-    return JsonToKotlinClass(toJsonObject(builder)).convert(modelName, typeStrict)
+fun String.toModelString(modelName: String? = null, printComments: Boolean? = null): String {
+    return JsonToKotlinClass(toJsonObject()).convert(modelName, printComments)
 }
 
-fun File.toModelString(modelName: String? = null, typeStrict: Boolean? = null, builder: GsonBuilder = {}): String {
-    return toJsonObject(builder).toModelString(modelName, typeStrict)
+fun File.toModelString(modelName: String? = null, printComments: Boolean? = null): String {
+    return toJsonObject().toModelString(modelName, printComments)
 }
 
-fun Path.toModelString(modelName: String? = null, typeStrict: Boolean? = null, builder: GsonBuilder = {}): String {
-    return toFile().toModelString(modelName, typeStrict, builder)
+fun Path.toModelString(modelName: String? = null, printComments: Boolean? = null): String {
+    return toFile().toModelString(modelName, printComments)
 }
 
-class JsonToKotlinClass(private val json: ImmutableJsonObject) {
-    fun convert(targetModelName: String?, typeStrict: Boolean?): String {
-        val modelName = targetModelName.run {
-            if (this == null || isBlank()) {
-                "Model"
-            } else {
-                this
+class JsonToKotlinClass internal constructor(private val json: JsonObject) {
+    fun convert(targetModelName: String?, printComments: Boolean?): String {
+        return buildString {
+            appendln("import jp.nephy.jsonkt.*")
+            appendln("import jp.nephy.jsonkt.delegation.*\n")
+
+            JsonObjectParser(json).use {
+                val modelName = targetModelName.orEmpty().ifBlank { "Model" }
+                append(it.toModelString(modelName, printComments ?: true))
             }
-        }
-
-        val result = mutableListOf<String>()
-
-        val parser = JsonObjectParser(json, typeStrict ?: false)
-        result.add(parser.toModelString(modelName))
-
-        if (result.isNotEmpty()) {
-            result.add(0, "import jp.nephy.jsonkt.*")
-            result.add(1, "import jp.nephy.jsonkt.delegation.*\n")
-        }
-
-        return result.joinToString("\n").trimEnd()
+        }.trimEnd()
     }
 
-    private class JsonObjectParser(private val json: ImmutableJsonObject, private val typeStrict: Boolean) {
-        fun toModelString(name: String): String {
+    private class JsonObjectParser(private val json: JsonObject): Closeable {
+        fun toModelString(name: String, printComments: Boolean): String {
             return buildString {
                 val subModels = mutableListOf<String>()
-                append("class $name(override val json: ImmutableJsonObject): JsonModel {\n")
-                json.map {
-                    when {
-                        it.value.isJsonObject() -> when {
-                            it.value.toString() == "{}" -> JsonObjectProperty(it)
-                            it.value.immutableJsonObject.isNullable -> JsonNullableModelProperty(it)
-                            else -> JsonModelProperty(it)
+                append("data class $name(override val json: JsonObject): JsonModel {\n")
+                json.map { pair ->
+                    val (key, value) = pair
+                    when (value) {
+                        is JsonObject -> when {
+                            value.toString() == "{}" -> JsonObjectProperty(pair, printComments)
+                            value.isNullable -> JsonNullableModelProperty(pair, printComments)
+                            else -> JsonModelProperty(pair, printComments)
                         }
-                        it.value.isJsonArray() -> when {
-                            it.value.immutableJsonArray.isEmpty() || it.value.immutableJsonArray.all { element -> element.isJsonArray() } -> JsonArrayProperty(it)
-                            it.value.immutableJsonArray.all { element -> element.isJsonObject() } -> when {
-                                it.value.immutableJsonArray.isNullable -> JsonNullableModelListProperty(it)
-                                else -> JsonModelListProperty(it)
+                        is JsonArray -> when {
+                            value.isEmpty() || value.all { element -> element is JsonArray } -> JsonArrayProperty(pair, printComments)
+                            value.all { element -> element is JsonObject } -> when {
+                                value.isNullable -> JsonNullableModelListProperty(pair, printComments)
+                                else -> JsonModelListProperty(pair, printComments)
                             }
-                            it.value.immutableJsonArray.all { element -> element.isJsonPrimitive() } -> JsonPrimitiveListProperty(it, typeStrict)
-                            else -> throw IllegalStateException("Not all elements in array are same type. These must be JsonObject, JsonArray or JsonPrimitive. (${it.key}: ${it.value})")
+                            value.all { element -> element is JsonPrimitive } -> JsonPrimitiveListProperty(pair, printComments)
+                            else -> throw IllegalStateException("Not all elements in array are same type. These must be JsonObject, JsonArray or JsonPrimitive. ($key: $value)")
                         }
-                        it.value.isJsonNull() -> JsonNullProperty(it)
-                        it.value.isJsonPrimitive() -> when {
-                            it.value.jsonPrimitive.isNullable -> JsonNullablePrimitiveProperty(it)
-                            else -> JsonPrimitiveProperty(it, typeStrict)
+                        is JsonNull -> JsonNullProperty(pair, printComments)
+                        is JsonPrimitive -> when {
+                            value.isNullable -> JsonNullablePrimitiveProperty(pair, printComments)
+                            else -> JsonPrimitiveProperty(pair, printComments)
                         }
-                        else -> throw IllegalArgumentException("Unknown type: ${it.value}")
+                        else -> throw IllegalArgumentException("Unknown type: $value")
                     }
                 }.sortedBy { it.key }.forEach {
                     if (it is JsonModelProperty) {
-                        val parser = JsonObjectParser(it.element.immutableJsonObject, typeStrict)
-                        subModels.add(parser.toModelString(it.modelName))
+                        val parser = JsonObjectParser(it.element.jsonObject)
+                        subModels.add(parser.toModelString(it.modelName, printComments))
                     } else if (it is JsonModelListProperty) {
                         val values = mutableMapOf<String, MutableSet<JsonElement>>()
-                        it.element.immutableJsonArray.forEach { element ->
-                            element.immutableJsonObject.forEach { k, v ->
-                                if (values.contains(k)) {
+                        it.element.jsonArray.forEach { element ->
+                            element.jsonObject.forEach { k, v ->
+                                if (k in values) {
                                     values[k]?.add(v)
                                 } else {
                                     values[k] = mutableSetOf(v)
@@ -120,29 +117,29 @@ class JsonToKotlinClass(private val json: ImmutableJsonObject) {
                             }
                         }
 
-                        val altJson = immutableJsonObjectOf(*values.map { (k, v) ->
+                        val altJson = jsonObjectOf(*values.map { (k, v) ->
                             when {
-                                v.all { element -> !element.isJsonNull() } -> k to v.run {
-                                    if (all { element -> element.isJsonObject() }) {
+                                v.all { element -> !element.isNull } -> k to v.run {
+                                    if (all { element -> element is JsonObject }) {
                                         val innerValues = mutableMapOf<String, Pair<MutableSet<JsonElement>, Boolean>>()
                                         forEach { element ->
-                                            element.immutableJsonObject.forEach { k, v ->
-                                                if (innerValues.contains(k)) {
+                                            element.jsonObject.forEach { k, v ->
+                                                if (k in innerValues) {
                                                     innerValues[k]?.first?.add(v)
                                                 } else {
-                                                    innerValues[k] = mutableSetOf(v) to (size != count { element -> element.immutableJsonObject.contains(k) })
+                                                    innerValues[k] = mutableSetOf(v) to (size != count { element -> k in element.jsonObject })
                                                 }
                                             }
                                         }
 
-                                        immutableJsonObjectOf(*innerValues.map { (k, v) ->
+                                        jsonObjectOf(*innerValues.map { (k, v) ->
                                             k to v.run {
                                                 first.first().apply {
                                                     if (second) {
-                                                        when {
-                                                            isJsonPrimitive() -> jsonPrimitive.isNullable = true
-                                                            isJsonObject() -> immutableJsonObject.isNullable = true
-                                                            isJsonArray() -> immutableJsonArray.isNullable = true
+                                                        when (this) {
+                                                            is JsonPrimitive -> isNullable = true
+                                                            is JsonObject -> isNullable = true
+                                                            is JsonArray -> isNullable = true
                                                         }
                                                     }
                                                 }
@@ -152,15 +149,15 @@ class JsonToKotlinClass(private val json: ImmutableJsonObject) {
                                         first()
                                     }
                                 }
-                                v.all { element -> element.isJsonNull() } -> k to JsonElement.jsonNull
-                                else -> k to v.find { element -> !element.isJsonNull() }!!.apply {
-                                    jsonPrimitive.isNullable = true
+                                v.all { element -> element.isNull } -> k to JsonNull
+                                else -> k to v.find { element -> !element.isNull }!!.apply {
+                                    primitive.isNullable = true
                                 }
                             }
                         }.toTypedArray())
 
-                        val parser = JsonObjectParser(altJson, typeStrict)
-                        subModels.add(parser.toModelString(it.modelName))
+                        val parser = JsonObjectParser(altJson)
+                        subModels.add(parser.toModelString(it.modelName, printComments))
                     }
                     append("    ${it.toPropertyString()}\n")
                 }
@@ -171,6 +168,12 @@ class JsonToKotlinClass(private val json: ImmutableJsonObject) {
                 }
             }.replace("\n\n\n", "\n\n")
         }
+
+        override fun close() {
+            nullablePrimitiveCache.clear()
+            nullableObjectCache.clear()
+            nullableArrayCache.clear()
+        }
     }
 }
 
@@ -179,12 +182,12 @@ private var JsonPrimitive.isNullable: Boolean
     get() = nullablePrimitiveCache[this] ?: false
     set(value) = nullablePrimitiveCache.set(this, value)
 
-private val nullableObjectCache = mutableMapOf<ImmutableJsonObject, Boolean>()
-private var ImmutableJsonObject.isNullable: Boolean
+private val nullableObjectCache = mutableMapOf<JsonObject, Boolean>()
+private var JsonObject.isNullable: Boolean
     get() = nullableObjectCache[this] ?: false
     set(value) = nullableObjectCache.set(this, value)
 
-private val nullableArrayCache = mutableMapOf<ImmutableJsonArray, Boolean>()
-private var ImmutableJsonArray.isNullable: Boolean
+private val nullableArrayCache = mutableMapOf<JsonArray, Boolean>()
+private var JsonArray.isNullable: Boolean
     get() = nullableArrayCache[this] ?: false
     set(value) = nullableArrayCache.set(this, value)
