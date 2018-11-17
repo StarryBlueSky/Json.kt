@@ -44,9 +44,8 @@ inline val JsonElement.stringOrNull: String?
  * Mutable operations
  */
 
-// TODO
 @JsonKtExperimentalApi
-inline fun JsonElement.update(key: String, value: Any?): JsonObject {
+inline fun JsonElement.set(key: String, value: Any?): JsonObject {
     return jsonObject.toMutableMap().let {
         it[key] = value.asJsonElement()
         JsonObject(it)
@@ -54,9 +53,25 @@ inline fun JsonElement.update(key: String, value: Any?): JsonObject {
 }
 
 @JsonKtExperimentalApi
-inline fun JsonElement.update(index: Int, value: Any?): JsonArray {
+inline fun JsonElement.set(index: Int, value: Any?): JsonArray {
     return jsonArray.toMutableList().let {
         it[index] = value.asJsonElement()
+        JsonArray(it)
+    }
+}
+
+@JsonKtExperimentalApi
+inline fun JsonElement.remove(key: String): JsonObject {
+    return jsonObject.toMutableMap().let {
+        it.remove(key)
+        JsonObject(it)
+    }
+}
+
+@JsonKtExperimentalApi
+inline fun JsonElement.removeAt(index: Int): JsonArray {
+    return jsonArray.toMutableList().let {
+        it.removeAt(index)
         JsonArray(it)
     }
 }
