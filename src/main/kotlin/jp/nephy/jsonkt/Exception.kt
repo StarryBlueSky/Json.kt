@@ -10,4 +10,4 @@ class JsonNullPointerException(key: String, json: JsonObject): JsonKtException("
 
 class JsonConversionException(type: String): JsonKtException("$type cannot be converted to json. Please install JsonKt.Serializer to handle.")
 
-class InvalidJsonModelException(type: String): JsonKtException("$type does not have (jp.nephy.jsonkt.gson.JsonObject) constructor.")
+class InvalidJsonModelException(type: String): JsonKtException("$type does not have (jp.nephy.jsonkt.JsonObject) constructor.")
