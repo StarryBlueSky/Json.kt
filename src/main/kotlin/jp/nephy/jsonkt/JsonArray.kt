@@ -40,10 +40,3 @@ inline val JsonArray.doubleList: List<Double>
 
 inline val JsonArray.stringList: List<String>
     get() = map { it.content }
-
-/*
- * Compatibility
- */
-
-@Deprecated("ImmutableJsonArray is not used anymore.", replaceWith = ReplaceWith("JsonArray", "jp.nephy.jsonkt.JsonArray"))
-typealias ImmutableJsonArray = JsonArray

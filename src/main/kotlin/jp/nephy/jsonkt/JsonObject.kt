@@ -10,5 +10,7 @@ fun jsonObjectOf(vararg pairs: JsonPair): JsonObject {
  * Compatibility
  */
 
-@Deprecated("ImmutableJsonObject is not used anymore.", replaceWith = ReplaceWith("JsonObject", "jp.nephy.jsonkt.JsonObject"))
-typealias ImmutableJsonObject = JsonObject
+@Suppress("UNCHECKED_CAST")
+fun JsonObject.edit(editor: (MutableMap<String, Any?>) -> Unit): JsonObject {
+    return (toMutableMap() as MutableMap<String, Any?>).apply(editor).toJsonObject()
+}
