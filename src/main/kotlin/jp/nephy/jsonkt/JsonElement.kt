@@ -41,37 +41,9 @@ inline val JsonElement.stringOrNull: String?
     get() = contentOrNull
 
 /*
- * Mutable operations
+ * Edit operations
  */
 
-@JsonKtExperimentalApi
-inline fun JsonElement.set(key: String, value: Any?): JsonObject {
-    return jsonObject.toMutableMap().let {
-        it[key] = value.asJsonElement()
-        JsonObject(it)
-    }
-}
-
-@JsonKtExperimentalApi
-inline fun JsonElement.set(index: Int, value: Any?): JsonArray {
-    return jsonArray.toMutableList().let {
-        it[index] = value.asJsonElement()
-        JsonArray(it)
-    }
-}
-
-@JsonKtExperimentalApi
-inline fun JsonElement.remove(key: String): JsonObject {
-    return jsonObject.toMutableMap().let {
-        it.remove(key)
-        JsonObject(it)
-    }
-}
-
-@JsonKtExperimentalApi
-inline fun JsonElement.removeAt(index: Int): JsonArray {
-    return jsonArray.toMutableList().let {
-        it.removeAt(index)
-        JsonArray(it)
-    }
+inline fun JsonElement.edit(noinline operation: (MutableMap<String, Any?>) -> Unit): JsonObject {
+    return jsonObject.edit(operation)
 }
