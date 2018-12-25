@@ -6,11 +6,7 @@ fun jsonObjectOf(vararg pairs: JsonPair): JsonObject {
     return pairs.toJsonObject()
 }
 
-/*
- * Compatibility
- */
-
 @Suppress("UNCHECKED_CAST")
-fun JsonObject.edit(editor: (MutableMap<String, Any?>) -> Unit): JsonObject {
+inline fun JsonObject.edit(editor: (MutableMap<String, Any?>) -> Unit): JsonObject {
     return (toMutableMap() as MutableMap<String, Any?>).apply(editor).toJsonObject()
 }
