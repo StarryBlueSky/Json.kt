@@ -79,26 +79,26 @@ inline fun Path?.toJsonArrayOrNull(): JsonArray? {
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> File.parse(model: KClass<T>): T {
-    return toJsonObject().parse(model)
+inline fun <T: JsonModel> File.parse(model: KClass<T>, vararg args: Any?): T {
+    return toJsonObject().parse(model, *args)
 }
 
-inline fun <T: JsonModel> File?.parseOrNull(model: KClass<T>): T? {
+inline fun <T: JsonModel> File?.parseOrNull(model: KClass<T>, vararg args: Any?): T? {
     return runCatching {
-        this?.parse(model)
+        this?.parse(model, *args)
     }.getOrNull()
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> Path.parse(model: KClass<T>): T {
-    return toJsonObject().parse(model)
+inline fun <T: JsonModel> Path.parse(model: KClass<T>, vararg args: Any?): T {
+    return toJsonObject().parse(model, *args)
 }
 
-inline fun <T: JsonModel> Path?.parseOrNull(model: KClass<T>): T? {
+inline fun <T: JsonModel> Path?.parseOrNull(model: KClass<T>, vararg args: Any?): T? {
     return runCatching {
-        this?.parse(model)
+        this?.parse(model, *args)
     }.getOrNull()
 }
 
@@ -109,23 +109,23 @@ inline fun <T: JsonModel> Path?.parseOrNull(model: KClass<T>): T? {
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <reified T: JsonModel> File.parse(): T {
-    return parse(T::class)
+inline fun <reified T: JsonModel> File.parse(vararg args: Any?): T {
+    return parse(T::class, *args)
 }
 
-inline fun <reified T: JsonModel> File?.parseOrNull(): T? {
-    return parseOrNull(T::class)
+inline fun <reified T: JsonModel> File?.parseOrNull(vararg args: Any?): T? {
+    return parseOrNull(T::class, *args)
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <reified T: JsonModel> Path.parse(): T {
-    return parse(T::class)
+inline fun <reified T: JsonModel> Path.parse(vararg args: Any?): T {
+    return parse(T::class, *args)
 }
 
-inline fun <reified T: JsonModel> Path?.parseOrNull(): T? {
-    return parseOrNull(T::class)
+inline fun <reified T: JsonModel> Path?.parseOrNull(vararg args: Any?): T? {
+    return parseOrNull(T::class, *args)
 }
 
 /*
@@ -135,31 +135,31 @@ inline fun <reified T: JsonModel> Path?.parseOrNull(): T? {
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> File.parseList(model: KClass<T>): List<T> {
-    return toJsonArray().parseList(model)
+inline fun <T: JsonModel> File.parseList(model: KClass<T>, vararg args: Any?): List<T> {
+    return toJsonArray().parseList(model, *args)
 }
 
-inline fun <T: JsonModel> File?.parseListOrNull(model: KClass<T>): List<T>? {
-    return toJsonArrayOrNull().parseListOrNull(model)
+inline fun <T: JsonModel> File?.parseListOrNull(model: KClass<T>, vararg args: Any?): List<T>? {
+    return toJsonArrayOrNull().parseListOrNull(model, *args)
 }
 
-inline fun <T: JsonModel> File?.parseListOrEmpty(model: KClass<T>): List<T> {
-    return parseListOrNull(model).orEmpty()
+inline fun <T: JsonModel> File?.parseListOrEmpty(model: KClass<T>, vararg args: Any?): List<T> {
+    return parseListOrNull(model, *args).orEmpty()
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> Path.parseList(model: KClass<T>): List<T> {
-    return toJsonArray().parseList(model)
+inline fun <T: JsonModel> Path.parseList(model: KClass<T>, vararg args: Any?): List<T> {
+    return toJsonArray().parseList(model, *args)
 }
 
-inline fun <T: JsonModel> Path?.parseListOrNull(model: KClass<T>): List<T>? {
-    return toJsonArrayOrNull().parseListOrNull(model)
+inline fun <T: JsonModel> Path?.parseListOrNull(model: KClass<T>, vararg args: Any?): List<T>? {
+    return toJsonArrayOrNull().parseListOrNull(model, *args)
 }
 
-inline fun <T: JsonModel> Path?.parseListOrEmpty(model: KClass<T>): List<T> {
-    return parseListOrNull(model).orEmpty()
+inline fun <T: JsonModel> Path?.parseListOrEmpty(model: KClass<T>, vararg args: Any?): List<T> {
+    return parseListOrNull(model, *args).orEmpty()
 }
 
 /*
@@ -169,29 +169,29 @@ inline fun <T: JsonModel> Path?.parseListOrEmpty(model: KClass<T>): List<T> {
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <reified T: JsonModel> File.parseList(): List<T> {
-    return parseList(T::class)
+inline fun <reified T: JsonModel> File.parseList(vararg args: Any?): List<T> {
+    return parseList(T::class, *args)
 }
 
-inline fun <reified T: JsonModel> File?.parseListOrNull(): List<T>? {
-    return parseListOrNull(T::class)
+inline fun <reified T: JsonModel> File?.parseListOrNull(vararg args: Any?): List<T>? {
+    return parseListOrNull(T::class, *args)
 }
 
-inline fun <reified T: JsonModel> File?.parseListOrEmpty(): List<T> {
-    return parseListOrEmpty(T::class)
+inline fun <reified T: JsonModel> File?.parseListOrEmpty(vararg args: Any?): List<T> {
+    return parseListOrEmpty(T::class, *args)
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <reified T: JsonModel> Path.parseList(): List<T> {
-    return parseList(T::class)
+inline fun <reified T: JsonModel> Path.parseList(vararg args: Any?): List<T> {
+    return parseList(T::class, *args)
 }
 
-inline fun <reified T: JsonModel> Path?.parseListOrNull(): List<T>? {
-    return parseListOrNull(T::class)
+inline fun <reified T: JsonModel> Path?.parseListOrNull(vararg args: Any?): List<T>? {
+    return parseListOrNull(T::class, *args)
 }
 
-inline fun <reified T: JsonModel> Path?.parseListOrEmpty(): List<T> {
-    return parseListOrEmpty(T::class)
+inline fun <reified T: JsonModel> Path?.parseListOrEmpty(vararg args: Any?): List<T> {
+    return parseListOrEmpty(T::class, *args)
 }
