@@ -3,7 +3,7 @@ package jp.nephy.jsonkt
 import jp.nephy.jsonkt.delegation.InvalidJsonModelException
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.createType
+import kotlin.reflect.full.primaryConstructor
 
 //expect fun <T: Any> KClass<T>.newModelInstance(json: JsonObject): T
 //
@@ -11,12 +11,10 @@ import kotlin.reflect.full.createType
 //
 //expect val KClass<*>.effectiveName: String?
 
-fun <T: Any> KClass<T>.newModelInstance(json: JsonObject): T {
-    val constructor = constructors.find {
-        it.parameters.size == 1 && it.parameters.first().type == JsonObject::class.createType()
-    } ?: throw InvalidJsonModelException(this)
-
-    return constructor.call(json)
+fun <T: Any> KClass<T>.newModelInstance(json: JsonObject, vararg args: Any?): T {
+    return runCatching {
+        primaryConstructor?.call(json, *args)
+    }.getOrNull() ?: throw InvalidJsonModelException(this)
 }
 
 fun KProperty<*>.returnsNullable(): Boolean {
