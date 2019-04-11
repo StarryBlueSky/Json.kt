@@ -27,10 +27,15 @@
 package jp.nephy.jsonkt.delegation
 
 import jp.nephy.jsonkt.*
+import jp.nephy.jsonkt.JsonNull
 import kotlinx.serialization.json.*
 
 fun JsonModel.booleanValueOrNull(key: String): Boolean? {
     return json.getOrNull(key)?.booleanOrNull
+}
+
+fun JsonModel.booleanValue(key: String): Boolean {
+    return booleanValueOrNull(key) ?: throw JsonNullPointerException(key, json)
 }
 
 fun JsonModel.booleanValue(key: String, default: Boolean): Boolean {
@@ -45,6 +50,10 @@ fun JsonModel.intValueOrNull(key: String): Int? {
     return json.getOrNull(key)?.intOrNull
 }
 
+fun JsonModel.intValue(key: String): Int {
+    return intValueOrNull(key) ?: throw JsonNullPointerException(key, json)
+}
+
 fun JsonModel.intValue(key: String, default: Int): Int {
     return intValueOrNull(key) ?: default
 }
@@ -55,6 +64,10 @@ fun JsonModel.intValue(key: String, default: () -> Int): Int {
 
 fun JsonModel.longValueOrNull(key: String): Long? {
     return json.getOrNull(key)?.longOrNull
+}
+
+fun JsonModel.longValue(key: String): Long {
+    return longValueOrNull(key) ?: throw JsonNullPointerException(key, json)
 }
 
 fun JsonModel.longValue(key: String, default: Long): Long {
@@ -69,6 +82,10 @@ fun JsonModel.floatValueOrNull(key: String): Float? {
     return json.getOrNull(key)?.floatOrNull
 }
 
+fun JsonModel.floatValue(key: String): Float {
+    return floatValueOrNull(key) ?: throw JsonNullPointerException(key, json)
+}
+
 fun JsonModel.floatValue(key: String, default: Float): Float {
     return floatValueOrNull(key) ?: default
 }
@@ -81,6 +98,10 @@ fun JsonModel.doubleValueOrNull(key: String): Double? {
     return json.getOrNull(key)?.doubleOrNull
 }
 
+fun JsonModel.doubleValue(key: String): Double {
+    return doubleValueOrNull(key) ?: throw JsonNullPointerException(key, json)
+}
+
 fun JsonModel.doubleValue(key: String, default: Double): Double {
     return doubleValueOrNull(key) ?: default
 }
@@ -91,6 +112,10 @@ fun JsonModel.doubleValue(key: String, default: () -> Double): Double {
 
 fun JsonModel.stringValueOrNull(key: String): String? {
     return json.getOrNull(key)?.stringOrNull
+}
+
+fun JsonModel.stringValue(key: String): String {
+    return stringValueOrNull(key) ?: throw JsonNullPointerException(key, json)
 }
 
 fun JsonModel.stringValue(key: String, default: String): String {
