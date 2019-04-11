@@ -25,27 +25,22 @@
 package jp.nephy.jsonkt
 
 import jp.nephy.jsonkt.delegation.InvalidJsonModelException
+import jp.nephy.jsonkt.delegation.JsonModel
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.primaryConstructor
-
-//expect fun <T: Any> KClass<T>.newModelInstance(json: JsonObject): T
-//
-//expect fun KProperty<*>.returnsNullable(): Boolean
-//
-//expect val KClass<*>.effectiveName: String?
+import kotlin.reflect.jvm.jvmName
 
 @PublishedApi
-internal fun <T: Any> KClass<T>.newModelInstance(json: JsonObject, vararg args: Any?): T {
+internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject, vararg args: Any?): M {
     return runCatching {
         primaryConstructor?.call(json, *args)
     }.getOrNull() ?: throw InvalidJsonModelException(this)
 }
 
 @PublishedApi
-internal fun KProperty<*>.returnsNullable(): Boolean {
-    return returnType.isMarkedNullable
-}
+internal val KProperty<*>.isMarkedNullable: Boolean
+    get() = returnType.isMarkedNullable
 
-internal val KClass<*>.effectiveName: String?
-    get() = qualifiedName
+internal val KClass<*>.effectiveName: String
+    get() = qualifiedName ?: simpleName ?: jvmName

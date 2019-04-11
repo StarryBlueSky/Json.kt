@@ -307,7 +307,7 @@ inline fun <T: JsonModel> Array<out JsonPair>.parse(model: KClass<T>, vararg arg
 
 inline fun <T: JsonModel> JsonObject?.parseOrNull(model: KClass<T>, vararg args: Any?): T? {
     return runCatching {
-        this?.let { model.newModelInstance(it, *args) }
+        this?.let { model.createModelInstance(it, *args) }
     }.getOrNull()
 }
 

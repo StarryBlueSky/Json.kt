@@ -59,11 +59,11 @@ inline fun <T: Any?> JsonObject?.jsonObjectProperty(
         }.recoverCatching {
             json?.let(default)
         }.onFailure { 
-            if (!property.returnsNullable()) {
+            if (!property.isMarkedNullable) {
                 throw it
             }
         }.getOrNull().let { 
-            if (it == null && !property.returnsNullable()) {
+            if (it == null && !property.isMarkedNullable) {
                 throw JsonNullPointerException(jsonKey, json)
             }
             
@@ -100,11 +100,11 @@ inline fun <T: Any?> JsonObject?.jsonArrayProperty(
                             converter.invoke(element)
                         }
                     }.onFailure {
-                        if (!property.returnsNullable()) {
+                        if (!property.isMarkedNullable) {
                             throw it
                         }
                     }.getOrNull().let {
-                        if (it == null && !property.returnsNullable()) {
+                        if (it == null && !property.isMarkedNullable) {
                             throw JsonNullPointerException(jsonKey, json)
                         }
 
