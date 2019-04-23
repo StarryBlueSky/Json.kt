@@ -27,6 +27,7 @@
 package jp.nephy.jsonkt
 
 import jp.nephy.jsonkt.delegation.JsonModel
+import jp.nephy.jsonkt.delegation.JsonNullPointerException
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.content
 import kotlinx.serialization.json.contentOrNull
@@ -91,7 +92,7 @@ fun <T: Any> T?.asJsonElement(): JsonElement {
  */
 
 inline operator fun JsonElement.get(key: String): JsonElement {
-    return jsonObject[key]
+    return jsonObject[key] ?: throw JsonNullPointerException(key, jsonObject)
 }
 
 inline operator fun JsonElement.get(index: Int): JsonElement {
