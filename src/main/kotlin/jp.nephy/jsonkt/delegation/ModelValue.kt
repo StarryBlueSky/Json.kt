@@ -27,11 +27,10 @@
 package jp.nephy.jsonkt.delegation
 
 import jp.nephy.jsonkt.*
-import jp.nephy.jsonkt.JsonNull
 import kotlinx.serialization.json.*
 
 fun JsonModel.booleanValueOrNull(key: String): Boolean? {
-    return json.getOrNull(key)?.booleanOrNull
+    return json[key]?.booleanOrNull
 }
 
 fun JsonModel.booleanValue(key: String): Boolean {
@@ -47,7 +46,7 @@ fun JsonModel.booleanValue(key: String, default: () -> Boolean): Boolean {
 }
 
 fun JsonModel.intValueOrNull(key: String): Int? {
-    return json.getOrNull(key)?.intOrNull
+    return json[key]?.intOrNull
 }
 
 fun JsonModel.intValue(key: String): Int {
@@ -63,7 +62,7 @@ fun JsonModel.intValue(key: String, default: () -> Int): Int {
 }
 
 fun JsonModel.longValueOrNull(key: String): Long? {
-    return json.getOrNull(key)?.longOrNull
+    return json[key]?.longOrNull
 }
 
 fun JsonModel.longValue(key: String): Long {
@@ -79,7 +78,7 @@ fun JsonModel.longValue(key: String, default: () -> Long): Long {
 }
 
 fun JsonModel.floatValueOrNull(key: String): Float? {
-    return json.getOrNull(key)?.floatOrNull
+    return json[key]?.floatOrNull
 }
 
 fun JsonModel.floatValue(key: String): Float {
@@ -95,7 +94,7 @@ fun JsonModel.floatValue(key: String, default: () -> Float): Float {
 }
 
 fun JsonModel.doubleValueOrNull(key: String): Double? {
-    return json.getOrNull(key)?.doubleOrNull
+    return json[key]?.doubleOrNull
 }
 
 fun JsonModel.doubleValue(key: String): Double {
@@ -111,7 +110,7 @@ fun JsonModel.doubleValue(key: String, default: () -> Double): Double {
 }
 
 fun JsonModel.stringValueOrNull(key: String): String? {
-    return json.getOrNull(key)?.stringOrNull
+    return json[key]?.stringOrNull
 }
 
 fun JsonModel.stringValue(key: String): String {
@@ -127,7 +126,7 @@ fun JsonModel.stringValue(key: String, default: () -> String): String {
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelValue(key: String): T {
-    return json[key].parse()
+    return (json[key] ?: throw JsonNullPointerException(key, json)).parse()
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelValueOrNull(key: String): T? {
@@ -135,7 +134,7 @@ inline fun <reified T: JsonModel> JsonModel.modelValueOrNull(key: String): T? {
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelListValue(key: String): List<T> {
-    return json[key].parseList()
+    return (json[key] ?: throw JsonNullPointerException(key, json)).parseList()
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelListValueOrNull(key: String): List<T>? {

@@ -48,7 +48,7 @@ inline fun <T: Any?> JsonObject?.jsonObjectProperty(
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         val json = this@jsonObjectProperty
         val jsonKey = key ?: property.name
-        val jsonValue = json?.getOrNull(jsonKey)
+        val jsonValue = json?.get(jsonKey)
 
         return runCatching {
             if (jsonValue.isNull) {
@@ -86,7 +86,7 @@ inline fun <T: Any?> JsonObject?.jsonArrayProperty(
     override fun getValue(thisRef: Any?, property: KProperty<*>): List<T> {
         val json = this@jsonArrayProperty ?: return emptyList()
         val jsonKey = key ?: property.name
-        val jsonValue = getOrNull(jsonKey)
+        val jsonValue = get(jsonKey)
 
         return if (jsonValue.isNull || jsonValue !is JsonArray) {
             default.invoke(json)
