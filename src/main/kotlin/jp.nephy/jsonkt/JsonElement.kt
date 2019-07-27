@@ -31,7 +31,6 @@ import jp.nephy.jsonkt.delegation.JsonNullPointerException
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.content
 import kotlinx.serialization.json.contentOrNull
-import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
 
@@ -47,15 +46,14 @@ inline val JsonElement.jsonArrayOrNull: JsonArray?
         jsonArray
     }.getOrNull()
 
-@ExperimentalContracts
-inline val JsonElement?.isNull: Boolean
-    get() {
-        contract {
-            returns(false) implies (this@isNull != null)
-        }
-        
-        return this == null || isNull
+
+inline fun JsonElement?.isNull(): Boolean {
+    contract {
+        returns(false) implies (this@isNull != null)
     }
+
+    return this == null || isNull
+}
 
 class JsonConversionException(
     @Suppress("UNUSED_PARAMETER") val type: KClass<*>
