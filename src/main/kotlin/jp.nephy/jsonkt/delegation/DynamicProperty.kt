@@ -31,7 +31,7 @@ class JsonNullPointerException(val key: String, val json: JsonObject?): JsonKtEx
 
 internal typealias JsonElementConverter<T> = (JsonElement) -> T
 
-typealias JsonObjectProperty<T> = CachedReadOnlyProperty<JsonModel, T>
+typealias JsonObjectProperty<T> = CachingReadOnlyProperty<JsonModel, T>
 internal typealias JsonObjectDefaultSelector<T> = (JsonObject) -> T
 
 /**
@@ -68,7 +68,7 @@ inline fun <T: Any?> JsonObject?.jsonObjectProperty(
     tmp as T
 }
 
-typealias JsonArrayProperty<T> = CachedReadOnlyProperty<Any?, List<T>>
+typealias JsonArrayProperty<T> = CachingReadOnlyProperty<Any?, List<T>>
 internal typealias JsonArrayDefaultSelector<T> = (JsonObject) -> List<T>
 
 /**
