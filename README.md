@@ -1,5 +1,5 @@
 # Json.kt
-[![Kotlin 1.3.10](https://img.shields.io/badge/Kotlin-1.3.10-blue.svg)](http://kotlinlang.org)
+[![Kotlin 1.3.41](https://img.shields.io/badge/Kotlin-1.3.41-blue.svg)](http://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/jp.nephy/jsonkt.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22jp.nephy%22)
 [![Travis](https://img.shields.io/travis/NephyProject/Json.kt.svg)](https://travis-ci.org/NephyProject/Json.kt/builds)
 [![MIT License](https://img.shields.io/github/license/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/blob/master/LICENSE)
