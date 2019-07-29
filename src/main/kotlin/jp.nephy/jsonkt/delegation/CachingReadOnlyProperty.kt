@@ -27,7 +27,7 @@ package jp.nephy.jsonkt.delegation
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-private object UninitializedObject: Any()
+private object UninitializedObject
 
 @Suppress("UNCHECKED_CAST", "LocalVariableName")
 class CachingReadOnlyProperty<R, out T: Any?>(initializer: (R, KProperty<*>) -> T): ReadOnlyProperty<R, T> {
