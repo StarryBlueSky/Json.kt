@@ -33,9 +33,9 @@ import kotlin.reflect.jvm.jvmName
 
 @PublishedApi
 internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject, vararg args: Any?): M {
-    return runCatching {
+    return runSafely {
         primaryConstructor?.call(json, *args)
-    }.getOrNull() ?: throw InvalidJsonModelException(this)
+    } ?: throw InvalidJsonModelException(this)
 }
 
 @PublishedApi

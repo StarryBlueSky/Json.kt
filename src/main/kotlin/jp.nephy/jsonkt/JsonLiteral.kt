@@ -26,49 +26,19 @@
 
 package jp.nephy.jsonkt
 
-@Suppress("IMPLICIT_CAST_TO_ANY")
-inline fun <reified T> JsonPrimitive.cast(): T {
-    return when (T::class) {
-        Boolean::class -> {
-            booleanOrNull
-        }
-        Int::class -> {
-            intOrNull
-        }
-        Long::class -> {
-            longOrNull
-        }
-        Float::class -> {
-            floatOrNull
-        }
-        Double::class -> {
-            doubleOrNull
-        }
-        Char::class -> {
-            contentOrNull?.firstOrNull()
-        }
-        String::class -> {
-            contentOrNull
-        }
-        else -> {
-            throw IllegalArgumentException("${T::class} is not primitive type.")
-        }
-    } as T
-}
-
 /*
- * toJsonPrimitive
+ * toJsonLiteral
  */
 
 /**
  * @throws JsonCastException
  */
-inline fun String.toJsonPrimitive(): JsonPrimitive {
+inline fun String.toJsonLiteral(): JsonLiteral {
     return toJsonElement().cast()
 }
 
-inline fun String?.toJsonPrimitiveOrNull(): JsonPrimitive? {
+inline fun String?.toJsonLiteralOrNull(): JsonLiteral? {
     return runSafely {
-        toJsonPrimitive()
+        toJsonLiteral()
     }
 }

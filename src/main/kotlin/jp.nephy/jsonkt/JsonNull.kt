@@ -22,6 +22,16 @@
  * SOFTWARE.
  */
 
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+
 package jp.nephy.jsonkt
 
-typealias JsonNull = kotlinx.serialization.json.JsonNull
+import kotlin.contracts.contract
+
+inline fun JsonElement?.isNull(): Boolean {
+    contract {
+        returns(false) implies (this@isNull != null)
+    }
+
+    return this == null || isNull
+}

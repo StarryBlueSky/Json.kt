@@ -34,3 +34,7 @@ class JsonCastException(
     @Suppress("UNUSED_PARAMETER") val element: Any,
     @Suppress("UNUSED_PARAMETER") val type: KClass<*>
 ): JsonKtException("An element cannot be casted to ${type.effectiveName}:\n${element.toString().take(100)}...")
+
+class JsonConversionException(
+    @Suppress("UNUSED_PARAMETER") val type: KClass<*>
+): JsonKtException("${type.effectiveName} cannot be converted to json. Please install JsonKt.Serializer to handle.")

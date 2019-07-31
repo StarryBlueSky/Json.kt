@@ -28,10 +28,68 @@ package jp.nephy.jsonkt
 
 import kotlinx.serialization.json.*
 
-typealias JsonArray = kotlinx.serialization.json.JsonArray
-
-fun jsonArrayOf(vararg elements: JsonValue): JsonArray {
+inline fun jsonArrayOf(vararg elements: JsonValue): JsonArray {
     return elements.toJsonArray()
+}
+
+/*
+ * toJsonArray
+ */
+
+/**
+ * @throws JsonCastException
+ */
+inline fun String.toJsonArray(): JsonArray {
+    return toJsonElement().cast()
+}
+
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonValueIterable.toJsonArray(): JsonArray {
+    return JsonArray(map { it.asJsonElement() })
+}
+
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonValueSequence.toJsonArray(): JsonArray {
+    return toList().toJsonArray()
+}
+
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonValueArray.toJsonArray(): JsonArray {
+    return toList().toJsonArray()
+}
+
+/*
+ * toJsonArrayOrNull
+ */
+
+inline fun String?.toJsonArrayOrNull(): JsonArray? {
+    return runSafely {
+        toJsonArray()
+    }
+}
+
+inline fun JsonValueIterable?.toJsonArrayOrNull(): JsonArray? {
+    return runSafely {
+        toJsonArray()
+    }
+}
+
+inline fun JsonValueSequence?.toJsonArrayOrNull(): JsonArray? {
+    return runSafely {
+        toJsonArray()
+    }
+}
+
+inline fun JsonValueArray?.toJsonArrayOrNull(): JsonArray? {
+    return runSafely {
+        toJsonArray()
+    }
 }
 
 /*
@@ -43,6 +101,9 @@ inline val JsonArray.jsonObjectList: List<JsonObject>
 
 inline val JsonArray.jsonArrayList: List<JsonArray>
     get() = map { it.jsonArray }
+
+inline val JsonArray.jsonElementList: List<JsonElement>
+    get() = toList()
 
 inline val JsonArray.jsonPrimitiveList: List<JsonPrimitive>
     get() = map { it.primitive }
@@ -64,3 +125,12 @@ inline val JsonArray.doubleList: List<Double>
 
 inline val JsonArray.stringList: List<String>
     get() = map { it.content }
+
+/*
+ * Edit
+ */
+
+@Suppress("UNCHECKED_CAST")
+inline fun JsonArray.edit(block: (JsonMutableArray) -> Unit): JsonArray {
+    return (toMutableList() as JsonMutableArray).apply(block).toJsonArray()
+}
