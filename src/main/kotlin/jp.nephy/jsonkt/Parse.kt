@@ -87,6 +87,59 @@ inline fun <T: JsonModel> JsonPairArray.parse(model: KClass<T>, vararg args: Any
     return toJsonObject().parse(model, *args)
 }
 
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonObject.parse(model: KClass<T>): T {
+    return try {
+        model.createModelInstance(this)
+    } catch (e: Throwable) {
+        throw InvalidJsonModelException(model)
+    }
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonElement.parse(model: KClass<T>): T {
+    return jsonObjectOrNull?.parse(model) ?: throw InvalidJsonModelException(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> String.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonMap.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonPairIterable.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonPairSequence.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonPairArray.parse(model: KClass<T>): T {
+    return toJsonObject().parse(model)
+}
+
 /*
  * parseOrNull
  */
@@ -130,6 +183,48 @@ inline fun <T: JsonModel> JsonPairSequence?.parseOrNull(model: KClass<T>, vararg
 inline fun <T: JsonModel> JsonPairArray?.parseOrNull(model: KClass<T>, vararg args: Any?): T? {
     return runSafely {
         parse(model, *args)
+    }
+}
+
+inline fun <T: JsonModel> JsonObject?.parseOrNull(model: KClass<T>): T? {
+    return runSafely {
+        parse(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonElement?.parseOrNull(model: KClass<T>): T? {
+    return runSafely {
+        parse(model)
+    }
+}
+
+inline fun <T: JsonModel> String?.parseOrNull(model: KClass<T>): T? {
+    return runSafely {
+        parse(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonMap?.parseOrNull(model: KClass<T>): T? {
+    return runSafely {
+        parse(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonPairIterable?.parseOrNull(model: KClass<T>): T? {
+    return runSafely {
+        parse(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonPairSequence?.parseOrNull(model: KClass<T>): T? {
+    return runSafely {
+        parse(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonPairArray?.parseOrNull(model: KClass<T>): T? {
+    return runSafely {
+        parse(model)
     }
 }
 
@@ -186,6 +281,55 @@ inline fun <reified T: JsonModel> JsonPairArray.parse(vararg args: Any?): T {
     return parse(T::class, *args)
 }
 
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonObject.parse(): T {
+    return parse(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonElement.parse(): T {
+    return parse(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> String.parse(): T {
+    return parse(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonMap.parse(): T {
+    return parse(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonPairIterable.parse(): T {
+    return parse(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonPairSequence.parse(): T {
+    return parse(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonPairArray.parse(): T {
+    return parse(T::class)
+}
+
 /*
  * inline parseOrNull
  */
@@ -216,6 +360,34 @@ inline fun <reified T: JsonModel> JsonPairSequence?.parseOrNull(vararg args: Any
 
 inline fun <reified T: JsonModel> JsonPairArray?.parseOrNull(vararg args: Any?): T? {
     return parseOrNull(T::class, *args)
+}
+
+inline fun <reified T: JsonModel> JsonObject?.parseOrNull(): T? {
+    return parseOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonElement?.parseOrNull(): T? {
+    return parseOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> String?.parseOrNull(): T? {
+    return parseOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonMap?.parseOrNull(): T? {
+    return parseOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonPairIterable?.parseOrNull(): T? {
+    return parseOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonPairSequence?.parseOrNull(): T? {
+    return parseOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonPairArray?.parseOrNull(): T? {
+    return parseOrNull(T::class)
 }
 
 /*
@@ -270,6 +442,54 @@ inline fun <T: JsonModel> JsonValueArray.parseList(model: KClass<T>, vararg args
     return toJsonArray().parseList(model, *args)
 }
 
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonArray.parseList(model: KClass<T>): List<T> {
+    return try {
+        map {
+            it.parse(model)
+        }
+    } catch (e: Throwable) {
+        throw InvalidJsonModelException(model)
+    }
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonElement.parseList(model: KClass<T>): List<T> {
+    return jsonArrayOrNull.parseListOrNull(model) ?: throw InvalidJsonModelException(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> String.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonValueIterable.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonValueSequence.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <T: JsonModel> JsonValueArray.parseList(model: KClass<T>): List<T> {
+    return toJsonArray().parseList(model)
+}
+
 /*
  * parseListOrNull
  */
@@ -310,6 +530,42 @@ inline fun <T: JsonModel> JsonValueArray?.parseListOrNull(model: KClass<T>, vara
     }
 }
 
+inline fun <T: JsonModel> JsonArray?.parseListOrNull(model: KClass<T>): List<T>? {
+    return runSafely {
+        parseList(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonElement?.parseListOrNull(model: KClass<T>): List<T>? {
+    return runSafely {
+        parseList(model)
+    }
+}
+
+inline fun <T: JsonModel> String?.parseListOrNull(model: KClass<T>): List<T>? {
+    return runSafely {
+        parseList(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonValueIterable?.parseListOrNull(model: KClass<T>): List<T>? {
+    return runSafely {
+        parseList(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonValueSequence?.parseListOrNull(model: KClass<T>): List<T>? {
+    return runSafely {
+        parseList(model)
+    }
+}
+
+inline fun <T: JsonModel> JsonValueArray?.parseListOrNull(model: KClass<T>): List<T>? {
+    return runSafely {
+        parseList(model)
+    }
+}
+
 /*
  * parseListOrEmpty
  */
@@ -336,6 +592,30 @@ inline fun <T: JsonModel> JsonValueSequence?.parseListOrEmpty(model: KClass<T>, 
 
 inline fun <T: JsonModel> JsonValueArray?.parseListOrEmpty(model: KClass<T>, vararg args: Any?): List<T> {
     return parseListOrNull(model, *args).orEmpty()
+}
+
+inline fun <T: JsonModel> JsonArray?.parseListOrEmpty(model: KClass<T>): List<T> {
+    return parseListOrNull(model).orEmpty()
+}
+
+inline fun <T: JsonModel> JsonElement?.parseListOrEmpty(model: KClass<T>): List<T> {
+    return parseListOrNull(model).orEmpty()
+}
+
+inline fun <T: JsonModel> String?.parseListOrEmpty(model: KClass<T>): List<T> {
+    return parseListOrNull(model).orEmpty()
+}
+
+inline fun <T: JsonModel> JsonValueIterable?.parseListOrEmpty(model: KClass<T>): List<T> {
+    return parseListOrNull(model).orEmpty()
+}
+
+inline fun <T: JsonModel> JsonValueSequence?.parseListOrEmpty(model: KClass<T>): List<T> {
+    return parseListOrNull(model).orEmpty()
+}
+
+inline fun <T: JsonModel> JsonValueArray?.parseListOrEmpty(model: KClass<T>): List<T> {
+    return parseListOrNull(model).orEmpty()
 }
 
 /*
@@ -384,6 +664,48 @@ inline fun <reified T: JsonModel> JsonValueArray.parseList(vararg args: Any?): L
     return parseList(T::class, *args)
 }
 
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonArray.parseList(): List<T> {
+    return parseList(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonElement.parseList(): List<T> {
+    return parseList(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> String.parseList(): List<T> {
+    return parseList(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonValueIterable.parseList(): List<T> {
+    return parseList(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonValueSequence.parseList(): List<T> {
+    return parseList(T::class)
+}
+
+/**
+ * @throws InvalidJsonModelException
+ */
+inline fun <reified T: JsonModel> JsonValueArray.parseList(): List<T> {
+    return parseList(T::class)
+}
+
 /*
  * inline parseListOrNull
  */
@@ -412,6 +734,30 @@ inline fun <reified T: JsonModel> JsonValueArray?.parseListOrNull(vararg args: A
     return parseListOrNull(T::class, *args)
 }
 
+inline fun <reified T: JsonModel> JsonArray?.parseListOrNull(): List<T>? {
+    return parseListOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonElement?.parseListOrNull(): List<T>? {
+    return parseListOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> String?.parseListOrNull(): List<T>? {
+    return parseListOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonValueIterable?.parseListOrNull(): List<T>? {
+    return parseListOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonValueSequence?.parseListOrNull(): List<T>? {
+    return parseListOrNull(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonValueArray?.parseListOrNull(): List<T>? {
+    return parseListOrNull(T::class)
+}
+
 /*
  * inline parseListOrEmpty
  */
@@ -438,4 +784,28 @@ inline fun <reified T: JsonModel> JsonValueSequence?.parseListOrEmpty(vararg arg
 
 inline fun <reified T: JsonModel> JsonValueArray?.parseListOrEmpty(vararg args: Any?): List<T> {
     return parseListOrEmpty(T::class, *args)
+}
+
+inline fun <reified T: JsonModel> JsonArray?.parseListOrEmpty(): List<T> {
+    return parseListOrEmpty(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonElement?.parseListOrEmpty(): List<T> {
+    return parseListOrEmpty(T::class)
+}
+
+inline fun <reified T: JsonModel> String?.parseListOrEmpty(): List<T> {
+    return parseListOrEmpty(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonValueIterable?.parseListOrEmpty(): List<T> {
+    return parseListOrEmpty(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonValueSequence?.parseListOrEmpty(): List<T> {
+    return parseListOrEmpty(T::class)
+}
+
+inline fun <reified T: JsonModel> JsonValueArray?.parseListOrEmpty(): List<T> {
+    return parseListOrEmpty(T::class)
 }
