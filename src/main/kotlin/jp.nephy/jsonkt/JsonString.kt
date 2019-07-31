@@ -26,49 +26,44 @@
 
 package jp.nephy.jsonkt
 
-@Suppress("IMPLICIT_CAST_TO_ANY")
-inline fun <reified T> JsonPrimitive.cast(): T {
-    return when (T::class) {
-        Boolean::class -> {
-            booleanOrNull
-        }
-        Int::class -> {
-            intOrNull
-        }
-        Long::class -> {
-            longOrNull
-        }
-        Float::class -> {
-            floatOrNull
-        }
-        Double::class -> {
-            doubleOrNull
-        }
-        Char::class -> {
-            contentOrNull?.firstOrNull()
-        }
-        String::class -> {
-            contentOrNull
-        }
-        else -> {
-            throw IllegalArgumentException("${T::class} is not primitive type.")
-        }
-    } as T
-}
+import jp.nephy.jsonkt.delegation.JsonModel
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import kotlinx.serialization.json.JsonElementSerializer
 
 /*
- * toJsonPrimitive
+ * stringify
  */
+
+inline fun JsonElement.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+    return if (configuration == defaultJsonConfiguration) {
+        defaultJsonInstance
+    } else {
+        Json(configuration)
+    }.stringify(JsonElementSerializer, this)
+}
+
+inline fun JsonModel.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+    return json.stringify(configuration)
+}
 
 /**
  * @throws JsonCastException
  */
-inline fun String.toJsonPrimitive(): JsonPrimitive {
-    return toJsonElement().cast()
+inline fun JsonPairIterable.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+    return toJsonArray().stringify(configuration)
 }
 
-inline fun String?.toJsonPrimitiveOrNull(): JsonPrimitive? {
-    return runSafely {
-        toJsonPrimitive()
-    }
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonPairSequence.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+    return toJsonArray().stringify(configuration)
+}
+
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonPairArray.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+    return toJsonArray().stringify(configuration)
 }

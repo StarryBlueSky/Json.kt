@@ -31,33 +31,31 @@ import jp.nephy.jsonkt.delegation.JsonNullPointerException
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.content
 import kotlinx.serialization.json.contentOrNull
-import kotlin.contracts.contract
-import kotlin.reflect.KClass
 
-typealias JsonElement = kotlinx.serialization.json.JsonElement
-
-inline val JsonElement.jsonObjectOrNull: JsonObject?
-    get() = runCatching {
-        jsonObject
-    }.getOrNull()
-
-inline val JsonElement.jsonArrayOrNull: JsonArray?
-    get() = runCatching {
-        jsonArray
-    }.getOrNull()
-
-
-inline fun JsonElement?.isNull(): Boolean {
-    contract {
-        returns(false) implies (this@isNull != null)
-    }
-
-    return this == null || isNull
+inline fun <reified T: Any> JsonElement.cast(): T {
+    return this as? T ?: throw JsonCastException(this, T::class)
 }
 
-class JsonConversionException(
-    @Suppress("UNUSED_PARAMETER") val type: KClass<*>
-): JsonKtException("${type.effectiveName} cannot be converted to json. Please install JsonKt.Serializer to handle.")
+/*
+ * toJsonElement
+ */
+
+/**
+ * @throws JsonCastException
+ */
+inline fun String.toJsonElement(): JsonElement {
+    return try {
+        defaultJsonInstance.parseJson(this)
+    } catch (e: Throwable) {
+        throw JsonCastException(this, JsonElement::class)
+    }
+}
+
+inline fun String?.toJsonElementOrNull(): JsonElement? {
+    return runSafely {
+        toJsonElement()
+    }
+}
 
 /**
  * @throws JsonConversionException
@@ -70,10 +68,18 @@ fun <T: Any> T?.asJsonElement(): JsonElement {
         is JsonModel -> json
         
         /* Collections */
-        is Map<*, *> -> JsonObject(this.toList().map { it.first.toString() to it.second.asJsonElement() }.toMap())
-        is Iterable<*> -> JsonArray(this.toList().map { it.asJsonElement() })
-        is Sequence<*> -> JsonArray(this.toList().map { it.asJsonElement() })
-        is Array<*> -> JsonArray(this.toList().map { it.asJsonElement() })
+        is Map<*, *> -> {
+            JsonObject(this.map { it.key.toString() to it.value.asJsonElement() }.toMap())
+        }
+        is Iterable<*> -> {
+            JsonArray(this.map { it.asJsonElement() })
+        }
+        is Sequence<*> -> {
+            JsonArray(this.map { it.asJsonElement() }.toList())
+        }
+        is Array<*> -> {
+            JsonArray(this.map { it.asJsonElement() })
+        }
         
         /* Primitives */
         is Boolean -> JsonPrimitive(this)
@@ -101,25 +107,41 @@ inline operator fun JsonElement.get(index: Int): JsonElement {
  * Compatibility
  */
 
+inline val JsonElement.jsonObjectOrNull: JsonObject?
+    get() = runSafely {
+        jsonObject
+    }
+
+inline val JsonElement.jsonArrayOrNull: JsonArray?
+    get() = runSafely {
+        jsonArray
+    }
+
 inline val JsonElement.string: String
     get() = content
 inline val JsonElement.stringOrNull: String?
     get() = contentOrNull
 
 inline val JsonElement.primitiveOrNull: JsonPrimitive?
-    get() = runCatching { 
+    get() = runSafely {
         primitive
-    }.getOrNull()
+    }
 
 inline val JsonElement.char: Char
     get() = content.first()
 inline val JsonElement.charOrNull: Char?
-    get() = contentOrNull?.firstOrNull()
+    get() = runSafely {
+        char
+    }
 
 /*
- * Edit operations
+ * Edit
  */
 
-inline fun JsonElement.edit(noinline operation: (MutableMap<String, Any?>) -> Unit): JsonObject {
-    return jsonObject.edit(operation)
+inline fun JsonElement.editAsObject(block: (JsonMutableMap) -> Unit): JsonObject {
+    return jsonObject.edit(block)
+}
+
+inline fun JsonElement.editAsArray(block: (JsonMutableArray) -> Unit): JsonArray {
+    return jsonArray.edit(block)
 }

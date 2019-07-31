@@ -22,53 +22,28 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
-
 package jp.nephy.jsonkt
 
-@Suppress("IMPLICIT_CAST_TO_ANY")
-inline fun <reified T> JsonPrimitive.cast(): T {
-    return when (T::class) {
-        Boolean::class -> {
-            booleanOrNull
-        }
-        Int::class -> {
-            intOrNull
-        }
-        Long::class -> {
-            longOrNull
-        }
-        Float::class -> {
-            floatOrNull
-        }
-        Double::class -> {
-            doubleOrNull
-        }
-        Char::class -> {
-            contentOrNull?.firstOrNull()
-        }
-        String::class -> {
-            contentOrNull
-        }
-        else -> {
-            throw IllegalArgumentException("${T::class} is not primitive type.")
-        }
-    } as T
-}
+internal typealias JsonKey = String
+internal typealias JsonValue = Any?
 
-/*
- * toJsonPrimitive
- */
+internal typealias JsonMap = Map<JsonKey, JsonValue>
+internal typealias JsonMutableMap = MutableMap<JsonKey, JsonValue>
 
-/**
- * @throws JsonCastException
- */
-inline fun String.toJsonPrimitive(): JsonPrimitive {
-    return toJsonElement().cast()
-}
+internal typealias JsonMutableArray = MutableList<JsonValue>
 
-inline fun String?.toJsonPrimitiveOrNull(): JsonPrimitive? {
-    return runSafely {
-        toJsonPrimitive()
-    }
-}
+internal typealias JsonPair = Pair<JsonKey, JsonValue>
+internal typealias JsonPairIterable = Iterable<JsonPair>
+internal typealias JsonPairSequence = Sequence<JsonPair>
+internal typealias JsonPairArray = Array<out JsonPair>
+
+internal typealias JsonValueIterable = Iterable<JsonValue>
+internal typealias JsonValueSequence = Sequence<JsonValue>
+internal typealias JsonValueArray = Array<out JsonValue>
+
+typealias JsonObject = kotlinx.serialization.json.JsonObject
+typealias JsonArray = kotlinx.serialization.json.JsonArray
+typealias JsonElement = kotlinx.serialization.json.JsonElement
+typealias JsonPrimitive = kotlinx.serialization.json.JsonPrimitive
+typealias JsonLiteral = kotlinx.serialization.json.JsonLiteral
+typealias JsonNull = kotlinx.serialization.json.JsonNull

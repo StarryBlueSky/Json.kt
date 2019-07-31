@@ -22,15 +22,92 @@
  * SOFTWARE.
  */
 
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+
 package jp.nephy.jsonkt
 
-typealias JsonObject = kotlinx.serialization.json.JsonObject
-
-fun jsonObjectOf(vararg pairs: JsonPair): JsonObject {
+inline fun jsonObjectOf(vararg pairs: JsonPair): JsonObject {
     return pairs.toJsonObject()
 }
 
+/*
+ * toJsonObject
+ */
+
+/**
+ * @throws JsonCastException
+ */
+inline fun String.toJsonObject(): JsonObject {
+    return toJsonElement().cast()
+}
+
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonMap.toJsonObject(): JsonObject {
+    return JsonObject(map { it.key to it.value.asJsonElement() }.toMap())
+}
+
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonPairIterable.toJsonObject(): JsonObject {
+    return toMap().toJsonObject()
+}
+
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonPairSequence.toJsonObject(): JsonObject {
+    return toMap().toJsonObject()
+}
+
+/**
+ * @throws JsonCastException
+ */
+inline fun JsonPairArray.toJsonObject(): JsonObject {
+    return toMap().toJsonObject()
+}
+
+/*
+ * toJsonObjectOrNull
+ */
+
+inline fun String?.toJsonObjectOrNull(): JsonObject? {
+    return runSafely {
+        toJsonObject()
+    }
+}
+
+inline fun JsonMap?.toJsonObjectOrNull(): JsonObject? {
+    return runSafely {
+        toJsonObject()
+    }
+}
+
+inline fun JsonPairIterable?.toJsonObjectOrNull(): JsonObject? {
+    return runSafely {
+        toJsonObject()
+    }
+}
+
+inline fun JsonPairSequence?.toJsonObjectOrNull(): JsonObject? {
+    return runSafely {
+        toJsonObject()
+    }
+}
+
+inline fun JsonPairArray?.toJsonObjectOrNull(): JsonObject? {
+    return runSafely {
+        toJsonObject()
+    }
+}
+
+/*
+ * Edit
+ */
+
 @Suppress("UNCHECKED_CAST")
-inline fun JsonObject.edit(editor: (MutableMap<String, Any?>) -> Unit): JsonObject {
-    return (toMutableMap() as MutableMap<String, Any?>).apply(editor).toJsonObject()
+inline fun JsonObject.edit(block: (JsonMutableMap) -> Unit): JsonObject {
+    return (toMutableMap() as JsonMutableMap).apply(block).toJsonObject()
 }
