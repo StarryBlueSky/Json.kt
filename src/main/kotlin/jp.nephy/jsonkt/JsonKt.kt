@@ -38,6 +38,13 @@ object JsonKt {
         install(T::class, serializer)
     }
 
+    fun <T: Any> uninstall(sourceClass: KClass<T>, serializer: Serializer<T>) {
+        serializers.remove(sourceClass, serializer)
+    }
+    inline fun <reified T: Any> uninstall(serializer: Serializer<T>) {
+        uninstall(T::class, serializer)
+    }
+
     interface Serializer<T: Any> {
         fun encode(data: T): String
     }
