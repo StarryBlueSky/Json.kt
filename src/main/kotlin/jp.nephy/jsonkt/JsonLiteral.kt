@@ -42,3 +42,22 @@ inline fun String?.toJsonLiteralOrNull(): JsonLiteral? {
         toJsonLiteral()
     }
 }
+
+/*
+ * isXXX
+ */
+
+inline val JsonLiteral.isBoolean: Boolean
+    get() = booleanOrNull != null
+
+inline val JsonLiteral.isInt: Boolean
+    get() = intOrNull != null
+
+inline val JsonLiteral.isLong: Boolean
+    get() = longOrNull != null
+
+inline val JsonLiteral.isFloat: Boolean
+    get() = floatOrNull != null
+
+inline val JsonLiteral.isDouble: Boolean
+    get() = doubleOrNull != null
