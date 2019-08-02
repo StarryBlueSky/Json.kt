@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-
 package jp.nephy.jsonkt.delegation
 
 import jp.nephy.jsonkt.*
@@ -31,22 +30,23 @@ class JsonNullPointerException(val key: String, val json: JsonObject?): JsonKtEx
 
 internal typealias JsonElementConverter<T> = (JsonElement) -> T
 
-typealias JsonObjectProperty<T> = CachingReadOnlyProperty<JsonModel, T>
+typealias JsonObjectProperty<T> = JsonDelegateProperty<T>
 internal typealias JsonObjectDefaultSelector<T> = (JsonObject) -> T
 
 /**
  * @throws JsonNullPointerException
  */
-inline fun <T: Any?> JsonObject?.jsonObjectProperty(
+@Suppress("UNCHECKED_CAST")
+inline fun <T> JsonObject?.jsonObjectProperty(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T> = { throw NotImplementedError() },
-    crossinline converter: JsonElementConverter<T> = { throw NotImplementedError() }
-) = JsonObjectProperty { _, property ->
-    val json = this@jsonObjectProperty
+    crossinline default: JsonObjectDefaultSelector<T> = { throw NotImplementedError("Default selector is not implemented.") },
+    crossinline converter: JsonElementConverter<T> = { throw NotImplementedError("Element converter is not implemented.") }
+) = JsonObjectProperty(key) { property ->
+    val json = this
     val jsonKey = key ?: property.name
     val jsonValue = json?.get(jsonKey)
 
-    val tmp = runCatching {
+    runCatching {
         if (jsonValue.isNull()) {
             json?.let(default)
         } else {
@@ -54,61 +54,64 @@ inline fun <T: Any?> JsonObject?.jsonObjectProperty(
         }
     }.recoverCatching {
         json?.let(default)
-    }.onFailure {
+    }.recoverCatching {
         if (!property.isMarkedNullable) {
             throw it
         }
-    }.getOrNull()
 
-    if (tmp == null && !property.isMarkedNullable) {
-        throw JsonNullPointerException(jsonKey, json)
-    }
+        null
+    }.mapCatching {
+        if (it == null && !property.isMarkedNullable) {
+            throw JsonNullPointerException(jsonKey, json)
+        }
 
-    @Suppress("UNCHECKED_CAST")
-    tmp as T
+        it
+    }.getOrThrow() as T
 }
 
-typealias JsonArrayProperty<T> = CachingReadOnlyProperty<Any?, List<T>>
+typealias JsonArrayProperty<T> = JsonDelegateProperty<List<T>>
 internal typealias JsonArrayDefaultSelector<T> = (JsonObject) -> List<T>
 
 /**
  * @throws JsonNullPointerException
  */
-inline fun <T: Any?> JsonObject?.jsonArrayProperty(
+@Suppress("UNCHECKED_CAST")
+inline fun <T> JsonObject?.jsonArrayProperty(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<T> = { emptyList() },
-    crossinline converter: JsonElementConverter<T> = { throw NotImplementedError() }
-) = JsonArrayProperty { _, property ->
-    val json = this@jsonArrayProperty ?: return@JsonArrayProperty emptyList<T>()
+    crossinline converter: JsonElementConverter<T> = { throw NotImplementedError("Element converter is not implemented.") }
+) = JsonArrayProperty(key) { property ->
+    val json = this
     val jsonKey = key ?: property.name
-    val jsonValue = get(jsonKey)
+    val jsonValue = json?.get(jsonKey)
 
-    if (jsonValue.isNull() || jsonValue !is JsonArray) {
-        default.invoke(json)
-    } else {
-        runCatching {
+    runCatching {
+        if (jsonValue.isNull() || jsonValue !is JsonArray) {
+            json?.let(default)
+        } else {
             jsonValue.map { element ->
-                val tmp = runCatching {
-                    if (element.isNull) {
+                runCatching {
+                    if (element.isNull()) {
                         null
                     } else {
-                        converter.invoke(element)
+                        element.let(converter)
                     }
-                }.onFailure {
+                }.recoverCatching {
                     if (!property.isMarkedNullable) {
                         throw it
                     }
-                }.getOrNull()
 
-                if (tmp == null && !property.isMarkedNullable) {
-                    throw JsonNullPointerException(jsonKey, json)
-                }
+                    null
+                }.mapCatching {
+                    if (it == null && !property.isMarkedNullable) {
+                        throw JsonNullPointerException(jsonKey, json)
+                    }
 
-                @Suppress("UNCHECKED_CAST")
-                tmp as T
+                    it
+                }.getOrThrow() as T
             }
-        }.recoverCatching {
-            default.invoke(json)
-        }.getOrThrow()
-    }
+        }
+    }.recoverCatching {
+        json?.let(default)
+    }.getOrThrow() ?: emptyList()
 }
