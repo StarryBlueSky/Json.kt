@@ -29,27 +29,31 @@ import kotlin.reflect.KProperty
 
 private object UninitializedObject
 
-@Suppress("UNCHECKED_CAST", "LocalVariableName")
-class CachingReadOnlyProperty<R, out T: Any?>(initializer: (R, KProperty<*>) -> T): ReadOnlyProperty<R, T> {
-    private var initializer: ((R, KProperty<*>) -> T)? = initializer
-    @Volatile private var _value: Any? = UninitializedObject
+private typealias Initializer<T> = (KProperty<*>) -> T
+
+@Suppress("UNCHECKED_CAST")
+abstract class CachingReadOnlyProperty<in R, out T>(initializer: Initializer<T>): ReadOnlyProperty<R, T> {
+    private var initializer: Initializer<T>? = initializer
+    @Volatile private var value: Any? = UninitializedObject
 
     override fun getValue(thisRef: R, property: KProperty<*>): T {
-        val _v0 = _value
-        if (_v0 !== UninitializedObject) {
-            return _value as T
+        val v0 = value
+        if (v0 != UninitializedObject) {
+            return value as T
         }
 
         return synchronized(this) {
-            val _v1 = _value
-            if (_v1 !== UninitializedObject) {
-                _value as T
+            val v1 = value
+            if (v1 != UninitializedObject) {
+                value as T
             } else {
-                val _v = initializer!!(thisRef, property)
+                val v = initializer!!(property)
                 initializer = null
-                _value = _v
-                _v
+                value = v
+                v
             }
         }
     }
 }
+
+class JsonDelegateProperty<out T>(internal val key: String?, initializer: Initializer<T>): CachingReadOnlyProperty<Any?, T>(initializer)
