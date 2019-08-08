@@ -1,11 +1,11 @@
-# Json.kt
-[![Kotlin 1.3.41](https://img.shields.io/badge/Kotlin-1.3.41-blue.svg)](http://kotlinlang.org)
-[![Maven Central](https://img.shields.io/maven-central/v/jp.nephy/jsonkt.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22jp.nephy%22)
-[![Travis](https://img.shields.io/travis/NephyProject/Json.kt.svg)](https://travis-ci.org/NephyProject/Json.kt/builds)
-[![MIT License](https://img.shields.io/github/license/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/issues)
+# Json.kt: Json Bindings for Kotlin
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.41-blue.svg)](https://kotlinlang.org)
+[![Stable](https://img.shields.io/bintray/v/nephyproject/stable/JsonKt.svg?label=stable)](https://bintray.com/nephyproject/stable/JsonKt/_latestVersion)
+[![Dev](https://img.shields.io/bintray/v/nephyproject/dev/JsonKt.svg?label=dev)](https://bintray.com/nephyproject/dev/JsonKt/_latestVersion)
+[![License](https://img.shields.io/github/license/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/blob/master/LICENSE)
+[![Issues](https://img.shields.io/github/issues/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/NephyProject/Json.kt.svg)](https://github.com/NephyProject/Json.kt/pulls)
 
-Json.kt: Json Bindings for Kotlin.
 ===========================
 
 シンプルな記法でJsonをKotlinのクラスに変換できます。委譲プロパティを使用しているためパフォーマンスの心配はいりません。
@@ -120,28 +120,32 @@ fun main(args: Array<String>) {
 
 Get Started
 -----------
-最新バージョンは [![Maven Central](https://img.shields.io/maven-central/v/jp.nephy/jsonkt.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22jp.nephy%22)
- です。
-[kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization#gradlejvm) の依存関係を追加する必要があります。
+
+Latest Json.kt version is [![Stable](https://img.shields.io/bintray/v/nephyproject/stable/JsonKt.svg?label=stable)](https://bintray.com/nephyproject/dev/JsonKt/_latestVersion) or [![Dev](https://img.shields.io/bintray/v/nephyproject/dev/JsonKt.svg?label=dev)](https://bintray.com/nephyproject/dev/JsonKt/_latestVersion).  
+
+Stable releases are available at [Bintray](https://bintray.com/nephyproject/stable/JsonKt). EAP builds are also available ([Dev Repository](https://bintray.com/nephyproject/dev/JsonKt)). Every commit is published as EAP build.  
 
 Gradle:
 ```groovy
-compile "jp.nephy:jsonkt:${jsonkt_version}"
-```
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://kotlin.bintray.com/kotlinx" }
+    maven { url "https://dl.bintray.com/nephyproject/stable" } 
+    // Or dev repository
+    // maven { url "https://dl.bintray.com/nephyproject/dev" }
+}
 
-Maven:
-```xml
-<dependency>
-    <groupId>jp.nephy</groupId>
-    <artifactId>jsonkt</artifactId>
-    <version>${jsonkt_version}</version>
-</dependency>
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.41"
+    implementation "jp.nephy:jsonkt:5.0.0-eap-1"
+}
 ```
 
 License
 ---------
-Json.kt は MIT ライセンスのもとで公開されています.
+
 Json.kt is provided under MIT License.
 
 
-Copyright (c) 2018 Nephy Project.
+Copyright (c) 2018-2019 Nephy Project.
