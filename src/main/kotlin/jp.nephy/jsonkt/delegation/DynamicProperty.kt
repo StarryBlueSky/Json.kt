@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+@file:Suppress("UNCHECKED_CAST")
+
 package jp.nephy.jsonkt.delegation
 
 import jp.nephy.jsonkt.*
@@ -36,11 +38,10 @@ internal typealias JsonObjectDefaultSelector<T> = (JsonObject) -> T
 /**
  * @throws JsonNullPointerException
  */
-@Suppress("UNCHECKED_CAST")
 inline fun <T> JsonObject?.jsonObjectProperty(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<T> = { throw NotImplementedError("Default selector is not implemented.") },
-    crossinline converter: JsonElementConverter<T> = { throw NotImplementedError("Element converter is not implemented.") }
+    crossinline converter: JsonElementConverter<T>
 ) = JsonObjectProperty(key) { property ->
     val json = this
     val jsonKey = key ?: property.name
@@ -75,11 +76,10 @@ internal typealias JsonArrayDefaultSelector<T> = (JsonObject) -> List<T>
 /**
  * @throws JsonNullPointerException
  */
-@Suppress("UNCHECKED_CAST")
 inline fun <T> JsonObject?.jsonArrayProperty(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<T> = { emptyList() },
-    crossinline converter: JsonElementConverter<T> = { throw NotImplementedError("Element converter is not implemented.") }
+    crossinline converter: JsonElementConverter<T>
 ) = JsonArrayProperty(key) { property ->
     val json = this
     val jsonKey = key ?: property.name
