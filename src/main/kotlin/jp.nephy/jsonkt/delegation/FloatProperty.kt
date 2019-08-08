@@ -31,7 +31,7 @@ import kotlinx.serialization.json.float
 import kotlinx.serialization.json.floatOrNull
 
 /*
-    Float
+ *  Float
  */
 
 inline fun JsonObject.byFloat(
@@ -39,22 +39,33 @@ inline fun JsonObject.byFloat(
     crossinline default: JsonObjectDefaultSelector<Float>
 ) = byLambda(key, default) { it.float }
 
-inline fun JsonObject.byFloat(key: String? = null) = byLambda(key) { it.float }
+inline fun JsonObject.byFloat(
+    key: String? = null,
+    default: Float
+) = byLambda(key, default) { it.float }
+
+inline fun JsonObject.byFloat(key: String) = byLambda(key) { it.float }
 
 inline fun JsonModel.float(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<Float>
 ) = lambda(key, default) { it.float }
 
-inline fun JsonModel.float(key: String? = null) = lambda(key) { it.float }
+inline fun JsonModel.float(
+    key: String? = null,
+    default: Float
+) = lambda(key, default) { it.float }
+
+inline fun JsonModel.float(key: String) = lambda(key) { it.float }
 
 inline val JsonObject.byFloat
-    get() = byFloat()
+    get() = byLambda { it.float }
+
 inline val JsonModel.float
-    get() = float()
+    get() = lambda { it.float }
 
 /*
-    Float?
+ *  Float?
  */
 
 inline fun JsonObject?.byNullableFloat(
@@ -62,24 +73,33 @@ inline fun JsonObject?.byNullableFloat(
     crossinline default: JsonObjectDefaultSelector<Float?>
 ) = byNullableLambda(key, default) { it.floatOrNull }
 
-inline fun JsonObject?.byNullableFloat(key: String? = null) = byNullableLambda(key) { it.floatOrNull }
+inline fun JsonObject?.byNullableFloat(
+    key: String? = null,
+    default: Float?
+) = byNullableLambda(key, default) { it.floatOrNull }
 
-inline fun JsonModel.nullableFloat(
+inline fun JsonObject?.byNullableFloat(key: String) = byNullableLambda(key) { it.floatOrNull }
+
+inline fun JsonModel?.nullableFloat(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<Float?>
 ) = nullableLambda(key, default) { it.floatOrNull }
 
-inline fun JsonModel.nullableFloat(key: String? = null) = nullableLambda(key) { it.floatOrNull }
+inline fun JsonModel?.nullableFloat(
+    key: String? = null,
+    default: Float?
+) = nullableLambda(key, default) { it.floatOrNull }
 
-inline val JsonObject.byNullableFloat
-    get() = byNullableFloat()
-inline val JsonModel.nullableFloat
-    get() = nullableFloat()
-inline val JsonModel.floatOrNull
-    get() = nullableFloat
+inline fun JsonModel?.nullableFloat(key: String) = nullableLambda(key) { it.floatOrNull }
+
+inline val JsonObject?.byNullableFloat
+    get() = byNullableLambda { it.floatOrNull }
+
+inline val JsonModel?.nullableFloat
+    get() = nullableLambda { it.floatOrNull }
 
 /*
-    List<Float>
+ *  List<Float>
  */
 
 inline fun JsonObject.byFloatList(
@@ -87,39 +107,61 @@ inline fun JsonObject.byFloatList(
     crossinline default: JsonArrayDefaultSelector<Float>
 ) = byLambdaList(key, default) { it.float }
 
-inline fun JsonObject.byFloatList(key: String? = null) = byLambdaList(key) { it.float }
+inline fun JsonObject.byFloatList(
+    key: String? = null,
+    default: List<Float>
+) = byLambdaList(key, default) { it.float }
+
+inline fun JsonObject.byFloatList(key: String) = byLambdaList(key) { it.float }
 
 inline fun JsonModel.floatList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Float>
 ) = lambdaList(key, default) { it.float }
 
-inline fun JsonModel.floatList(key: String? = null) = lambdaList(key) { it.float }
+inline fun JsonModel.floatList(
+    key: String? = null,
+    default: List<Float>
+) = lambdaList(key, default) { it.float }
+
+inline fun JsonModel.floatList(key: String) = lambdaList(key) { it.float }
 
 inline val JsonObject.byFloatList
-    get() = byFloatList()
+    get() = byLambdaList { it.float }
+
 inline val JsonModel.floatList
-    get() = floatList()
+    get() = lambdaList { it.float }
 
 /*
-    List<Float?>
+ *  List<Float?>
  */
 
-inline fun JsonObject.byNullableFloatList(
+inline fun JsonObject?.byNullableFloatList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Float?>
 ) = byNullableLambdaList(key, default) { it.floatOrNull }
 
-inline fun JsonObject.byNullableFloatList(key: String? = null) = byNullableLambdaList(key) { it.floatOrNull }
+inline fun JsonObject?.byNullableFloatList(
+    key: String? = null,
+    default: List<Float?>
+) = byNullableLambdaList(key, default) { it.floatOrNull }
 
-inline fun JsonModel.nullableFloatList(
+inline fun JsonObject?.byNullableFloatList(key: String) = byNullableLambdaList(key) { it.floatOrNull }
+
+inline fun JsonModel?.nullableFloatList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Float?>
 ) = nullableLambdaList(key, default) { it.floatOrNull }
 
-inline fun JsonModel.nullableFloatList(key: String? = null) = nullableLambdaList(key) { it.floatOrNull }
+inline fun JsonModel?.nullableFloatList(
+    key: String? = null,
+    default: List<Float?>
+) = nullableLambdaList(key, default) { it.floatOrNull }
 
-inline val JsonObject.byNullableFloatList
-    get() = byNullableFloatList()
-inline val JsonModel.nullableFloatList
-    get() = nullableFloatList()
+inline fun JsonModel?.nullableFloatList(key: String) = nullableLambdaList(key) { it.floatOrNull }
+
+inline val JsonObject?.byNullableFloatList
+    get() = byNullableLambdaList { it.floatOrNull }
+
+inline val JsonModel?.nullableFloatList
+    get() = nullableLambdaList { it.floatOrNull }

@@ -31,7 +31,7 @@ import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.booleanOrNull
 
 /*
-    Boolean
+ *  Boolean
  */
 
 inline fun JsonObject.byBoolean(
@@ -39,22 +39,33 @@ inline fun JsonObject.byBoolean(
     crossinline default: JsonObjectDefaultSelector<Boolean>
 ) = byLambda(key, default) { it.boolean }
 
-inline fun JsonObject.byBoolean(key: String? = null) = byLambda(key) { it.boolean }
+inline fun JsonObject.byBoolean(
+    key: String? = null,
+    default: Boolean
+) = byLambda(key, default) { it.boolean }
+
+inline fun JsonObject.byBoolean(key: String) = byLambda(key) { it.boolean }
 
 inline fun JsonModel.boolean(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<Boolean>
 ) = lambda(key, default) { it.boolean }
 
-inline fun JsonModel.boolean(key: String? = null) = lambda(key) { it.boolean }
+inline fun JsonModel.boolean(
+    key: String? = null,
+    default: Boolean
+) = lambda(key, default) { it.boolean }
+
+inline fun JsonModel.boolean(key: String) = lambda(key) { it.boolean }
 
 inline val JsonObject.byBoolean
-    get() = byBoolean()
+    get() = byLambda { it.boolean }
+
 inline val JsonModel.boolean
-    get() = boolean()
+    get() = lambda { it.boolean }
 
 /*
-    Boolean?
+ *  Boolean?
  */
 
 inline fun JsonObject?.byNullableBoolean(
@@ -62,64 +73,95 @@ inline fun JsonObject?.byNullableBoolean(
     crossinline default: JsonObjectDefaultSelector<Boolean?>
 ) = byNullableLambda(key, default) { it.booleanOrNull }
 
-inline fun JsonObject?.byNullableBoolean(key: String? = null) = byNullableLambda(key) { it.booleanOrNull }
+inline fun JsonObject?.byNullableBoolean(
+    key: String? = null,
+    default: Boolean?
+) = byNullableLambda(key, default) { it.booleanOrNull }
 
-inline fun JsonModel.nullableBoolean(
+inline fun JsonObject?.byNullableBoolean(key: String) = byNullableLambda(key) { it.booleanOrNull }
+
+inline fun JsonModel?.nullableBoolean(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<Boolean?>
 ) = nullableLambda(key, default) { it.booleanOrNull }
 
-inline fun JsonModel.nullableBoolean(key: String? = null) = nullableLambda(key) { it.booleanOrNull }
+inline fun JsonModel?.nullableBoolean(
+    key: String? = null,
+    default: Boolean?
+) = nullableLambda(key, default) { it.booleanOrNull }
 
-inline val JsonObject.byNullableBoolean
-    get() = byNullableBoolean()
-inline val JsonModel.nullableBoolean
-    get() = nullableBoolean()
-inline val JsonModel.booleanOrNull
-    get() = nullableBoolean
+inline fun JsonModel?.nullableBoolean(key: String) = nullableLambda(key) { it.booleanOrNull }
+
+inline val JsonObject?.byNullableBoolean
+    get() = byNullableLambda { it.booleanOrNull }
+
+inline val JsonModel?.nullableBoolean
+    get() = nullableLambda { it.booleanOrNull }
 
 /*
-    List<Boolean>
+ *  List<Boolean>
  */
 
-inline fun JsonObject.byBooleanList (
+inline fun JsonObject.byBooleanList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Boolean>
 ) = byLambdaList(key, default) { it.boolean }
 
-inline fun JsonObject.byBooleanList(key: String? = null) = byLambdaList(key) { it.boolean }
+inline fun JsonObject.byBooleanList(
+    key: String? = null,
+    default: List<Boolean>
+) = byLambdaList(key, default) { it.boolean }
+
+inline fun JsonObject.byBooleanList(key: String) = byLambdaList(key) { it.boolean }
 
 inline fun JsonModel.booleanList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Boolean>
 ) = lambdaList(key, default) { it.boolean }
 
-inline fun JsonModel.booleanList(key: String? = null) = lambdaList(key) { it.boolean }
+inline fun JsonModel.booleanList(
+    key: String? = null,
+    default: List<Boolean>
+) = lambdaList(key, default) { it.boolean }
+
+inline fun JsonModel.booleanList(key: String) = lambdaList(key) { it.boolean }
 
 inline val JsonObject.byBooleanList
-    get() = byBooleanList()
+    get() = byLambdaList { it.boolean }
+
 inline val JsonModel.booleanList
-    get() = booleanList()
+    get() = lambdaList { it.boolean }
 
 /*
-    List<Boolean?>
+ *  List<Boolean?>
  */
 
-inline fun JsonObject.byNullableBooleanList(
+inline fun JsonObject?.byNullableBooleanList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Boolean?>
 ) = byNullableLambdaList(key, default) { it.booleanOrNull }
 
-inline fun JsonObject.byNullableBooleanList(key: String? = null) = byNullableLambdaList(key) { it.booleanOrNull }
+inline fun JsonObject?.byNullableBooleanList(
+    key: String? = null,
+    default: List<Boolean?>
+) = byNullableLambdaList(key, default) { it.booleanOrNull }
 
-inline fun JsonModel.nullableBooleanList(
+inline fun JsonObject?.byNullableBooleanList(key: String) = byNullableLambdaList(key) { it.booleanOrNull }
+
+inline fun JsonModel?.nullableBooleanList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Boolean?>
 ) = nullableLambdaList(key, default) { it.booleanOrNull }
 
-inline fun JsonModel.nullableBooleanList(key: String? = null) = nullableLambdaList(key) { it.booleanOrNull }
+inline fun JsonModel?.nullableBooleanList(
+    key: String? = null,
+    default: List<Boolean?>
+) = nullableLambdaList(key, default) { it.booleanOrNull }
 
-inline val JsonObject.byNullableBooleanList
-    get() = byNullableBooleanList()
-inline val JsonModel.nullableBooleanList
-    get() = nullableBooleanList()
+inline fun JsonModel?.nullableBooleanList(key: String) = nullableLambdaList(key) { it.booleanOrNull }
+
+inline val JsonObject?.byNullableBooleanList
+    get() = byNullableLambdaList { it.booleanOrNull }
+
+inline val JsonModel?.nullableBooleanList
+    get() = nullableLambdaList { it.booleanOrNull }

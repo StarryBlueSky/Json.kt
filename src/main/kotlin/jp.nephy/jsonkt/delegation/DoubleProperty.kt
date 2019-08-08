@@ -31,7 +31,7 @@ import kotlinx.serialization.json.double
 import kotlinx.serialization.json.doubleOrNull
 
 /*
-    Double
+ *  Double
  */
 
 inline fun JsonObject.byDouble(
@@ -39,22 +39,33 @@ inline fun JsonObject.byDouble(
     crossinline default: JsonObjectDefaultSelector<Double>
 ) = byLambda(key, default) { it.double }
 
-inline fun JsonObject.byDouble(key: String? = null) = byLambda(key) { it.double }
+inline fun JsonObject.byDouble(
+    key: String? = null,
+    default: Double
+) = byLambda(key, default) { it.double }
+
+inline fun JsonObject.byDouble(key: String) = byLambda(key) { it.double }
 
 inline fun JsonModel.double(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<Double>
 ) = lambda(key, default) { it.double }
 
-inline fun JsonModel.double(key: String? = null) = lambda(key) { it.double }
+inline fun JsonModel.double(
+    key: String? = null,
+    default: Double
+) = lambda(key, default) { it.double }
+
+inline fun JsonModel.double(key: String) = lambda(key) { it.double }
 
 inline val JsonObject.byDouble
-    get() = byDouble()
+    get() = byLambda { it.double }
+
 inline val JsonModel.double
-    get() = double()
+    get() = lambda { it.double }
 
 /*
-    Double?
+ *  Double?
  */
 
 inline fun JsonObject?.byNullableDouble(
@@ -62,24 +73,33 @@ inline fun JsonObject?.byNullableDouble(
     crossinline default: JsonObjectDefaultSelector<Double?>
 ) = byNullableLambda(key, default) { it.doubleOrNull }
 
-inline fun JsonObject?.byNullableDouble(key: String? = null) = byNullableLambda(key) { it.doubleOrNull }
+inline fun JsonObject?.byNullableDouble(
+    key: String? = null,
+    default: Double?
+) = byNullableLambda(key, default) { it.doubleOrNull }
 
-inline fun JsonModel.nullableDouble(
+inline fun JsonObject?.byNullableDouble(key: String) = byNullableLambda(key) { it.doubleOrNull }
+
+inline fun JsonModel?.nullableDouble(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<Double?>
 ) = nullableLambda(key, default) { it.doubleOrNull }
 
-inline fun JsonModel.nullableDouble(key: String? = null) = nullableLambda(key) { it.doubleOrNull }
+inline fun JsonModel?.nullableDouble(
+    key: String? = null,
+    default: Double?
+) = nullableLambda(key, default) { it.doubleOrNull }
 
-inline val JsonObject.byNullableDouble
-    get() = byNullableDouble()
-inline val JsonModel.nullableDouble
-    get() = nullableDouble()
-inline val JsonModel.doubleOrNull
-    get() = nullableDouble
+inline fun JsonModel?.nullableDouble(key: String) = nullableLambda(key) { it.doubleOrNull }
+
+inline val JsonObject?.byNullableDouble
+    get() = byNullableLambda { it.doubleOrNull }
+
+inline val JsonModel?.nullableDouble
+    get() = nullableLambda { it.doubleOrNull }
 
 /*
-    List<Double>
+ *  List<Double>
  */
 
 inline fun JsonObject.byDoubleList(
@@ -87,39 +107,61 @@ inline fun JsonObject.byDoubleList(
     crossinline default: JsonArrayDefaultSelector<Double>
 ) = byLambdaList(key, default) { it.double }
 
-inline fun JsonObject.byDoubleList(key: String? = null) = byLambdaList(key) { it.double }
+inline fun JsonObject.byDoubleList(
+    key: String? = null,
+    default: List<Double>
+) = byLambdaList(key, default) { it.double }
+
+inline fun JsonObject.byDoubleList(key: String) = byLambdaList(key) { it.double }
 
 inline fun JsonModel.doubleList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Double>
 ) = lambdaList(key, default) { it.double }
 
-inline fun JsonModel.doubleList(key: String? = null) = lambdaList(key) { it.double }
+inline fun JsonModel.doubleList(
+    key: String? = null,
+    default: List<Double>
+) = lambdaList(key, default) { it.double }
+
+inline fun JsonModel.doubleList(key: String) = lambdaList(key) { it.double }
 
 inline val JsonObject.byDoubleList
-    get() = byDoubleList()
+    get() = byLambdaList { it.double }
+
 inline val JsonModel.doubleList
-    get() = doubleList()
+    get() = lambdaList { it.double }
 
 /*
-    List<Double?>
+ *  List<Double?>
  */
 
-inline fun JsonObject.byNullableDoubleList(
+inline fun JsonObject?.byNullableDoubleList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Double?>
 ) = byNullableLambdaList(key, default) { it.doubleOrNull }
 
-inline fun JsonObject.byNullableDoubleList(key: String? = null) = byNullableLambdaList(key) { it.doubleOrNull }
+inline fun JsonObject?.byNullableDoubleList(
+    key: String? = null,
+    default: List<Double?>
+) = byNullableLambdaList(key, default) { it.doubleOrNull }
 
-inline fun JsonModel.nullableDoubleList(
+inline fun JsonObject?.byNullableDoubleList(key: String) = byNullableLambdaList(key) { it.doubleOrNull }
+
+inline fun JsonModel?.nullableDoubleList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<Double?>
 ) = nullableLambdaList(key, default) { it.doubleOrNull }
 
-inline fun JsonModel.nullableDoubleList(key: String? = null) = nullableLambdaList(key) { it.doubleOrNull }
+inline fun JsonModel?.nullableDoubleList(
+    key: String? = null,
+    default: List<Double?>
+) = nullableLambdaList(key, default) { it.doubleOrNull }
 
-inline val JsonObject.byNullableDoubleList
-    get() = byNullableDoubleList()
-inline val JsonModel.nullableDoubleList
-    get() = nullableDoubleList()
+inline fun JsonModel?.nullableDoubleList(key: String) = nullableLambdaList(key) { it.doubleOrNull }
+
+inline val JsonObject?.byNullableDoubleList
+    get() = byNullableLambdaList { it.doubleOrNull }
+
+inline val JsonModel?.nullableDoubleList
+    get() = nullableLambdaList { it.doubleOrNull }
