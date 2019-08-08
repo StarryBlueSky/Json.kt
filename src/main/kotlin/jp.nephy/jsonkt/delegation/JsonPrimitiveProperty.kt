@@ -31,7 +31,7 @@ import jp.nephy.jsonkt.JsonPrimitive
 import jp.nephy.jsonkt.primitiveOrNull
 
 /*
-    JsonPrimitive
+ *  JsonPrimitive
  */
 
 inline fun JsonObject.byJsonPrimitive(
@@ -39,22 +39,33 @@ inline fun JsonObject.byJsonPrimitive(
     crossinline default: JsonObjectDefaultSelector<JsonPrimitive>
 ) = byLambda(key, default) { it.primitive }
 
-inline fun JsonObject.byJsonPrimitive(key: String? = null) = byLambda(key) { it.primitive }
+inline fun JsonObject.byJsonPrimitive(
+    key: String? = null,
+    default: JsonPrimitive
+) = byLambda(key, default) { it.primitive }
 
-inline fun JsonModel.primitive(
+inline fun JsonObject.byJsonPrimitive(key: String) = byLambda(key) { it.primitive }
+
+inline fun JsonModel.jsonPrimitive(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<JsonPrimitive>
 ) = lambda(key, default) { it.primitive }
 
-inline fun JsonModel.primitive(key: String? = null) = lambda(key) { it.primitive }
+inline fun JsonModel.jsonPrimitive(
+    key: String? = null,
+    default: JsonPrimitive
+) = lambda(key, default) { it.primitive }
+
+inline fun JsonModel.jsonPrimitive(key: String) = lambda(key) { it.primitive }
 
 inline val JsonObject.byJsonPrimitive
-    get() = byJsonPrimitive()
-inline val JsonModel.primitive
-    get() = primitive()
+    get() = byLambda { it.primitive }
+
+inline val JsonModel.jsonPrimitive
+    get() = lambda { it.primitive }
 
 /*
-    JsonPrimitive?
+ *  JsonPrimitive?
  */
 
 inline fun JsonObject?.byNullableJsonPrimitive(
@@ -62,64 +73,95 @@ inline fun JsonObject?.byNullableJsonPrimitive(
     crossinline default: JsonObjectDefaultSelector<JsonPrimitive?>
 ) = byNullableLambda(key, default) { it.primitiveOrNull }
 
-inline fun JsonObject?.byNullableJsonPrimitive(key: String? = null) = byNullableLambda(key) { it.primitiveOrNull }
+inline fun JsonObject?.byNullableJsonPrimitive(
+    key: String? = null,
+    default: JsonPrimitive?
+) = byNullableLambda(key, default) { it.primitiveOrNull }
 
-inline fun JsonModel.nullableJsonPrimitive(
+inline fun JsonObject?.byNullableJsonPrimitive(key: String) = byNullableLambda(key) { it.primitiveOrNull }
+
+inline fun JsonModel?.nullableJsonPrimitive(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<JsonPrimitive?>
 ) = nullableLambda(key, default) { it.primitiveOrNull }
 
-inline fun JsonModel.nullableJsonPrimitive(key: String? = null) = nullableLambda(key) { it.primitiveOrNull }
+inline fun JsonModel?.nullableJsonPrimitive(
+    key: String? = null,
+    default: JsonPrimitive?
+) = nullableLambda(key, default) { it.primitiveOrNull }
 
-inline val JsonObject.byNullableJsonPrimitive
-    get() = byNullableJsonPrimitive()
-inline val JsonModel.nullableJsonPrimitive
-    get() = nullableJsonPrimitive()
-inline val JsonModel.primitiveOrNull
-    get() = nullableJsonPrimitive
+inline fun JsonModel?.nullableJsonPrimitive(key: String) = nullableLambda(key) { it.primitiveOrNull }
+
+inline val JsonObject?.byNullableJsonPrimitive
+    get() = byNullableLambda { it.primitiveOrNull }
+
+inline val JsonModel?.nullableJsonPrimitive
+    get() = nullableLambda { it.primitiveOrNull }
 
 /*
-    List<JsonPrimitive>
+ *  List<JsonPrimitive>
  */
 
-inline fun JsonObject.byJsonPrimitiveList (
+inline fun JsonObject.byJsonPrimitiveList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<JsonPrimitive>
 ) = byLambdaList(key, default) { it.primitive }
 
-inline fun JsonObject.byJsonPrimitiveList(key: String? = null) = byLambdaList(key) { it.primitive }
+inline fun JsonObject.byJsonPrimitiveList(
+    key: String? = null,
+    default: List<JsonPrimitive>
+) = byLambdaList(key, default) { it.primitive }
 
-inline fun JsonModel.primitiveList(
+inline fun JsonObject.byJsonPrimitiveList(key: String) = byLambdaList(key) { it.primitive }
+
+inline fun JsonModel.jsonPrimitiveList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<JsonPrimitive>
 ) = lambdaList(key, default) { it.primitive }
 
-inline fun JsonModel.primitiveList(key: String? = null) = lambdaList(key) { it.primitive }
+inline fun JsonModel.jsonPrimitiveList(
+    key: String? = null,
+    default: List<JsonPrimitive>
+) = lambdaList(key, default) { it.primitive }
+
+inline fun JsonModel.jsonPrimitiveList(key: String) = lambdaList(key) { it.primitive }
 
 inline val JsonObject.byJsonPrimitiveList
-    get() = byJsonPrimitiveList()
-inline val JsonModel.primitiveList
-    get() = primitiveList()
+    get() = byLambdaList { it.primitive }
+
+inline val JsonModel.jsonPrimitiveList
+    get() = lambdaList { it.primitive }
 
 /*
-    List<JsonPrimitive?>
+ *  List<JsonPrimitive?>
  */
 
-inline fun JsonObject.byNullableJsonPrimitiveList(
+inline fun JsonObject?.byNullableJsonPrimitiveList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<JsonPrimitive?>
 ) = byNullableLambdaList(key, default) { it.primitiveOrNull }
 
-inline fun JsonObject.byNullableJsonPrimitiveList(key: String? = null) = byNullableLambdaList(key) { it.primitiveOrNull }
+inline fun JsonObject?.byNullableJsonPrimitiveList(
+    key: String? = null,
+    default: List<JsonPrimitive?>
+) = byNullableLambdaList(key, default) { it.primitiveOrNull }
 
-inline fun JsonModel.nullableJsonPrimitiveList(
+inline fun JsonObject?.byNullableJsonPrimitiveList(key: String) = byNullableLambdaList(key) { it.primitiveOrNull }
+
+inline fun JsonModel?.nullableJsonPrimitiveList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<JsonPrimitive?>
 ) = nullableLambdaList(key, default) { it.primitiveOrNull }
 
-inline fun JsonModel.nullableJsonPrimitiveList(key: String? = null) = nullableLambdaList(key) { it.primitiveOrNull }
+inline fun JsonModel?.nullableJsonPrimitiveList(
+    key: String? = null,
+    default: List<JsonPrimitive?>
+) = nullableLambdaList(key, default) { it.primitiveOrNull }
 
-inline val JsonObject.byNullableJsonPrimitiveList
-    get() = byNullableJsonPrimitiveList()
-inline val JsonModel.nullableJsonPrimitiveList
-    get() = nullableJsonPrimitiveList()
+inline fun JsonModel?.nullableJsonPrimitiveList(key: String) = nullableLambdaList(key) { it.primitiveOrNull }
+
+inline val JsonObject?.byNullableJsonPrimitiveList
+    get() = byNullableLambdaList { it.primitiveOrNull }
+
+inline val JsonModel?.nullableJsonPrimitiveList
+    get() = nullableLambdaList { it.primitiveOrNull }

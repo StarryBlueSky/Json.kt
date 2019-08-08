@@ -30,7 +30,7 @@ import jp.nephy.jsonkt.JsonObject
 import jp.nephy.jsonkt.jsonObjectOrNull
 
 /*
-    JsonObject
+ *  JsonObject
  */
 
 inline fun JsonObject.byJsonObject(
@@ -38,22 +38,33 @@ inline fun JsonObject.byJsonObject(
     crossinline default: JsonObjectDefaultSelector<JsonObject>
 ) = byLambda(key, default) { it.jsonObject }
 
-inline fun JsonObject.byJsonObject(key: String? = null) = byLambda(key) { it.jsonObject }
+inline fun JsonObject.byJsonObject(
+    key: String? = null,
+    default: JsonObject
+) = byLambda(key, default) { it.jsonObject }
+
+inline fun JsonObject.byJsonObject(key: String) = byLambda(key) { it.jsonObject }
 
 inline fun JsonModel.jsonObject(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<JsonObject>
 ) = lambda(key, default) { it.jsonObject }
 
-inline fun JsonModel.jsonObject(key: String? = null) = lambda(key) { it.jsonObject }
+inline fun JsonModel.jsonObject(
+    key: String? = null,
+    default: JsonObject
+) = lambda(key, default) { it.jsonObject }
+
+inline fun JsonModel.jsonObject(key: String) = lambda(key) { it.jsonObject }
 
 inline val JsonObject.byJsonObject
-    get() = byJsonObject()
+    get() = byLambda { it.jsonObject }
+
 inline val JsonModel.jsonObject
-    get() = jsonObject()
+    get() = lambda { it.jsonObject }
 
 /*
-    JsonObject?
+ *  JsonObject?
  */
 
 inline fun JsonObject?.byNullableJsonObject(
@@ -61,64 +72,95 @@ inline fun JsonObject?.byNullableJsonObject(
     crossinline default: JsonObjectDefaultSelector<JsonObject?>
 ) = byNullableLambda(key, default) { it.jsonObjectOrNull }
 
-inline fun JsonObject?.byNullableJsonObject(key: String? = null) = byNullableLambda(key) { it.jsonObjectOrNull }
+inline fun JsonObject?.byNullableJsonObject(
+    key: String? = null,
+    default: JsonObject?
+) = byNullableLambda(key, default) { it.jsonObjectOrNull }
 
-inline fun JsonModel.nullableJsonObject(
+inline fun JsonObject?.byNullableJsonObject(key: String) = byNullableLambda(key) { it.jsonObjectOrNull }
+
+inline fun JsonModel?.nullableJsonObject(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<JsonObject?>
 ) = nullableLambda(key, default) { it.jsonObjectOrNull }
 
-inline fun JsonModel.nullableJsonObject(key: String? = null) = nullableLambda(key) { it.jsonObjectOrNull }
+inline fun JsonModel?.nullableJsonObject(
+    key: String? = null,
+    default: JsonObject?
+) = nullableLambda(key, default) { it.jsonObjectOrNull }
 
-inline val JsonObject.byNullableJsonObject
-    get() = byNullableJsonObject()
-inline val JsonModel.nullableJsonObject
-    get() = nullableJsonObject()
-inline val JsonModel.jsonObjectOrNull
-    get() = nullableJsonObject
+inline fun JsonModel?.nullableJsonObject(key: String) = nullableLambda(key) { it.jsonObjectOrNull }
+
+inline val JsonObject?.byNullableJsonObject
+    get() = byNullableLambda { it.jsonObjectOrNull }
+
+inline val JsonModel?.nullableJsonObject
+    get() = nullableLambda { it.jsonObjectOrNull }
 
 /*
-    List<JsonObject>
+ *  List<JsonObject>
  */
 
-inline fun JsonObject.byJsonObjectList (
+inline fun JsonObject.byJsonObjectList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<JsonObject>
 ) = byLambdaList(key, default) { it.jsonObject }
 
-inline fun JsonObject.byJsonObjectList(key: String? = null) = byLambdaList(key) { it.jsonObject }
+inline fun JsonObject.byJsonObjectList(
+    key: String? = null,
+    default: List<JsonObject>
+) = byLambdaList(key, default) { it.jsonObject }
+
+inline fun JsonObject.byJsonObjectList(key: String) = byLambdaList(key) { it.jsonObject }
 
 inline fun JsonModel.jsonObjectList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<JsonObject>
 ) = lambdaList(key, default) { it.jsonObject }
 
-inline fun JsonModel.jsonObjectList(key: String? = null) = lambdaList(key) { it.jsonObject }
+inline fun JsonModel.jsonObjectList(
+    key: String? = null,
+    default: List<JsonObject>
+) = lambdaList(key, default) { it.jsonObject }
+
+inline fun JsonModel.jsonObjectList(key: String) = lambdaList(key) { it.jsonObject }
 
 inline val JsonObject.byJsonObjectList
-    get() = byJsonObjectList()
+    get() = byLambdaList { it.jsonObject }
+
 inline val JsonModel.jsonObjectList
-    get() = jsonObjectList()
+    get() = lambdaList { it.jsonObject }
 
 /*
-    List<JsonObject?>
+ *  List<JsonObject?>
  */
 
-inline fun JsonObject.byNullableJsonObjectList(
+inline fun JsonObject?.byNullableJsonObjectList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<JsonObject?>
 ) = byNullableLambdaList(key, default) { it.jsonObjectOrNull }
 
-inline fun JsonObject.byNullableJsonObjectList(key: String? = null) = byNullableLambdaList(key) { it.jsonObjectOrNull }
+inline fun JsonObject?.byNullableJsonObjectList(
+    key: String? = null,
+    default: List<JsonObject?>
+) = byNullableLambdaList(key, default) { it.jsonObjectOrNull }
 
-inline fun JsonModel.nullableJsonObjectList(
+inline fun JsonObject?.byNullableJsonObjectList(key: String) = byNullableLambdaList(key) { it.jsonObjectOrNull }
+
+inline fun JsonModel?.nullableJsonObjectList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<JsonObject?>
 ) = nullableLambdaList(key, default) { it.jsonObjectOrNull }
 
-inline fun JsonModel.nullableJsonObjectList(key: String? = null) = nullableLambdaList(key) { it.jsonObjectOrNull }
+inline fun JsonModel?.nullableJsonObjectList(
+    key: String? = null,
+    default: List<JsonObject?>
+) = nullableLambdaList(key, default) { it.jsonObjectOrNull }
 
-inline val JsonObject.byNullableJsonObjectList
-    get() = byNullableJsonObjectList()
-inline val JsonModel.nullableJsonObjectList
-    get() = nullableJsonObjectList()
+inline fun JsonModel?.nullableJsonObjectList(key: String) = nullableLambdaList(key) { it.jsonObjectOrNull }
+
+inline val JsonObject?.byNullableJsonObjectList
+    get() = byNullableLambdaList { it.jsonObjectOrNull }
+
+inline val JsonModel?.nullableJsonObjectList
+    get() = nullableLambdaList { it.jsonObjectOrNull }
