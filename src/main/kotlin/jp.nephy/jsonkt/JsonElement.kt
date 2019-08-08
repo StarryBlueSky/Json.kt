@@ -127,6 +127,13 @@ inline val JsonElement.primitiveOrNull: JsonPrimitive?
         primitive
     }
 
+inline val JsonElement.literal: JsonLiteral
+    get() = this as JsonLiteral
+inline val JsonElement.literalOrNull: JsonLiteral?
+    get() = runSafely {
+        literal
+    }
+
 inline val JsonElement.char: Char
     get() = content.first()
 inline val JsonElement.charOrNull: Char?
