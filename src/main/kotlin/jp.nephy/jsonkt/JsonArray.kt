@@ -102,11 +102,11 @@ inline val JsonArray.jsonObjectList: List<JsonObject>
 inline val JsonArray.jsonArrayList: List<JsonArray>
     get() = map { it.jsonArray }
 
-inline val JsonArray.jsonElementList: List<JsonElement>
-    get() = toList()
-
 inline val JsonArray.jsonPrimitiveList: List<JsonPrimitive>
     get() = map { it.primitive }
+
+inline val JsonArray.jsonLiteralList: List<JsonLiteral>
+    get() = map { it.literal }
 
 inline val JsonArray.booleanList: List<Boolean>
     get() = map { it.boolean }
@@ -123,8 +123,44 @@ inline val JsonArray.floatList: List<Float>
 inline val JsonArray.doubleList: List<Double>
     get() = map { it.double }
 
+inline val JsonArray.charList: List<Char>
+    get() = map { it.char }
+
 inline val JsonArray.stringList: List<String>
-    get() = map { it.content }
+    get() = map { it.string }
+
+inline val JsonArray.nullableJsonObjectList: List<JsonObject?>
+    get() = map { it.jsonObjectOrNull }
+
+inline val JsonArray.nullableJsonArrayList: List<JsonArray?>
+    get() = map { it.jsonArrayOrNull }
+
+inline val JsonArray.nullableJsonPrimitiveList: List<JsonPrimitive?>
+    get() = map { it.primitiveOrNull }
+
+inline val JsonArray.nullableJsonLiteralList: List<JsonLiteral?>
+    get() = map { it.literalOrNull }
+
+inline val JsonArray.nullableBooleanList: List<Boolean?>
+    get() = map { it.booleanOrNull }
+
+inline val JsonArray.nullableIntList: List<Int?>
+    get() = map { it.intOrNull }
+
+inline val JsonArray.nullableLongList: List<Long?>
+    get() = map { it.longOrNull }
+
+inline val JsonArray.nullableFloatList: List<Float?>
+    get() = map { it.floatOrNull }
+
+inline val JsonArray.nullableDoubleList: List<Double?>
+    get() = map { it.doubleOrNull }
+
+inline val JsonArray.nullableCharList: List<Char?>
+    get() = map { it.charOrNull }
+
+inline val JsonArray.nullableStringList: List<String?>
+    get() = map { it.stringOrNull }
 
 /*
  * Edit
