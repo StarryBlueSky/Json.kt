@@ -72,3 +72,26 @@ inline fun String?.toJsonPrimitiveOrNull(): JsonPrimitive? {
         toJsonPrimitive()
     }
 }
+
+
+/*
+ * isXXX
+ */
+
+inline val JsonPrimitive.isBoolean: Boolean
+    get() = booleanOrNull != null
+
+inline val JsonPrimitive.isInt: Boolean
+    get() = intOrNull != null
+
+inline val JsonPrimitive.isLong: Boolean
+    get() = longOrNull != null
+
+inline val JsonPrimitive.isFloat: Boolean
+    get() = floatOrNull != null
+
+inline val JsonPrimitive.isDouble: Boolean
+    get() = doubleOrNull != null
+
+inline val JsonPrimitive.isString: Boolean
+    get() = literal.isString
