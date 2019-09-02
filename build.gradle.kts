@@ -233,7 +233,24 @@ val dokka = tasks.named<DokkaTask>("dokka") {
     includeNonPublic = false
     reportUndocumented = true
     skipEmptyPackages = true
-    skipDeprecated = false
+    skipDeprecated = true
+    
+    impliedPlatforms = mutableListOf("Common")
+    kotlinTasks {
+        emptyList()
+    }
+    sourceRoot {
+        path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
+        platforms = listOf("Common")
+    }
+    sourceRoot {
+        path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
+        platforms = listOf("JVM")
+    }
+    sourceRoot {
+        path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
+        platforms = listOf("JS")
+    }
 }
 
 val dokkaJavadoc = task<DokkaTask>("dokkaJavadoc") {
@@ -245,7 +262,24 @@ val dokkaJavadoc = task<DokkaTask>("dokkaJavadoc") {
     includeNonPublic = false
     reportUndocumented = false
     skipEmptyPackages = true
-    skipDeprecated = false
+    skipDeprecated = true
+    
+    impliedPlatforms = mutableListOf("Common")
+    kotlinTasks {
+        emptyList()
+    }
+    sourceRoot {
+        path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
+        platforms = listOf("Common")
+    }
+    sourceRoot {
+        path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
+        platforms = listOf("JVM")
+    }
+    sourceRoot {
+        path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
+        platforms = listOf("JS")
+    }
 }
 
 /*
