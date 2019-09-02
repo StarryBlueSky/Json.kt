@@ -29,11 +29,9 @@ import kotlin.reflect.KProperty
 
 private object UninitializedObject
 
-private typealias Initializer<T> = (KProperty<*>) -> T
-
 @Suppress("UNCHECKED_CAST")
-abstract class CachingReadOnlyProperty<in R, out T>(initializer: Initializer<T>): ReadOnlyProperty<R, T> {
-    private var initializer: Initializer<T>? = initializer
+open class CachingReadOnlyProperty<in R, out T> internal constructor(initializer: PropertyInitializer<T>): ReadOnlyProperty<R, T> {
+    private var initializer: PropertyInitializer<T>? = initializer
     private var value: Any? = UninitializedObject
 
     override fun getValue(thisRef: R, property: KProperty<*>): T {
@@ -56,4 +54,6 @@ abstract class CachingReadOnlyProperty<in R, out T>(initializer: Initializer<T>)
     }
 }
 
-class JsonDelegateProperty<out T>(internal val key: String?, initializer: Initializer<T>): CachingReadOnlyProperty<Any?, T>(initializer)
+
+actual class JsonDelegateProperty<out T> actual constructor(internal actual val key: String?, initializer: PropertyInitializer<T>)
+    : ReadOnlyProperty<Any?, T> by CachingReadOnlyProperty<Any?, T>(initializer)
