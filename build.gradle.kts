@@ -95,7 +95,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${ThirdpartyVersion.KotlinxSerializationRuntime}")
             }
         }
         named("commonTest").configure {
@@ -112,7 +112,7 @@ kotlin {
                 implementation(kotlin("stdlib"))
                 implementation(kotlin("reflect"))
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${ThirdpartyVersion.KotlinxSerializationRuntime}")
             }
         }
         named("jvmTest").configure {
@@ -138,7 +138,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-js"))
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${ThirdpartyVersion.KotlinxSerializationRuntime}")
             }
         }
         named("jsTest").configure {
@@ -151,7 +151,7 @@ kotlin {
 
 //        named("nativeMain").configure {
 //            dependencies {
-//                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$kotlinxSerializationVersion")
+//                api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$kotlinxSerializationVersion")
 //            }
 //        }
 //        named("nativeTest").configure {
