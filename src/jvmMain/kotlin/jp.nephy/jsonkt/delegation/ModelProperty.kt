@@ -29,10 +29,6 @@ package jp.nephy.jsonkt.delegation
 import jp.nephy.jsonkt.*
 import kotlin.reflect.KClass
 
-interface JsonModel {
-    val json: JsonObject
-}
-
 class InvalidJsonModelException(
     @Suppress("UNUSED_PARAMETER") val modelClass: KClass<*>
 ): JsonKtException("${modelClass.simpleName} does not have valid constructor.")
