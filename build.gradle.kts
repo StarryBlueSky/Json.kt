@@ -3,7 +3,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.ZonedDateTime
@@ -18,15 +17,27 @@ val packageName = "JsonKt"
 val packageVersion = Version(5, 0, 0)
 val packageDescription = "Json bindings for Kotlin"
 
+object ThirdpartyVersion {
+    const val KotlinxSerializationRuntime = "0.12.0"
+
+    // for testing
+    const val Spek = "2.0.6"
+
+    // for logging
+    const val KotlinLogging = "1.7.6"
+    const val Logback = "1.2.3"
+    const val jansi = "1.18"
+}
+
 plugins {
-    kotlin("jvm") version "1.3.41"
+    kotlin("multiplatform") version "1.3.50"
 
     // For testing
     id("com.adarshr.test-logger") version "1.7.0"
     id("build-time-tracker") version "0.11.1"
 
     // For publishing
-    id("maven-publish")
+    `maven-publish`
     id("com.jfrog.bintray") version "1.8.4"
 
     // For documentation
@@ -47,31 +58,111 @@ fun Project.property(key: String? = null) = object: ReadOnlyProperty<Project, St
 repositories {
     mavenCentral()
     jcenter()
-    maven(url = "https://kotlin.bintray.com/kotlin-eap")
+    maven(url = "https://dl.bintray.com/spekframework/spek-dev")
 }
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(kotlin("reflect"))
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.1")
-}
-
-/*
- * Compilations
- */
-
-tasks.named<KotlinCompile>("compileKotlin") {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs += listOf("-Xuse-experimental=kotlin.Experimental", "-Xuse-experimental=kotlin.contracts.ExperimentalContracts")
+kotlin {
+    metadata {
+        mavenPublication {
+            artifactId = "${rootProject.name}-common"
+        }
     }
-}
+    jvm {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+        mavenPublication {
+            artifactId = rootProject.name
+        }
+    }
+    js {
+        compilations {
+            named("main").configure {
+                kotlinOptions {
+                    metaInfo = true
+                    sourceMap = true
+                    verbose = true
+                    moduleKind = "umd"
+                }
+            }
+        }
+    }
 
-tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs += listOf("-Xuse-experimental=kotlin.Experimental", "-Xuse-experimental=kotlin.contracts.ExperimentalContracts")
+    sourceSets {
+        named("commonMain").configure {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+            }
+        }
+        named("commonTest").configure {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+
+                implementation("io.github.microutils:kotlin-logging-common:${ThirdpartyVersion.KotlinLogging}")
+            }
+        }
+
+        named("jvmMain").configure {
+            dependencies {
+                implementation(kotlin("stdlib"))
+                implementation(kotlin("reflect"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+            }
+        }
+        named("jvmTest").configure {
+            dependencies {
+                implementation(kotlin("test"))
+
+                implementation("org.spekframework.spek2:spek-dsl-jvm:${ThirdpartyVersion.Spek}") {
+                    exclude(group = "org.jetbrains.kotlin")
+                }
+                runtimeOnly("org.spekframework.spek2:spek-runner-junit5:${ThirdpartyVersion.Spek}") {
+                    exclude(group = "org.junit.platform")
+                    exclude(group = "org.jetbrains.kotlin")
+                }
+
+                implementation("io.github.microutils:kotlin-logging:${ThirdpartyVersion.KotlinLogging}")
+                implementation("ch.qos.logback:logback-core:${ThirdpartyVersion.Logback}")
+                implementation("ch.qos.logback:logback-classic:${ThirdpartyVersion.Logback}")
+                implementation("org.fusesource.jansi:jansi:${ThirdpartyVersion.jansi}")
+            }
+        }
+
+        named("jsMain").configure {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+            }
+        }
+        named("jsTest").configure {
+            dependencies {
+                implementation(kotlin("test-js"))
+
+                implementation("io.github.microutils:kotlin-logging-js:${ThirdpartyVersion.KotlinLogging}")
+            }
+        }
+
+//        named("nativeMain").configure {
+//            dependencies {
+//                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$kotlinxSerializationVersion")
+//            }
+//        }
+//        named("nativeTest").configure {
+//        }
+    }
+
+    sourceSets.all {
+        languageSettings.apiVersion = "1.3"
+        languageSettings.languageVersion = "1.3"
+        languageSettings.useExperimentalAnnotation("kotlin.Experimental")
+        languageSettings.useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
     }
 }
 
@@ -124,7 +215,7 @@ testlogger {
     theme = ThemeType.MOCHA
 }
 
-tasks.named<Test>("test") {
+tasks.named<Test>("jvmTest") {
     useJUnitPlatform {
         includeEngines("spek2")
     }
@@ -161,19 +252,6 @@ val dokkaJavadoc = task<DokkaTask>("dokkaJavadoc") {
  * Publishing
  */
 
-val jar = tasks.named<Jar>("jar").get()
-
-if (isEAPBuild) {
-    jar.destinationDir.listFiles()?.forEach {
-        it.delete()
-    }
-}
-
-val sourcesJar = task<Jar>("sourcesJar") {
-    classifier = "sources"
-    from(sourceSets["main"].allSource)
-}
-
 val javadocJar = task<Jar>("javadocJar") {
     dependsOn(dokkaJavadoc)
 
@@ -189,13 +267,33 @@ val kdocJar = task<Jar>("kdocJar") {
 }
 
 publishing {
-    publications {
-        create<MavenPublication>("kotlin") {
-            from(components.getByName("java"))
-
-            artifact(sourcesJar)
-            artifact(javadocJar)
+    publications.withType<MavenPublication> {
+        pom {
+            name.set(rootProject.name)
+            description.set(packageDescription)
+            url.set("https://github.com/$githubOrganizationName/$githubRepositoryName")
+            licenses {
+                license {
+                    name.set("MIT Licence")
+                    url.set("https://nephy.jp/license/mit")
+                }
+            }
+            developers {
+                developer {
+                    name.set("Slash Nephy")
+                    email.set("slash@nephy.jp")
+                    organization.set("github")
+                    organizationUrl.set("https://github.com/SlashNephy")
+                }
+            }
+            scm {
+                connection.set("scm:git:git://github.com/$githubOrganizationName/$githubRepositoryName.git")
+                developerConnection.set("scm:git:ssh://github.com:$githubOrganizationName/$githubRepositoryName.git")
+                url.set("https://github.com/$githubOrganizationName/$githubRepositoryName/tree/master")
+            }
         }
+
+        artifact(javadocJar)
     }
 }
 
@@ -203,12 +301,12 @@ val bintrayUsername by property()
 val bintrayApiKey by property()
 
 bintray {
-    setPublications("kotlin")
-
     user = bintrayUsername
     key = bintrayApiKey
     publish = true
     override = true
+
+    setPublications("metadata", "jvm", "js")
 
     pkg.apply {
         repo = if (isEAPBuild) "dev" else "stable"
