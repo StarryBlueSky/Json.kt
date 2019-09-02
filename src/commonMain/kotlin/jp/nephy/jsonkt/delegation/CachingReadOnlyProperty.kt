@@ -22,28 +22,38 @@
  * SOFTWARE.
  */
 
-package jp.nephy.jsonkt
+package jp.nephy.jsonkt.delegation
 
-import jp.nephy.jsonkt.delegation.InvalidJsonModelException
-import jp.nephy.jsonkt.delegation.JsonModel
-import kotlin.reflect.KClass
+import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.jvmName
 
-actual val KProperty<*>.returnsNullable: Boolean
-    get() = returnType.isMarkedNullable
+private object UninitializedObject
 
-@PublishedApi
-internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject): M {
-    return runSafely {
-        primaryConstructor?.call(json)
-    } ?: throw InvalidJsonModelException(this)
+private typealias Initializer<T> = (KProperty<*>) -> T
+
+@Suppress("UNCHECKED_CAST")
+abstract class CachingReadOnlyProperty<in R, out T>(initializer: Initializer<T>): ReadOnlyProperty<R, T> {
+    private var initializer: Initializer<T>? = initializer
+    private var value: Any? = UninitializedObject
+
+    override fun getValue(thisRef: R, property: KProperty<*>): T {
+        val v0 = value
+        if (v0 != UninitializedObject) {
+            return value as T
+        }
+
+        return synchronized(this) {
+            val v1 = value
+            if (v1 != UninitializedObject) {
+                value as T
+            } else {
+                val v = initializer!!(property)
+                initializer = null
+                value = v
+                v
+            }
+        }
+    }
 }
 
-@PublishedApi
-internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject, vararg args: Any?): M {
-    return runSafely {
-        primaryConstructor?.call(json, *args)
-    } ?: throw InvalidJsonModelException(this)
-}
+class JsonDelegateProperty<out T>(internal val key: String?, initializer: Initializer<T>): CachingReadOnlyProperty<Any?, T>(initializer)

@@ -22,28 +22,28 @@
  * SOFTWARE.
  */
 
-package jp.nephy.jsonkt
+@file:Suppress("UNUSED")
 
-import jp.nephy.jsonkt.delegation.InvalidJsonModelException
-import jp.nephy.jsonkt.delegation.JsonModel
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.jvmName
+package jp.nephy.jsonkt.delegation
 
-actual val KProperty<*>.returnsNullable: Boolean
-    get() = returnType.isMarkedNullable
+import jp.nephy.jsonkt.*
 
-@PublishedApi
-internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject): M {
-    return runSafely {
-        primaryConstructor?.call(json)
-    } ?: throw InvalidJsonModelException(this)
+inline fun <reified T: JsonModel> JsonModel.modelValue(key: String): T {
+    return (json[key] ?: throw JsonNullPointerException(key, json)).parse()
 }
 
-@PublishedApi
-internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject, vararg args: Any?): M {
-    return runSafely {
-        primaryConstructor?.call(json, *args)
-    } ?: throw InvalidJsonModelException(this)
+inline fun <reified T: JsonModel> JsonModel.modelValueOrNull(key: String): T? {
+    return json.getObjectOrNull(key).parseOrNull()
+}
+
+inline fun <reified T: JsonModel> JsonModel.modelListValue(key: String): List<T> {
+    return (json[key] ?: throw JsonNullPointerException(key, json)).parseList()
+}
+
+inline fun <reified T: JsonModel> JsonModel.modelListValueOrNull(key: String): List<T>? {
+    return json.getArrayOrNull(key).parseListOrNull()
+}
+
+inline fun <reified T: JsonModel> JsonModel.modelListValueOrEmpty(key: String): List<T> {
+    return json.getArrayOrNull(key).parseListOrEmpty()
 }

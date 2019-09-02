@@ -54,13 +54,13 @@ inline fun <T> JsonObject?.jsonObjectProperty(
     }.recoverCatching {
         json?.let(default)
     }.recoverCatching {
-        if (!property.returnType.isMarkedNullable) {
+        if (!property.returnsNullable) {
             throw it
         }
 
         null
     }.mapCatching {
-        if (it == null && !property.returnType.isMarkedNullable) {
+        if (it == null && !property.returnsNullable) {
             throw JsonNullPointerException(jsonKey, json)
         }
 
@@ -95,13 +95,13 @@ inline fun <T> JsonObject?.jsonArrayProperty(
                         element.let(converter)
                     }
                 }.recoverCatching {
-                    if (!property.returnType.isMarkedNullable) {
+                    if (!property.returnsNullable) {
                         throw it
                     }
 
                     null
                 }.mapCatching {
-                    if (it == null && !property.returnType.isMarkedNullable) {
+                    if (it == null && !property.returnsNullable) {
                         throw JsonNullPointerException(jsonKey, json)
                     }
 
