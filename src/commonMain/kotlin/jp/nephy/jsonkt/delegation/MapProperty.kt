@@ -22,38 +22,15 @@
  * SOFTWARE.
  */
 
+@file:Suppress("UNUSED")
+
 package jp.nephy.jsonkt.delegation
 
-import kotlin.properties.ReadOnlyProperty
+import kotlinx.serialization.json.JsonObject
 import kotlin.reflect.KProperty
 
-private object UninitializedObject
+expect inline operator fun <reified T> JsonObject.getValue(thisRef: Any?, property: KProperty<*>): T
 
-private typealias Initializer<T> = (KProperty<*>) -> T
-
-@Suppress("UNCHECKED_CAST")
-abstract class CachingReadOnlyProperty<in R, out T>(initializer: Initializer<T>): ReadOnlyProperty<R, T> {
-    private var initializer: Initializer<T>? = initializer
-    @Volatile private var value: Any? = UninitializedObject
-
-    override fun getValue(thisRef: R, property: KProperty<*>): T {
-        val v0 = value
-        if (v0 != UninitializedObject) {
-            return value as T
-        }
-
-        return synchronized(this) {
-            val v1 = value
-            if (v1 != UninitializedObject) {
-                value as T
-            } else {
-                val v = initializer!!(property)
-                initializer = null
-                value = v
-                v
-            }
-        }
-    }
+inline operator fun <reified T> JsonModel.getValue(thisRef: Any?, property: KProperty<*>): T {
+    return json.getValue(thisRef, property)
 }
-
-class JsonDelegateProperty<out T>(internal val key: String?, initializer: Initializer<T>): CachingReadOnlyProperty<Any?, T>(initializer)

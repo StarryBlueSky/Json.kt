@@ -43,7 +43,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.isSubclassOf
 
 @Suppress("IMPLICIT_CAST_TO_ANY", "UNCHECKED_CAST")
-inline operator fun <reified T> JsonObject.getValue(thisRef: Any?, property: KProperty<*>): T {
+actual inline operator fun <reified T> JsonObject.getValue(thisRef: Any?, property: KProperty<*>): T {
     val value = this[property.name]
 
     return when (val kClass = T::class) {
@@ -94,8 +94,4 @@ inline operator fun <reified T> JsonObject.getValue(thisRef: Any?, property: KPr
             }
         }
     } as T
-}
-
-inline operator fun <reified T> JsonModel.getValue(thisRef: Any?, property: KProperty<*>): T {
-    return json.getValue(thisRef, property)
 }

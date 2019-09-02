@@ -125,22 +125,3 @@ fun JsonModel.stringValue(key: String, default: () -> String): String {
     return stringValueOrNull(key) ?: default()
 }
 
-inline fun <reified T: JsonModel> JsonModel.modelValue(key: String): T {
-    return (json[key] ?: throw JsonNullPointerException(key, json)).parse()
-}
-
-inline fun <reified T: JsonModel> JsonModel.modelValueOrNull(key: String): T? {
-    return json.getObjectOrNull(key).parseOrNull()
-}
-
-inline fun <reified T: JsonModel> JsonModel.modelListValue(key: String): List<T> {
-    return (json[key] ?: throw JsonNullPointerException(key, json)).parseList()
-}
-
-inline fun <reified T: JsonModel> JsonModel.modelListValueOrNull(key: String): List<T>? {
-    return json.getArrayOrNull(key).parseListOrNull()
-}
-
-inline fun <reified T: JsonModel> JsonModel.modelListValueOrEmpty(key: String): List<T> {
-    return json.getArrayOrNull(key).parseListOrEmpty()
-}
