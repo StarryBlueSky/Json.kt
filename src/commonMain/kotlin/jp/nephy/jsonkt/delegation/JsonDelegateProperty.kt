@@ -29,6 +29,11 @@ import kotlin.reflect.KProperty
 
 internal typealias PropertyInitializer<T> = (KProperty<*>) -> T
 
-expect class JsonDelegateProperty<out T>(key: String?, initializer: PropertyInitializer<T>): ReadOnlyProperty<Any?, T> {
+internal object UninitializedObject
+
+expect class JsonDelegateProperty<out T>(
+    key: String?,
+    initializer: PropertyInitializer<T>
+): ReadOnlyProperty<Any?, T> {
     internal val key: String?
 }

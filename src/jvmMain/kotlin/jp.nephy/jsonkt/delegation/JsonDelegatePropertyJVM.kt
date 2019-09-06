@@ -27,33 +27,32 @@ package jp.nephy.jsonkt.delegation
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-private object UninitializedObject
+open class CachingReadOnlyProperty<in R, out T> internal constructor(
+    private val initializer: PropertyInitializer<T>
+): ReadOnlyProperty<R, T> {
+    @Volatile private var value: Any? = UninitializedObject
 
-@Suppress("UNCHECKED_CAST")
-open class CachingReadOnlyProperty<in R, out T> internal constructor(initializer: PropertyInitializer<T>): ReadOnlyProperty<R, T> {
-    private var initializer: PropertyInitializer<T>? = initializer
-    private var value: Any? = UninitializedObject
-
+    @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: R, property: KProperty<*>): T {
-        val v0 = value
-        if (v0 != UninitializedObject) {
-            return value as T
+        val v1 = value
+        if (v1 !== UninitializedObject) {
+            return v1 as T
         }
 
         return synchronized(this) {
-            val v1 = value
-            if (v1 != UninitializedObject) {
-                value as T
+            val v2 = value
+            if (v2 === UninitializedObject) {
+                val v3 = initializer(property)
+                value = v3
+                v3
             } else {
-                val v = initializer!!(property)
-                initializer = null
-                value = v
-                v
+                v2 as T
             }
         }
     }
 }
 
-
-actual class JsonDelegateProperty<out T> actual constructor(internal actual val key: String?, initializer: PropertyInitializer<T>)
-    : ReadOnlyProperty<Any?, T> by CachingReadOnlyProperty<Any?, T>(initializer)
+actual class JsonDelegateProperty<out T> actual constructor(
+    internal actual val key: String?,
+    initializer: PropertyInitializer<T>
+): ReadOnlyProperty<Any?, T> by CachingReadOnlyProperty<Any?, T>(initializer)
