@@ -29,8 +29,17 @@ package jp.nephy.jsonkt.delegation
 import kotlinx.serialization.json.JsonObject
 import kotlin.reflect.KProperty
 
-expect inline operator fun <reified T> JsonObject.getValue(thisRef: Any?, property: KProperty<*>): T
+@PublishedApi
+internal expect inline fun <reified T> JsonObject.getValue(key: String): T
+
+inline operator fun <reified T> JsonObject.getValue(thisRef: Any?, property: KProperty<*>): T {
+    val jsonKey = property.name
+
+    return getValue(jsonKey)
+}
 
 inline operator fun <reified T> JsonModel.getValue(thisRef: Any?, property: KProperty<*>): T {
-    return json.getValue(thisRef, property)
+    val jsonKey = keyConverter(property)
+
+    return json.getValue(jsonKey)
 }

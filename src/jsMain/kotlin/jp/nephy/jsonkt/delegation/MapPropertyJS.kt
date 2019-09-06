@@ -8,11 +8,11 @@ import kotlinx.serialization.json.JsonLiteral
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlin.reflect.KProperty
 
+@PublishedApi
 @Suppress("IMPLICIT_CAST_TO_ANY", "UNCHECKED_CAST")
-actual inline operator fun <reified T> JsonObject.getValue(thisRef: Any?, property: KProperty<*>): T {
-    val value = this[property.name]
+internal actual inline fun <reified T> JsonObject.getValue(key: String): T {
+    val value = this[key]
 
     return when (val kClass = T::class) {
         Boolean::class -> {
