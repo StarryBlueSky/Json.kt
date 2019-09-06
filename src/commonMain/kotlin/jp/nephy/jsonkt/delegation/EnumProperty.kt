@@ -44,16 +44,16 @@ interface DoubleJsonEnum: JsonEnum<Double>
 interface CharJsonEnum: JsonEnum<Char>
 interface StringJsonEnum: JsonEnum<String>
 
-class NoSuchEmumMemberException(
+class NoSuchEnumMemberException(
     @Suppress("UNUSED_PARAMETER") val enumClass: KClass<*>,
     @Suppress("UNUSED_PARAMETER") val value: Any
 ): JsonKtException("Enum class ${enumClass.simpleName} does not have member of value $value.")
 
 /**
- * @throws NoSuchEmumMemberException
+ * @throws NoSuchEnumMemberException
  */
 inline fun <T: Any, reified E> findEnumMember(value: T): E where E: Enum<E>, E: JsonEnum<T> {
-    return findEnumMemberOrNull(value) ?: throw NoSuchEmumMemberException(E::class, value)
+    return findEnumMemberOrNull(value) ?: throw NoSuchEnumMemberException(E::class, value)
 }
 
 inline fun <T: Any, reified E> findEnumMemberOrNull(value: T): E? where E: Enum<E>, E: JsonEnum<T> {
