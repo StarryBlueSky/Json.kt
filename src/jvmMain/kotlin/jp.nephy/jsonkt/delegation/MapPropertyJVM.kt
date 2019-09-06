@@ -27,10 +27,6 @@
 package jp.nephy.jsonkt.delegation
 
 import jp.nephy.jsonkt.*
-import jp.nephy.jsonkt.jsonArrayOrNull
-import jp.nephy.jsonkt.jsonObjectOrNull
-import jp.nephy.jsonkt.primitiveOrNull
-import jp.nephy.jsonkt.stringOrNull
 import kotlinx.serialization.json.*
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -39,12 +35,12 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 import kotlin.reflect.full.isSubclassOf
 
+@PublishedApi
 @Suppress("IMPLICIT_CAST_TO_ANY", "UNCHECKED_CAST")
-actual inline operator fun <reified T> JsonObject.getValue(thisRef: Any?, property: KProperty<*>): T {
-    val value = this[property.name]
+internal actual inline fun <reified T> JsonObject.getValue(key: String): T {
+    val value = this[key]
 
     return when (val kClass = T::class) {
         Boolean::class -> {

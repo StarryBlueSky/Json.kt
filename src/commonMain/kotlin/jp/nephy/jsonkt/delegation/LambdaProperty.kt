@@ -53,18 +53,18 @@ inline fun <T: Any> JsonModel.lambda(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<T>,
     crossinline converter: JsonElementConverter<T>
-) = json.jsonObjectProperty(key, default, converter)
+) = jsonObjectProperty(key, default, converter)
 
 inline fun <T: Any> JsonModel.lambda(
     key: String? = null,
     default: T,
     crossinline converter: JsonElementConverter<T>
-) = json.jsonObjectProperty(key, { default }, converter)
+) = jsonObjectProperty(key, { default }, converter)
 
 inline fun <T: Any> JsonModel.lambda(
     key: String? = null,
     crossinline converter: JsonElementConverter<T>
-) = json.jsonObjectProperty(key, converter = converter)
+) = jsonObjectProperty(key, converter = converter)
 
 /*
  *  T?
@@ -91,18 +91,18 @@ inline fun <T> JsonModel?.nullableLambda(
     key: String? = null,
     crossinline default: JsonObjectDefaultSelector<T?>,
     crossinline converter: JsonElementConverter<T?>
-) = this?.json.jsonObjectProperty(key, default, converter)
+) = jsonObjectProperty(key, default, converter)
 
 inline fun <T> JsonModel?.nullableLambda(
     key: String? = null,
     default: T?,
     crossinline converter: JsonElementConverter<T?>
-) = this?.json.jsonObjectProperty(key, { default }, converter)
+) = jsonObjectProperty(key, { default }, converter)
 
 inline fun <T> JsonModel?.nullableLambda(
     key: String? = null,
     crossinline converter: JsonElementConverter<T?>
-) = this?.json.jsonObjectProperty(key, converter = converter)
+) = jsonObjectProperty(key, converter = converter)
 
 /*
  *  List<T>
@@ -129,18 +129,18 @@ inline fun <T: Any> JsonModel.lambdaList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<T>,
     crossinline converter: JsonElementConverter<T>
-) = json.jsonArrayProperty(key, default, converter)
+) = jsonArrayProperty(key, default, converter)
 
 inline fun <T: Any> JsonModel.lambdaList(
     key: String? = null,
     default: List<T>,
     crossinline converter: JsonElementConverter<T>
-) = json.jsonArrayProperty(key, { default }, converter)
+) = jsonArrayProperty(key, { default }, converter)
 
 inline fun <T: Any> JsonModel.lambdaList(
     key: String? = null,
     crossinline converter: JsonElementConverter<T>
-) = json.jsonArrayProperty(key, converter = converter)
+) = jsonArrayProperty(key, converter = converter)
 
 /*
  *  List<T?>
@@ -167,15 +167,15 @@ inline fun <T> JsonModel?.nullableLambdaList(
     key: String? = null,
     crossinline default: JsonArrayDefaultSelector<T?>,
     crossinline converter: JsonElementConverter<T?>
-) = this?.json.jsonArrayProperty(key, default, converter)
+) = jsonArrayProperty(key, default, converter)
 
 inline fun <T> JsonModel?.nullableLambdaList(
     key: String? = null,
     default: List<T?>,
     crossinline converter: JsonElementConverter<T?>
-) = this?.json.jsonArrayProperty(key, { default }, converter)
+) = jsonArrayProperty(key, { default }, converter)
 
 inline fun <T> JsonModel?.nullableLambdaList(
     key: String? = null,
     crossinline converter: JsonElementConverter<T?>
-) = this?.json.jsonArrayProperty(key, converter = converter)
+) = jsonArrayProperty(key, converter = converter)
