@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+@file:Suppress("unused")
+
 package jp.nephy.jsonkt.delegation
 
 import kotlin.properties.ReadOnlyProperty
