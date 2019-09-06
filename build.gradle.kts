@@ -26,7 +26,7 @@ object ThirdpartyVersion {
     // for logging
     const val KotlinLogging = "1.7.6"
     const val Logback = "1.2.3"
-    const val jansi = "1.18"
+    const val Jansi = "1.18"
 }
 
 plugins {
@@ -130,7 +130,7 @@ kotlin {
                 implementation("io.github.microutils:kotlin-logging:${ThirdpartyVersion.KotlinLogging}")
                 implementation("ch.qos.logback:logback-core:${ThirdpartyVersion.Logback}")
                 implementation("ch.qos.logback:logback-classic:${ThirdpartyVersion.Logback}")
-                implementation("org.fusesource.jansi:jansi:${ThirdpartyVersion.jansi}")
+                implementation("org.fusesource.jansi:jansi:${ThirdpartyVersion.Jansi}")
             }
         }
 
@@ -289,14 +289,14 @@ val dokkaJavadoc = task<DokkaTask>("dokkaJavadoc") {
 val javadocJar = task<Jar>("javadocJar") {
     dependsOn(dokkaJavadoc)
 
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
     from("$buildDir/javadoc")
 }
 
 val kdocJar = task<Jar>("kdocJar") {
     dependsOn(dokka)
 
-    classifier = "kdoc"
+    archiveClassifier.set("kdoc")
     from("$buildDir/kdoc")
 }
 
@@ -353,15 +353,15 @@ bintray {
         publicDownloadNumbers = true
 
         githubRepo = "$githubOrganizationName/$githubRepositoryName"
-        websiteUrl = "https://github.com/$githubOrganizationName/$githubRepositoryName"
-        issueTrackerUrl = "https://github.com/$githubOrganizationName/$githubRepositoryName/issues"
-        vcsUrl = "https://github.com/$githubOrganizationName/$githubRepositoryName.git"
+        websiteUrl = "https://github.com/$githubRepo"
+        issueTrackerUrl = "$websiteUrl/issues"
+        vcsUrl = "$websiteUrl.git"
 
         version.apply {
             name = project.version.toString()
-            desc = "$packageName ${project.version}"
-            released = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ").format(ZonedDateTime.now())
-            vcsTag = project.version.toString()
+            desc = "$packageName $name"
+            released = DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.now())
+            vcsTag = name
         }
     }
 }

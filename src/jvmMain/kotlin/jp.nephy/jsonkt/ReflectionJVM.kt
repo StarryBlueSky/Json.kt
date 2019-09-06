@@ -29,7 +29,6 @@ import jp.nephy.jsonkt.delegation.JsonModel
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.jvmName
 
 actual val KProperty<*>.returnsNullable: Boolean
     get() = returnType.isMarkedNullable

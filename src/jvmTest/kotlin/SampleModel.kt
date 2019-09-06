@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED")
+
 import jp.nephy.jsonkt.JsonObject
 import jp.nephy.jsonkt.delegation.*
 
