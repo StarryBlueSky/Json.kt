@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "UNUSED_PARAMETER")
+@file:Suppress("UNUSED", "UNUSED_PARAMETER", "MemberVisibilityCanBePrivate", "CanBeParameter")
 
 package jp.nephy.jsonkt
 
