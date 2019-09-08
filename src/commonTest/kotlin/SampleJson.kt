@@ -20,5 +20,6 @@ const val json = """{
             "y": 20.00001,
             "z": 30
         }
-    ]
+    ],
+    "snake_key": "Python"
 }"""
