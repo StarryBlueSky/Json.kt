@@ -360,7 +360,7 @@ bintray {
         version.apply {
             name = project.version.toString()
             desc = "$packageName $name"
-            released = DateTimeFormatter.ISO_DATE_TIME.format(ZonedDateTime.now())
+            released = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ").format(ZonedDateTime.now())
             vcsTag = name
         }
     }
