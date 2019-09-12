@@ -29,22 +29,22 @@ package jp.nephy.jsonkt.delegation
 import jp.nephy.jsonkt.JsonObject
 
 @PublishedApi
-internal expect inline fun <reified T: JsonModel> JsonObject?.jsonModelProperty(key: String? = null, vararg args: Any?): JsonObjectProperty<T>
+internal expect inline fun <reified T: JsonModel> JsonObject?.jsonModelProperty(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T>
 
 @PublishedApi
-internal expect inline fun <reified T: JsonModel> JsonObject?.jsonModelOrDefaultProperty(key: String? = null, vararg args: Any?): JsonObjectProperty<T>
+internal expect inline fun <reified T: JsonModel> JsonObject?.jsonModelOrDefaultProperty(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T>
 
 @PublishedApi
-internal expect inline fun <reified T: JsonModel> JsonObject?.jsonModelOrNullProperty(key: String? = null, vararg args: Any?): JsonObjectProperty<T?>
+internal expect inline fun <reified T: JsonModel> JsonObject?.jsonModelOrNullProperty(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T?>
 
 @PublishedApi
-internal expect inline fun <reified T: JsonModel> JsonModel?.jsonModelProperty(key: String? = null, vararg args: Any?): JsonObjectProperty<T>
+internal expect inline fun <reified T: JsonModel> JsonModel?.jsonModelProperty(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T>
 
 @PublishedApi
-internal expect inline fun <reified T: JsonModel> JsonModel?.jsonModelOrDefaultProperty(key: String? = null, vararg args: Any?): JsonObjectProperty<T>
+internal expect inline fun <reified T: JsonModel> JsonModel?.jsonModelOrDefaultProperty(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T>
 
 @PublishedApi
-internal expect inline fun <reified T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: String? = null, vararg args: Any?): JsonObjectProperty<T?>
+internal expect inline fun <reified T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T?>
 
 @PublishedApi
 internal expect inline fun <reified T: JsonModel> JsonObject?.jsonModelProperty(key: String? = null): JsonObjectProperty<T>
@@ -68,13 +68,13 @@ internal expect inline fun <reified T: JsonModel> JsonModel?.jsonModelOrNullProp
     JsonModel
  */
 
-inline fun <reified T: JsonModel> JsonObject.byModel(key: String? = null, vararg args: Any?): JsonObjectProperty<T> = jsonModelProperty<T>(key, *args)
+inline fun <reified T: JsonModel> JsonObject.byModel(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T> = jsonModelProperty<T>(key, *parameters)
 
-inline fun <reified T: JsonModel> JsonModel.model(key: String? = null, vararg args: Any?): JsonObjectProperty<T> = jsonModelProperty<T>(key, *args)
+inline fun <reified T: JsonModel> JsonModel.model(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T> = jsonModelProperty<T>(key, *parameters)
 
-inline fun <reified T: JsonModel> JsonObject.byModelOrDefault(key: String? = null, vararg args: Any?): JsonObjectProperty<T> = jsonModelOrDefaultProperty<T>(key, *args)
+inline fun <reified T: JsonModel> JsonObject.byModelOrDefault(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T> = jsonModelOrDefaultProperty<T>(key, *parameters)
 
-inline fun <reified T: JsonModel> JsonModel.modelOrDefault(key: String? = null, vararg args: Any?): JsonObjectProperty<T> = jsonModelOrDefaultProperty<T>(key, *args)
+inline fun <reified T: JsonModel> JsonModel.modelOrDefault(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T> = jsonModelOrDefaultProperty<T>(key, *parameters)
 
 inline fun <reified T: JsonModel> JsonObject.byModel(key: String? = null): JsonObjectProperty<T> = jsonModelProperty<T>(key)
 
@@ -88,9 +88,9 @@ inline fun <reified T: JsonModel> JsonModel.modelOrDefault(key: String? = null):
     JsonModel?
  */
 
-inline fun <reified T: JsonModel> JsonObject?.byNullableModel(key: String? = null, vararg args: Any?): JsonObjectProperty<T?> = jsonModelOrNullProperty<T>(key, *args)
+inline fun <reified T: JsonModel> JsonObject?.byNullableModel(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T?> = jsonModelOrNullProperty<T>(key, *parameters)
 
-inline fun <reified T: JsonModel> JsonModel?.nullableModel(key: String? = null, vararg args: Any?): JsonObjectProperty<T?> = jsonModelOrNullProperty<T>(key, *args)
+inline fun <reified T: JsonModel> JsonModel?.nullableModel(key: String? = null, vararg parameters: Any?): JsonObjectProperty<T?> = jsonModelOrNullProperty<T>(key, *parameters)
 
 inline fun <reified T: JsonModel> JsonObject?.byNullableModel(key: String? = null): JsonObjectProperty<T?> = jsonModelOrNullProperty<T>(key)
 

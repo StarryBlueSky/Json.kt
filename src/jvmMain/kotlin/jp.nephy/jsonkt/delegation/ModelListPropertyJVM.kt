@@ -6,33 +6,33 @@ import jp.nephy.jsonkt.parse
 import jp.nephy.jsonkt.parseOrNull
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelListProperty(key: String?, vararg args: Any?): JsonArrayProperty<T> {
-    return jsonArrayProperty(key) { it.parse<T>(*args) }
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelListProperty(key: String?, vararg parameters: Any?): JsonArrayProperty<T> {
+    return jsonArrayProperty(key) { it.parse<T>(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelListOrDefaultProperty(key: String?, vararg args: Any?): JsonArrayProperty<T> {
-    return jsonArrayProperty(key) { it.parseOrNull<T>(*args) ?: jsonObjectOf().parse(*args) }
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelListOrDefaultProperty(key: String?, vararg parameters: Any?): JsonArrayProperty<T> {
+    return jsonArrayProperty(key) { it.parseOrNull<T>(*parameters) ?: jsonObjectOf().parse(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelListOrNullProperty(key: String?, vararg args: Any?): JsonArrayProperty<T?> {
-    return jsonArrayProperty(key) { it.parseOrNull<T>(*args) }
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelListOrNullProperty(key: String?, vararg parameters: Any?): JsonArrayProperty<T?> {
+    return jsonArrayProperty(key) { it.parseOrNull<T>(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelListProperty(key: String?, vararg args: Any?): JsonArrayProperty<T> {
-    return jsonArrayProperty(key) { it.parse<T>(*args) }
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelListProperty(key: String?, vararg parameters: Any?): JsonArrayProperty<T> {
+    return jsonArrayProperty(key) { it.parse<T>(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelListOrDefaultProperty(key: String?, vararg args: Any?): JsonArrayProperty<T> {
-    return jsonArrayProperty(key) { it.parseOrNull<T>(*args) ?: jsonObjectOf().parse(*args) }
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelListOrDefaultProperty(key: String?, vararg parameters: Any?): JsonArrayProperty<T> {
+    return jsonArrayProperty(key) { it.parseOrNull<T>(*parameters) ?: jsonObjectOf().parse(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelListOrNullProperty(key: String?, vararg args: Any?): JsonArrayProperty<T?> {
-    return jsonArrayProperty(key) { it.parseOrNull<T>(*args) }
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelListOrNullProperty(key: String?, vararg parameters: Any?): JsonArrayProperty<T?> {
+    return jsonArrayProperty(key) { it.parseOrNull<T>(*parameters) }
 }
 
 @PublishedApi

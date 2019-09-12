@@ -26,7 +26,6 @@
 
 package jp.nephy.jsonkt
 
-import jp.nephy.jsonkt.delegation.InvalidJsonModelException
 import jp.nephy.jsonkt.delegation.JsonModel
 import java.io.File
 import java.nio.charset.Charset
@@ -100,52 +99,52 @@ inline fun Path?.toJsonArrayOrNull(charset: Charset = Charsets.UTF_8): JsonArray
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> File.parse(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): T {
-    return toJsonObject(charset).parse(model, *args)
+inline fun <T: JsonModel> File.parseAs(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): T {
+    return toJsonObject(charset).parseAs(model, *parameters)
 }
 
-inline fun <T: JsonModel> File?.parseOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): T? {
+inline fun <T: JsonModel> File?.parseAsOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): T? {
     return runSafely {
-        parse(model, charset, *args)
+        parseAs(model, charset, *parameters)
     }
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> File.parse(model: KClass<T>, charset: Charset = Charsets.UTF_8): T {
-    return toJsonObject(charset).parse(model)
+inline fun <T: JsonModel> File.parseAs(model: KClass<T>, charset: Charset = Charsets.UTF_8): T {
+    return toJsonObject(charset).parseAs(model)
 }
 
 inline fun <T: JsonModel> File?.parseOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8): T? {
     return runSafely {
-        parse(model, charset)
+        parseAs(model, charset)
     }
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> Path.parse(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): T {
-    return toJsonObject(charset).parse(model, *args)
+inline fun <T: JsonModel> Path.parseAs(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): T {
+    return toJsonObject(charset).parseAs(model, *parameters)
 }
 
-inline fun <T: JsonModel> Path?.parseOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): T? {
+inline fun <T: JsonModel> Path?.parseAsOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): T? {
     return runSafely {
-        parse(model, charset, *args)
+        parseAs(model, charset, *parameters)
     }
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> Path.parse(model: KClass<T>, charset: Charset = Charsets.UTF_8): T {
-    return toJsonObject(charset).parse(model)
+inline fun <T: JsonModel> Path.parseAs(model: KClass<T>, charset: Charset = Charsets.UTF_8): T {
+    return toJsonObject(charset).parseAs(model)
 }
 
-inline fun <T: JsonModel> Path?.parseOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8): T? {
+inline fun <T: JsonModel> Path?.parseAsOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8): T? {
     return runSafely {
-        parse(model, charset)
+        parseAs(model, charset)
     }
 }
 
@@ -156,45 +155,45 @@ inline fun <T: JsonModel> Path?.parseOrNull(model: KClass<T>, charset: Charset =
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <reified T: JsonModel> File.parse(charset: Charset = Charsets.UTF_8, vararg args: Any?): T {
-    return parse(T::class, charset, *args)
+inline fun <reified T: JsonModel> File.parse(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): T {
+    return parseAs(T::class, charset, *parameters)
 }
 
-inline fun <reified T: JsonModel> File?.parseOrNull(charset: Charset = Charsets.UTF_8, vararg args: Any?): T? {
-    return parseOrNull(T::class, charset, *args)
+inline fun <reified T: JsonModel> File?.parseOrNull(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): T? {
+    return parseAsOrNull(T::class, charset, *parameters)
 }
 
 /**
  * @throws InvalidJsonModelException
  */
 inline fun <reified T: JsonModel> File.parse(charset: Charset = Charsets.UTF_8): T {
-    return parse(T::class, charset)
+    return parseAs(T::class, charset)
 }
 
 inline fun <reified T: JsonModel> File?.parseOrNull(charset: Charset = Charsets.UTF_8): T? {
-    return parseOrNull(T::class, charset)
+    return parseAsOrNull(T::class, charset)
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <reified T: JsonModel> Path.parse(charset: Charset = Charsets.UTF_8, vararg args: Any?): T {
-    return parse(T::class, charset, *args)
+inline fun <reified T: JsonModel> Path.parse(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): T {
+    return parseAs(T::class, charset, *parameters)
 }
 
-inline fun <reified T: JsonModel> Path?.parseOrNull(charset: Charset = Charsets.UTF_8, vararg args: Any?): T? {
-    return parseOrNull(T::class, charset, *args)
+inline fun <reified T: JsonModel> Path?.parseOrNull(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): T? {
+    return parseAsOrNull(T::class, charset, *parameters)
 }
 
 /**
  * @throws InvalidJsonModelException
  */
 inline fun <reified T: JsonModel> Path.parse(charset: Charset = Charsets.UTF_8): T {
-    return parse(T::class, charset)
+    return parseAs(T::class, charset)
 }
 
 inline fun <reified T: JsonModel> Path?.parseOrNull(charset: Charset = Charsets.UTF_8): T? {
-    return parseOrNull(T::class, charset)
+    return parseAsOrNull(T::class, charset)
 }
 
 /*
@@ -204,69 +203,69 @@ inline fun <reified T: JsonModel> Path?.parseOrNull(charset: Charset = Charsets.
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> File.parseList(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T> {
-    return toJsonArray(charset).parseList(model, *args)
+inline fun <T: JsonModel> File.parseListAs(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T> {
+    return toJsonArray(charset).parseListAs(model, *parameters)
 }
 
-inline fun <T: JsonModel> File?.parseListOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T>? {
+inline fun <T: JsonModel> File?.parseListAsOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T>? {
     return runSafely {
-        parseList(model, charset, *args)
+        parseListAs(model, charset, *parameters)
     }
 }
 
-inline fun <T: JsonModel> File?.parseListOrEmpty(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T> {
-    return parseListOrNull(model, charset, *args).orEmpty()
+inline fun <T: JsonModel> File?.parseListAsOrEmpty(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T> {
+    return parseListAsOrNull(model, charset, *parameters).orEmpty()
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> File.parseList(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T> {
-    return toJsonArray(charset).parseList(model)
+inline fun <T: JsonModel> File.parseListAs(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T> {
+    return toJsonArray(charset).parseListAs(model)
 }
 
-inline fun <T: JsonModel> File?.parseListOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T>? {
+inline fun <T: JsonModel> File?.parseListAsOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T>? {
     return runSafely {
-        parseList(model, charset)
+        parseListAs(model, charset)
     }
 }
 
-inline fun <T: JsonModel> File?.parseListOrEmpty(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T> {
-    return parseListOrNull(model, charset).orEmpty()
+inline fun <T: JsonModel> File?.parseListAsOrEmpty(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T> {
+    return parseListAsOrNull(model, charset).orEmpty()
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> Path.parseList(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T> {
-    return toJsonArray(charset).parseList(model, *args)
+inline fun <T: JsonModel> Path.parseListAs(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T> {
+    return toJsonArray(charset).parseListAs(model, *parameters)
 }
 
-inline fun <T: JsonModel> Path?.parseListOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T>? {
+inline fun <T: JsonModel> Path?.parseListOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T>? {
     return runSafely {
-        parseList(model, charset, *args)
+        parseListAs(model, charset, *parameters)
     }
 }
 
-inline fun <T: JsonModel> Path?.parseListOrEmpty(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T> {
-    return parseListOrNull(model, charset, *args).orEmpty()
+inline fun <T: JsonModel> Path?.parseListAsOrEmpty(model: KClass<T>, charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T> {
+    return parseListAsOrNull(model, charset, *parameters).orEmpty()
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <T: JsonModel> Path.parseList(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T> {
-    return toJsonArray(charset).parseList(model)
+inline fun <T: JsonModel> Path.parseListAs(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T> {
+    return toJsonArray(charset).parseListAs(model)
 }
 
-inline fun <T: JsonModel> Path?.parseListOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T>? {
+inline fun <T: JsonModel> Path?.parseListAsOrNull(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T>? {
     return runSafely {
-        parseList(model, charset)
+        parseListAs(model, charset)
     }
 }
 
-inline fun <T: JsonModel> Path?.parseListOrEmpty(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T> {
-    return parseListOrNull(model, charset).orEmpty()
+inline fun <T: JsonModel> Path?.parseListAsOrEmpty(model: KClass<T>, charset: Charset = Charsets.UTF_8): List<T> {
+    return parseListAsOrNull(model, charset).orEmpty()
 }
 
 /*
@@ -276,59 +275,59 @@ inline fun <T: JsonModel> Path?.parseListOrEmpty(model: KClass<T>, charset: Char
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <reified T: JsonModel> File.parseList(charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T> {
-    return parseList(T::class, charset, *args)
+inline fun <reified T: JsonModel> File.parseList(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T> {
+    return parseListAs(T::class, charset, *parameters)
 }
 
-inline fun <reified T: JsonModel> File?.parseListOrNull(charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T>? {
-    return parseListOrNull(T::class, charset, *args)
+inline fun <reified T: JsonModel> File?.parseListOrNull(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T>? {
+    return parseListAsOrNull(T::class, charset, *parameters)
 }
 
-inline fun <reified T: JsonModel> File?.parseListOrEmpty(charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T> {
-    return parseListOrEmpty(T::class, charset, *args)
+inline fun <reified T: JsonModel> File?.parseListOrEmpty(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T> {
+    return parseListAsOrEmpty(T::class, charset, *parameters)
 }
 
 /**
  * @throws InvalidJsonModelException
  */
 inline fun <reified T: JsonModel> File.parseList(charset: Charset = Charsets.UTF_8): List<T> {
-    return parseList(T::class, charset)
+    return parseListAs(T::class, charset)
 }
 
 inline fun <reified T: JsonModel> File?.parseListOrNull(charset: Charset = Charsets.UTF_8): List<T>? {
-    return parseListOrNull(T::class, charset)
+    return parseListAsOrNull(T::class, charset)
 }
 
 inline fun <reified T: JsonModel> File?.parseListOrEmpty(charset: Charset = Charsets.UTF_8): List<T> {
-    return parseListOrEmpty(T::class, charset)
+    return parseListAsOrEmpty(T::class, charset)
 }
 
 /**
  * @throws InvalidJsonModelException
  */
-inline fun <reified T: JsonModel> Path.parseList(charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T> {
-    return parseList(T::class, charset, *args)
+inline fun <reified T: JsonModel> Path.parseList(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T> {
+    return parseListAs(T::class, charset, *parameters)
 }
 
-inline fun <reified T: JsonModel> Path?.parseListOrNull(charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T>? {
-    return parseListOrNull(T::class, charset, *args)
+inline fun <reified T: JsonModel> Path?.parseListOrNull(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T>? {
+    return parseListAsOrNull(T::class, charset, *parameters)
 }
 
-inline fun <reified T: JsonModel> Path?.parseListOrEmpty(charset: Charset = Charsets.UTF_8, vararg args: Any?): List<T> {
-    return parseListOrEmpty(T::class, charset, *args)
+inline fun <reified T: JsonModel> Path?.parseListOrEmpty(charset: Charset = Charsets.UTF_8, vararg parameters: Any?): List<T> {
+    return parseListAsOrEmpty(T::class, charset, *parameters)
 }
 
 /**
  * @throws InvalidJsonModelException
  */
 inline fun <reified T: JsonModel> Path.parseList(charset: Charset = Charsets.UTF_8): List<T> {
-    return parseList(T::class, charset)
+    return parseListAs(T::class, charset)
 }
 
 inline fun <reified T: JsonModel> Path?.parseListOrNull(charset: Charset = Charsets.UTF_8): List<T>? {
-    return parseListOrNull(T::class, charset)
+    return parseListAsOrNull(T::class, charset)
 }
 
 inline fun <reified T: JsonModel> Path?.parseListOrEmpty(charset: Charset = Charsets.UTF_8): List<T> {
-    return parseListOrEmpty(T::class, charset)
+    return parseListAsOrEmpty(T::class, charset)
 }

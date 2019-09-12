@@ -27,39 +27,35 @@
 package jp.nephy.jsonkt.delegation
 
 import jp.nephy.jsonkt.JsonObject
+import jp.nephy.jsonkt.throwUnsupportedException
 
 @PublishedApi
-internal fun throwUnsupportedException(): Nothing {
-    throw UnsupportedOperationException("Model operation is not implemented in the platform.")
-}
-
-@PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelProperty(key: String?, vararg args: Any?): JsonObjectProperty<T> {
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T> {
     throwUnsupportedException()
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelOrDefaultProperty(key: String?, vararg args: Any?): JsonObjectProperty<T> {
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelOrDefaultProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T> {
     throwUnsupportedException()
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelOrNullProperty(key: String?, vararg args: Any?): JsonObjectProperty<T?> {
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelOrNullProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T?> {
     throwUnsupportedException()
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelProperty(key: String?, vararg args: Any?): JsonObjectProperty<T> {
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T> {
     throwUnsupportedException()
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelOrDefaultProperty(key: String?, vararg args: Any?): JsonObjectProperty<T> {
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelOrDefaultProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T> {
     throwUnsupportedException()
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: String?, vararg args: Any?): JsonObjectProperty<T?> {
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T?> {
     throwUnsupportedException()
 }
 

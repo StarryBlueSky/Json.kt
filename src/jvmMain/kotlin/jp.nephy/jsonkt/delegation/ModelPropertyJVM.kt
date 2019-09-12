@@ -26,41 +26,39 @@
 
 package jp.nephy.jsonkt.delegation
 
-import jp.nephy.jsonkt.*
-import kotlin.reflect.KClass
-
-class InvalidJsonModelException(
-    @Suppress("UNUSED_PARAMETER") val modelClass: KClass<*>
-): JsonKtException("${modelClass.simpleName} does not have valid constructor.")
+import jp.nephy.jsonkt.JsonObject
+import jp.nephy.jsonkt.jsonObjectOf
+import jp.nephy.jsonkt.parse
+import jp.nephy.jsonkt.parseOrNull
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelProperty(key: String?, vararg args: Any?): JsonObjectProperty<T> {
-    return jsonObjectProperty(key) { it.parse<T>(*args) }
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T> {
+    return jsonObjectProperty(key) { it.parse<T>(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelOrDefaultProperty(key: String?, vararg args: Any?): JsonObjectProperty<T> {
-    return jsonObjectProperty(key) { it.parseOrNull<T>(*args) ?: jsonObjectOf().parse(*args) }
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelOrDefaultProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T> {
+    return jsonObjectProperty(key) { it.parseOrNull<T>(*parameters) ?: jsonObjectOf().parse(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelOrNullProperty(key: String?, vararg args: Any?): JsonObjectProperty<T?> {
-    return jsonObjectProperty(key) { it.parseOrNull<T>(*args) }
+internal actual inline fun <reified T: JsonModel> JsonObject?.jsonModelOrNullProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T?> {
+    return jsonObjectProperty(key) { it.parseOrNull<T>(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelProperty(key: String?, vararg args: Any?): JsonObjectProperty<T> {
-    return jsonObjectProperty(key) { it.parse<T>(*args) }
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T> {
+    return jsonObjectProperty(key) { it.parse<T>(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelOrDefaultProperty(key: String?, vararg args: Any?): JsonObjectProperty<T> {
-    return jsonObjectProperty(key) { it.parseOrNull<T>(*args) ?: jsonObjectOf().parse(*args) }
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelOrDefaultProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T> {
+    return jsonObjectProperty(key) { it.parseOrNull<T>(*parameters) ?: jsonObjectOf().parse(*parameters) }
 }
 
 @PublishedApi
-internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: String?, vararg args: Any?): JsonObjectProperty<T?> {
-    return jsonObjectProperty(key) { it.parseOrNull<T>(*args) }
+internal actual inline fun <reified T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: String?, vararg parameters: Any?): JsonObjectProperty<T?> {
+    return jsonObjectProperty(key) { it.parseOrNull<T>(*parameters) }
 }
 
 @PublishedApi

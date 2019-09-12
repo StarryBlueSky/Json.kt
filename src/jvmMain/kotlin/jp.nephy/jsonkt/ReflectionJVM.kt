@@ -24,7 +24,6 @@
 
 package jp.nephy.jsonkt
 
-import jp.nephy.jsonkt.delegation.InvalidJsonModelException
 import jp.nephy.jsonkt.delegation.JsonModel
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -41,8 +40,8 @@ internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject): M {
 }
 
 @PublishedApi
-internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject, vararg args: Any?): M {
+internal fun <M: JsonModel> KClass<M>.createModelInstance(json: JsonObject, vararg parameters: Any?): M {
     return runSafely {
-        primaryConstructor?.call(json, *args)
+        primaryConstructor?.call(json, *parameters)
     } ?: throw InvalidJsonModelException(this)
 }

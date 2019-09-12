@@ -22,28 +22,53 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "UNUSED_PARAMETER", "MemberVisibilityCanBePrivate", "CanBeParameter")
+@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
 
 package jp.nephy.jsonkt
 
+import jp.nephy.jsonkt.delegation.JsonModel
 import kotlin.reflect.KClass
 
-open class JsonKtException(override val message: String): Exception()
+/*
+ * parse
+ */
 
-class JsonCastException(
-    val element: Any,
-    val type: KClass<*>
-): JsonKtException("An element cannot be casted to ${type.simpleName}:\n${element.toString().take(100)}...")
+actual inline fun <T: JsonModel> JsonElement.parseAs(model: KClass<T>, vararg parameters: Any?): T {
+    return try {
+        model.createModelInstance(jsonObject, *parameters)
+    } catch (e: Throwable) {
+        throw InvalidJsonModelException(model)
+    }
+}
 
-class JsonConversionException(
-    val type: KClass<*>
-): JsonKtException("${type.simpleName} cannot be converted to json. Please install JsonKt.Serializer to handle.")
+actual inline fun <T: JsonModel> JsonElement.parseAs(model: KClass<T>): T {
+    return try {
+        model.createModelInstance(jsonObject)
+    } catch (e: Throwable) {
+        throw InvalidJsonModelException(model)
+    }
+}
 
-class JsonNullPointerException(
-    val key: String,
-    val json: JsonObject?
-): JsonKtException("json[\"$key\"] is null or is not present but return type is non-null:\n${json.toString().take(100)}...")
+/*
+ * parseList
+ */
 
-class InvalidJsonModelException(
-    @Suppress("UNUSED_PARAMETER") val modelClass: KClass<*>
-): JsonKtException("${modelClass.simpleName} does not have valid constructor.")
+actual inline fun <T: JsonModel> JsonElement.parseListAs(model: KClass<T>, vararg parameters: Any?): List<T> {
+    return try {
+        jsonArray.map {
+            it.parseAs(model, *parameters)
+        }
+    } catch (e: Throwable) {
+        throw InvalidJsonModelException(model)
+    }
+}
+
+actual inline fun <T: JsonModel> JsonElement.parseListAs(model: KClass<T>): List<T> {
+    return try {
+        jsonArray.map {
+            it.parseAs(model)
+        }
+    } catch (e: Throwable) {
+        throw InvalidJsonModelException(model)
+    }
+}
