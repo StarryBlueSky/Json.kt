@@ -32,49 +32,49 @@ import blue.starry.jsonkt.delegation.JsonModel
  * parseObject
  */
 
-inline fun <T: JsonModel> JsonElement.parseObject(block: (JsonObject) -> T): T = block(jsonObject)
+fun <T: JsonModel> JsonElement.parseObject(block: (JsonObject) -> T): T = block(jsonObject)
 
-inline fun <T: JsonModel> JsonObject.parseObject(block: (JsonObject) -> T): T = (this as JsonElement).parseObject(block)
+fun <T: JsonModel> JsonObject.parseObject(block: (JsonObject) -> T): T = (this as JsonElement).parseObject(block)
 
-inline fun <T: JsonModel> String.parseObject(block: (JsonObject) -> T): T = toJsonElement().parseObject(block)
+fun <T: JsonModel> String.parseObject(block: (JsonObject) -> T): T = toJsonElement().parseObject(block)
 
-inline fun <T: JsonModel> JsonMap.parseObject(block: (JsonObject) -> T): T = toJsonObject().parseObject(block)
+fun <T: JsonModel> JsonMap.parseObject(block: (JsonObject) -> T): T = toJsonObject().parseObject(block)
 
-inline fun <T: JsonModel> JsonPairIterable.parseObject(block: (JsonObject) -> T): T = toJsonObject().parseObject(block)
+fun <T: JsonModel> JsonPairIterable.parseObject(block: (JsonObject) -> T): T = toJsonObject().parseObject(block)
 
-inline fun <T: JsonModel> JsonPairSequence.parseObject(block: (JsonObject) -> T): T = toJsonObject().parseObject(block)
+fun <T: JsonModel> JsonPairSequence.parseObject(block: (JsonObject) -> T): T = toJsonObject().parseObject(block)
 
-inline fun <T: JsonModel> JsonPairArray.parseObject(block: (JsonObject) -> T): T = toJsonObject().parseObject(block)
+fun <T: JsonModel> JsonPairArray.parseObject(block: (JsonObject) -> T): T = toJsonObject().parseObject(block)
 
 /*
  * parseObjectOrNull
  */
 
-inline fun <T: JsonModel> JsonElement?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
+fun <T: JsonModel> JsonElement?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
     parseObject(block)
 }
 
-inline fun <T: JsonModel> JsonObject?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
+fun <T: JsonModel> JsonObject?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
     parseObject(block)
 }
 
-inline fun <T: JsonModel> String?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
+fun <T: JsonModel> String?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
     parseObject(block)
 }
 
-inline fun <T: JsonModel> JsonMap?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
+fun <T: JsonModel> JsonMap?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
     parseObject(block)
 }
 
-inline fun <T: JsonModel> JsonPairIterable?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
+fun <T: JsonModel> JsonPairIterable?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
     parseObject(block)
 }
 
-inline fun <T: JsonModel> JsonPairSequence?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
+fun <T: JsonModel> JsonPairSequence?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
     parseObject(block)
 }
 
-inline fun <T: JsonModel> JsonPairArray?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
+fun <T: JsonModel> JsonPairArray?.parseObjectOrNull(block: (JsonObject) -> T): T? = runSafely {
     parseObject(block)
 }
 
@@ -82,42 +82,42 @@ inline fun <T: JsonModel> JsonPairArray?.parseObjectOrNull(block: (JsonObject) -
  * parseArray
  */
 
-inline fun <T: JsonModel> JsonElement.parseArray(block: (JsonObject) -> T): List<T> = jsonArray.map { block(it.jsonObject) }
+fun <T: JsonModel> JsonElement.parseArray(block: (JsonObject) -> T): List<T> = jsonArray.map { block(it.jsonObject) }
 
-inline fun <T: JsonModel> JsonArray.parseArray(block: (JsonObject) -> T): List<T> = (this as JsonElement).parseArray(block)
+fun <T: JsonModel> JsonArray.parseArray(block: (JsonObject) -> T): List<T> = (this as JsonElement).parseArray(block)
 
-inline fun <T: JsonModel> String.parseArray(block: (JsonObject) -> T): List<T> = toJsonElement().parseArray(block)
+fun <T: JsonModel> String.parseArray(block: (JsonObject) -> T): List<T> = toJsonElement().parseArray(block)
 
-inline fun <T: JsonModel> JsonValueIterable.parseArray(block: (JsonObject) -> T): List<T> = toJsonArray().parseArray(block)
+fun <T: JsonModel> JsonValueIterable.parseArray(block: (JsonObject) -> T): List<T> = toJsonArray().parseArray(block)
 
-inline fun <T: JsonModel> JsonValueSequence.parseArray(block: (JsonObject) -> T): List<T> = toJsonArray().parseArray(block)
+fun <T: JsonModel> JsonValueSequence.parseArray(block: (JsonObject) -> T): List<T> = toJsonArray().parseArray(block)
 
-inline fun <T: JsonModel> JsonValueArray.parseArray(block: (JsonObject) -> T): List<T> = toJsonArray().parseArray(block)
+fun <T: JsonModel> JsonValueArray.parseArray(block: (JsonObject) -> T): List<T> = toJsonArray().parseArray(block)
 
 /*
  * parseArrayOrNull
  */
 
-inline fun <T: JsonModel> JsonElement?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
+fun <T: JsonModel> JsonElement?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
     parseArray(block)
 }
 
-inline fun <T: JsonModel> JsonArray?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
+fun <T: JsonModel> JsonArray?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
     parseArray(block)
 }
 
-inline fun <T: JsonModel> String?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
+fun <T: JsonModel> String?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
     parseArray(block)
 }
 
-inline fun <T: JsonModel> JsonValueIterable?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
+fun <T: JsonModel> JsonValueIterable?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
     parseArray(block)
 }
 
-inline fun <T: JsonModel> JsonValueSequence?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
+fun <T: JsonModel> JsonValueSequence?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
     parseArray(block)
 }
 
-inline fun <T: JsonModel> JsonValueArray?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
+fun <T: JsonModel> JsonValueArray?.parseArrayOrNull(block: (JsonObject) -> T): List<T>? = runSafely {
     parseArray(block)
 }

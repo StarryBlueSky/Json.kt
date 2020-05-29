@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt
 
@@ -67,11 +67,11 @@ inline fun <reified T> JsonPrimitive.safeCast(): T? {
 /**
  * @throws JsonCastException
  */
-inline fun String.toJsonPrimitive(): JsonPrimitive {
+fun String.toJsonPrimitive(): JsonPrimitive {
     return toJsonElement().cast()
 }
 
-inline fun String?.toJsonPrimitiveOrNull(): JsonPrimitive? {
+fun String?.toJsonPrimitiveOrNull(): JsonPrimitive? {
     return runSafely {
         toJsonPrimitive()
     }

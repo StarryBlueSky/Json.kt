@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt
 
 import kotlinx.serialization.json.*
 
-inline fun jsonArrayOf(vararg elements: JsonValue): JsonArray {
+fun jsonArrayOf(vararg elements: JsonValue): JsonArray {
     return elements.toJsonArray()
 }
 
@@ -39,28 +39,28 @@ inline fun jsonArrayOf(vararg elements: JsonValue): JsonArray {
 /**
  * @throws JsonCastException
  */
-inline fun String.toJsonArray(): JsonArray {
+fun String.toJsonArray(): JsonArray {
     return toJsonElement().cast()
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonValueIterable.toJsonArray(): JsonArray {
+fun JsonValueIterable.toJsonArray(): JsonArray {
     return JsonArray(map { it.asJsonElement() })
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonValueSequence.toJsonArray(): JsonArray {
+fun JsonValueSequence.toJsonArray(): JsonArray {
     return toList().toJsonArray()
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonValueArray.toJsonArray(): JsonArray {
+fun JsonValueArray.toJsonArray(): JsonArray {
     return toList().toJsonArray()
 }
 
@@ -68,25 +68,25 @@ inline fun JsonValueArray.toJsonArray(): JsonArray {
  * toJsonArrayOrNull
  */
 
-inline fun String?.toJsonArrayOrNull(): JsonArray? {
+fun String?.toJsonArrayOrNull(): JsonArray? {
     return runSafely {
         toJsonArray()
     }
 }
 
-inline fun JsonValueIterable?.toJsonArrayOrNull(): JsonArray? {
+fun JsonValueIterable?.toJsonArrayOrNull(): JsonArray? {
     return runSafely {
         toJsonArray()
     }
 }
 
-inline fun JsonValueSequence?.toJsonArrayOrNull(): JsonArray? {
+fun JsonValueSequence?.toJsonArrayOrNull(): JsonArray? {
     return runSafely {
         toJsonArray()
     }
 }
 
-inline fun JsonValueArray?.toJsonArrayOrNull(): JsonArray? {
+fun JsonValueArray?.toJsonArrayOrNull(): JsonArray? {
     return runSafely {
         toJsonArray()
     }

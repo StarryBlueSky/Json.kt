@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt.delegation
 
@@ -34,29 +34,29 @@ import blue.starry.jsonkt.stringOrNull
  *  String
  */
 
-inline fun JsonObject.byString(
+fun JsonObject.byString(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<String>
+    default: JsonObjectDefaultSelector<String>
 ) = byLambda(key, default) { it.string }
 
-inline fun JsonObject.byString(
+fun JsonObject.byString(
     key: String? = null,
     default: String
 ) = byLambda(key, default) { it.string }
 
-inline fun JsonObject.byString(key: String) = byLambda(key) { it.string }
+fun JsonObject.byString(key: String) = byLambda(key) { it.string }
 
-inline fun JsonModel.string(
+fun JsonModel.string(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<String>
+    default: JsonObjectDefaultSelector<String>
 ) = lambda(key, default) { it.string }
 
-inline fun JsonModel.string(
+fun JsonModel.string(
     key: String? = null,
     default: String
 ) = lambda(key, default) { it.string }
 
-inline fun JsonModel.string(key: String) = lambda(key) { it.string }
+fun JsonModel.string(key: String) = lambda(key) { it.string }
 
 inline val JsonObject.byString
     get() = byLambda { it.string }
@@ -68,29 +68,29 @@ inline val JsonModel.string
  *  String?
  */
 
-inline fun JsonObject?.byNullableString(
+fun JsonObject?.byNullableString(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<String?>
+    default: JsonObjectDefaultSelector<String?>
 ) = byNullableLambda(key, default) { it.stringOrNull }
 
-inline fun JsonObject?.byNullableString(
+fun JsonObject?.byNullableString(
     key: String? = null,
     default: String?
 ) = byNullableLambda(key, default) { it.stringOrNull }
 
-inline fun JsonObject?.byNullableString(key: String) = byNullableLambda(key) { it.stringOrNull }
+fun JsonObject?.byNullableString(key: String) = byNullableLambda(key) { it.stringOrNull }
 
-inline fun JsonModel?.nullableString(
+fun JsonModel?.nullableString(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<String?>
+    default: JsonObjectDefaultSelector<String?>
 ) = nullableLambda(key, default) { it.stringOrNull }
 
-inline fun JsonModel?.nullableString(
+fun JsonModel?.nullableString(
     key: String? = null,
     default: String?
 ) = nullableLambda(key, default) { it.stringOrNull }
 
-inline fun JsonModel?.nullableString(key: String) = nullableLambda(key) { it.stringOrNull }
+fun JsonModel?.nullableString(key: String) = nullableLambda(key) { it.stringOrNull }
 
 inline val JsonObject?.byNullableString
     get() = byNullableLambda { it.stringOrNull }
@@ -102,29 +102,29 @@ inline val JsonModel?.nullableString
  *  List<String>
  */
 
-inline fun JsonObject.byStringList(
+fun JsonObject.byStringList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<String>
+    default: JsonArrayDefaultSelector<String>
 ) = byLambdaList(key, default) { it.string }
 
-inline fun JsonObject.byStringList(
+fun JsonObject.byStringList(
     key: String? = null,
     default: List<String>
 ) = byLambdaList(key, default) { it.string }
 
-inline fun JsonObject.byStringList(key: String) = byLambdaList(key) { it.string }
+fun JsonObject.byStringList(key: String) = byLambdaList(key) { it.string }
 
-inline fun JsonModel.stringList(
+fun JsonModel.stringList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<String>
+    default: JsonArrayDefaultSelector<String>
 ) = lambdaList(key, default) { it.string }
 
-inline fun JsonModel.stringList(
+fun JsonModel.stringList(
     key: String? = null,
     default: List<String>
 ) = lambdaList(key, default) { it.string }
 
-inline fun JsonModel.stringList(key: String) = lambdaList(key) { it.string }
+fun JsonModel.stringList(key: String) = lambdaList(key) { it.string }
 
 inline val JsonObject.byStringList
     get() = byLambdaList { it.string }
@@ -136,29 +136,29 @@ inline val JsonModel.stringList
  *  List<String?>
  */
 
-inline fun JsonObject?.byNullableStringList(
+fun JsonObject?.byNullableStringList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<String?>
+    default: JsonArrayDefaultSelector<String?>
 ) = byNullableLambdaList(key, default) { it.stringOrNull }
 
-inline fun JsonObject?.byNullableStringList(
+fun JsonObject?.byNullableStringList(
     key: String? = null,
     default: List<String?>
 ) = byNullableLambdaList(key, default) { it.stringOrNull }
 
-inline fun JsonObject?.byNullableStringList(key: String) = byNullableLambdaList(key) { it.stringOrNull }
+fun JsonObject?.byNullableStringList(key: String) = byNullableLambdaList(key) { it.stringOrNull }
 
-inline fun JsonModel?.nullableStringList(
+fun JsonModel?.nullableStringList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<String?>
+    default: JsonArrayDefaultSelector<String?>
 ) = nullableLambdaList(key, default) { it.stringOrNull }
 
-inline fun JsonModel?.nullableStringList(
+fun JsonModel?.nullableStringList(
     key: String? = null,
     default: List<String?>
 ) = nullableLambdaList(key, default) { it.stringOrNull }
 
-inline fun JsonModel?.nullableStringList(key: String) = nullableLambdaList(key) { it.stringOrNull }
+fun JsonModel?.nullableStringList(key: String) = nullableLambdaList(key) { it.stringOrNull }
 
 inline val JsonObject?.byNullableStringList
     get() = byNullableLambdaList { it.stringOrNull }

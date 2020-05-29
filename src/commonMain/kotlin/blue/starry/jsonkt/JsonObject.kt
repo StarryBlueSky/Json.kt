@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt
 
-inline fun jsonObjectOf(vararg pairs: JsonPair): JsonObject {
+fun jsonObjectOf(vararg pairs: JsonPair): JsonObject {
     return pairs.toJsonObject()
 }
 
@@ -37,35 +37,35 @@ inline fun jsonObjectOf(vararg pairs: JsonPair): JsonObject {
 /**
  * @throws JsonCastException
  */
-inline fun String.toJsonObject(): JsonObject {
+fun String.toJsonObject(): JsonObject {
     return toJsonElement().cast()
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonMap.toJsonObject(): JsonObject {
+fun JsonMap.toJsonObject(): JsonObject {
     return JsonObject(map { it.key to it.value.asJsonElement() }.toMap())
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonPairIterable.toJsonObject(): JsonObject {
+fun JsonPairIterable.toJsonObject(): JsonObject {
     return toMap().toJsonObject()
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonPairSequence.toJsonObject(): JsonObject {
+fun JsonPairSequence.toJsonObject(): JsonObject {
     return toMap().toJsonObject()
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonPairArray.toJsonObject(): JsonObject {
+fun JsonPairArray.toJsonObject(): JsonObject {
     return toMap().toJsonObject()
 }
 
@@ -73,31 +73,31 @@ inline fun JsonPairArray.toJsonObject(): JsonObject {
  * toJsonObjectOrNull
  */
 
-inline fun String?.toJsonObjectOrNull(): JsonObject? {
+fun String?.toJsonObjectOrNull(): JsonObject? {
     return runSafely {
         toJsonObject()
     }
 }
 
-inline fun JsonMap?.toJsonObjectOrNull(): JsonObject? {
+fun JsonMap?.toJsonObjectOrNull(): JsonObject? {
     return runSafely {
         toJsonObject()
     }
 }
 
-inline fun JsonPairIterable?.toJsonObjectOrNull(): JsonObject? {
+fun JsonPairIterable?.toJsonObjectOrNull(): JsonObject? {
     return runSafely {
         toJsonObject()
     }
 }
 
-inline fun JsonPairSequence?.toJsonObjectOrNull(): JsonObject? {
+fun JsonPairSequence?.toJsonObjectOrNull(): JsonObject? {
     return runSafely {
         toJsonObject()
     }
 }
 
-inline fun JsonPairArray?.toJsonObjectOrNull(): JsonObject? {
+fun JsonPairArray?.toJsonObjectOrNull(): JsonObject? {
     return runSafely {
         toJsonObject()
     }

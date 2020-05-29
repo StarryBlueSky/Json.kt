@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt
 
@@ -42,7 +42,7 @@ inline fun <reified T: Any> JsonElement.cast(): T {
 /**
  * @throws JsonCastException
  */
-inline fun String.toJsonElement(): JsonElement {
+fun String.toJsonElement(): JsonElement {
     return try {
         defaultJsonInstance.parseJson(this)
     } catch (e: Throwable) {
@@ -50,7 +50,7 @@ inline fun String.toJsonElement(): JsonElement {
     }
 }
 
-inline fun String?.toJsonElementOrNull(): JsonElement? {
+fun String?.toJsonElementOrNull(): JsonElement? {
     return runSafely {
         toJsonElement()
     }
@@ -96,11 +96,11 @@ fun <T: Any> T?.asJsonElement(): JsonElement {
  * Operator functions
  */
 
-inline operator fun JsonElement.get(key: String): JsonElement {
+operator fun JsonElement.get(key: String): JsonElement {
     return jsonObject[key] ?: throw JsonNullPointerException(key, jsonObject)
 }
 
-inline operator fun JsonElement.get(index: Int): JsonElement {
+operator fun JsonElement.get(index: Int): JsonElement {
     return jsonArray[index]
 }
 
@@ -146,10 +146,10 @@ inline val JsonElement.charOrNull: Char?
  * Copy
  */
 
-inline fun JsonElement.copyAsObject(block: (JsonMutableMap) -> Unit): JsonObject {
+fun JsonElement.copyAsObject(block: (JsonMutableMap) -> Unit): JsonObject {
     return jsonObject.copy(block)
 }
 
-inline fun JsonElement.copyAsArray(block: (JsonMutableArray) -> Unit): JsonArray {
+fun JsonElement.copyAsArray(block: (JsonMutableArray) -> Unit): JsonArray {
     return jsonArray.copy(block)
 }

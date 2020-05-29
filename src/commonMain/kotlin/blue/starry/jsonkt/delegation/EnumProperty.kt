@@ -70,7 +70,7 @@ internal inline fun <T: Any, reified E> findEnumMemberOrNull(value: T?): E? wher
 
 inline fun <reified T: Any, reified E> JsonObject.byEnum(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E> = ::jsonObjectDefaultSelector
+    noinline default: JsonObjectDefaultSelector<E> = ::jsonObjectDefaultSelector
 ): JsonObjectProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
     val casted = it.primitive.cast<T>()
     
@@ -79,7 +79,7 @@ inline fun <reified T: Any, reified E> JsonObject.byEnum(
 
 inline fun <reified T: Any, reified E> JsonModel.enum(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E> = ::jsonObjectDefaultSelector
+    noinline default: JsonObjectDefaultSelector<E> = ::jsonObjectDefaultSelector
 ): JsonObjectProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
     val casted = it.primitive.cast<T>()
 
@@ -92,7 +92,7 @@ inline fun <reified T: Any, reified E> JsonModel.enum(
 
 inline fun <reified T: Any, reified E> JsonObject?.byNullableEnum(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E?> = ::jsonObjectDefaultSelectorWithNull
+    noinline default: JsonObjectDefaultSelector<E?> = ::jsonObjectDefaultSelectorWithNull
 ): JsonObjectProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonObjectProperty(key, default) {
     val casted = it.primitive.safeCast<T>()
     
@@ -101,7 +101,7 @@ inline fun <reified T: Any, reified E> JsonObject?.byNullableEnum(
 
 inline fun <reified T: Any, reified E> JsonModel?.nullableEnum(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E?> = ::jsonObjectDefaultSelectorWithNull
+    noinline default: JsonObjectDefaultSelector<E?> = ::jsonObjectDefaultSelectorWithNull
 ): JsonObjectProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonObjectProperty(key, default) {
     val casted = it.primitive.safeCast<T>()
 
@@ -114,7 +114,7 @@ inline fun <reified T: Any, reified E> JsonModel?.nullableEnum(
 
 inline fun <reified T: Any, reified E> JsonObject.byEnumList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<E> = ::jsonArrayDefaultSelector
+    noinline default: JsonArrayDefaultSelector<E> = ::jsonArrayDefaultSelector
 ): JsonArrayProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) { json ->
     val casted = json.primitive.cast<T>()
 
@@ -123,7 +123,7 @@ inline fun <reified T: Any, reified E> JsonObject.byEnumList(
 
 inline fun <reified T: Any, reified E> JsonModel.enumList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<E> = ::jsonArrayDefaultSelector
+    noinline default: JsonArrayDefaultSelector<E> = ::jsonArrayDefaultSelector
 ): JsonArrayProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) {
     val casted = it.primitive.cast<T>()
 
@@ -136,7 +136,7 @@ inline fun <reified T: Any, reified E> JsonModel.enumList(
 
 inline fun <reified T: Any, reified E> JsonObject?.byNullableEnumList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<E?> = ::jsonArrayDefaultSelector
+    noinline default: JsonArrayDefaultSelector<E?> = ::jsonArrayDefaultSelector
 ): JsonArrayProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonArrayProperty(key, default) {
     val casted = it.primitive.safeCast<T>()
 
@@ -145,7 +145,7 @@ inline fun <reified T: Any, reified E> JsonObject?.byNullableEnumList(
 
 inline fun <reified T: Any, reified E> JsonModel?.nullableEnumList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<E?> = ::jsonArrayDefaultSelector
+    noinline default: JsonArrayDefaultSelector<E?> = ::jsonArrayDefaultSelector
 ): JsonArrayProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonArrayProperty(key, default) {
     val casted = it.primitive.safeCast<T>()
 

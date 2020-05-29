@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt
 
@@ -35,7 +35,7 @@ import kotlinx.serialization.json.JsonElementSerializer
  * stringify
  */
 
-inline fun JsonElement.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+fun JsonElement.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
     return if (configuration == defaultJsonConfiguration) {
         defaultJsonInstance
     } else {
@@ -46,24 +46,24 @@ inline fun JsonElement.stringify(configuration: JsonConfiguration = defaultJsonC
 /**
  * @throws JsonCastException
  */
-inline fun JsonPairIterable.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+fun JsonPairIterable.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
     return toJsonArray().stringify(configuration)
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonPairSequence.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+fun JsonPairSequence.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
     return toJsonArray().stringify(configuration)
 }
 
 /**
  * @throws JsonCastException
  */
-inline fun JsonPairArray.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+fun JsonPairArray.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
     return toJsonArray().stringify(configuration)
 }
 
-inline fun JsonModel.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+fun JsonModel.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
     return json.stringify(configuration)
 }

@@ -32,150 +32,150 @@ import blue.starry.jsonkt.JsonObject
  *  T
  */
 
-inline fun <T: Any> JsonObject.byLambda(
+fun <T: Any> JsonObject.byLambda(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T>,
-    crossinline converter: JsonElementConverter<T>
+    default: JsonObjectDefaultSelector<T>,
+    converter: JsonElementConverter<T>
 ): JsonObjectProperty<T> = jsonObjectProperty(key, default, converter)
 
-inline fun <T: Any> JsonObject.byLambda(
+fun <T: Any> JsonObject.byLambda(
     key: String? = null,
     default: T,
-    crossinline converter: JsonElementConverter<T>
+    converter: JsonElementConverter<T>
 ): JsonObjectProperty<T> = jsonObjectProperty(key, { default }, converter)
 
-inline fun <T: Any> JsonObject.byLambda(
+fun <T: Any> JsonObject.byLambda(
     key: String? = null,
-    crossinline converter: JsonElementConverter<T>
+    converter: JsonElementConverter<T>
 ): JsonObjectProperty<T> = jsonObjectProperty(key, converter = converter)
 
-inline fun <T: Any> JsonModel.lambda(
+fun <T: Any> JsonModel.lambda(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T>,
-    crossinline converter: JsonElementConverter<T>
+    default: JsonObjectDefaultSelector<T>,
+    converter: JsonElementConverter<T>
 ): JsonObjectProperty<T> = jsonObjectProperty(key, default, converter)
 
-inline fun <T: Any> JsonModel.lambda(
+fun <T: Any> JsonModel.lambda(
     key: String? = null,
     default: T,
-    crossinline converter: JsonElementConverter<T>
+    converter: JsonElementConverter<T>
 ): JsonObjectProperty<T> = jsonObjectProperty(key, { default }, converter)
 
-inline fun <T: Any> JsonModel.lambda(
+fun <T: Any> JsonModel.lambda(
     key: String? = null,
-    crossinline converter: JsonElementConverter<T>
+    converter: JsonElementConverter<T>
 ): JsonObjectProperty<T> = jsonObjectProperty(key, converter = converter)
 
 /*
  *  T?
  */
 
-inline fun <T> JsonObject?.byNullableLambda(
+fun <T> JsonObject?.byNullableLambda(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T?>,
-    crossinline converter: JsonElementConverter<T?>
+    default: JsonObjectDefaultSelector<T?>,
+    converter: JsonElementConverter<T?>
 ): JsonObjectProperty<T?> = nullableJsonObjectProperty(key, default, converter)
 
-inline fun <T> JsonObject?.byNullableLambda(
+fun <T> JsonObject?.byNullableLambda(
     key: String? = null,
     default: T?,
-    crossinline converter: JsonElementConverter<T?>
+    converter: JsonElementConverter<T?>
 ): JsonObjectProperty<T?> = nullableJsonObjectProperty(key, { default }, converter)
 
-inline fun <T> JsonObject?.byNullableLambda(
+fun <T> JsonObject?.byNullableLambda(
     key: String? = null,
-    crossinline converter: JsonElementConverter<T?>
+    converter: JsonElementConverter<T?>
 ): JsonObjectProperty<T?> = nullableJsonObjectProperty(key, converter = converter)
 
-inline fun <T> JsonModel?.nullableLambda(
+fun <T> JsonModel?.nullableLambda(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T?>,
-    crossinline converter: JsonElementConverter<T?>
+    default: JsonObjectDefaultSelector<T?>,
+    converter: JsonElementConverter<T?>
 ): JsonObjectProperty<T?> = nullableJsonObjectProperty(key, default, converter)
 
-inline fun <T> JsonModel?.nullableLambda(
+fun <T> JsonModel?.nullableLambda(
     key: String? = null,
     default: T?,
-    crossinline converter: JsonElementConverter<T?>
+    converter: JsonElementConverter<T?>
 ): JsonObjectProperty<T?> = nullableJsonObjectProperty(key, { default }, converter)
 
-inline fun <T> JsonModel?.nullableLambda(
+fun <T> JsonModel?.nullableLambda(
     key: String? = null,
-    crossinline converter: JsonElementConverter<T?>
+    converter: JsonElementConverter<T?>
 ): JsonObjectProperty<T?> = nullableJsonObjectProperty(key, converter = converter)
 
 /*
  *  List<T>
  */
 
-inline fun <T: Any> JsonObject.byLambdaList(
+fun <T: Any> JsonObject.byLambdaList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<T>,
-    crossinline converter: JsonElementConverter<T>
+    default: JsonArrayDefaultSelector<T>,
+    converter: JsonElementConverter<T>
 ): JsonArrayProperty<T> = jsonArrayProperty(key, default, converter)
 
-inline fun <T: Any> JsonObject.byLambdaList(
+fun <T: Any> JsonObject.byLambdaList(
     key: String? = null,
     default: List<T>,
-    crossinline converter: JsonElementConverter<T>
+    converter: JsonElementConverter<T>
 ): JsonArrayProperty<T> = jsonArrayProperty(key, { default }, converter)
 
-inline fun <T: Any> JsonObject.byLambdaList(
+fun <T: Any> JsonObject.byLambdaList(
     key: String? = null,
-    crossinline converter: JsonElementConverter<T>
+    converter: JsonElementConverter<T>
 ): JsonArrayProperty<T> = jsonArrayProperty(key, converter = converter)
 
-inline fun <T: Any> JsonModel.lambdaList(
+fun <T: Any> JsonModel.lambdaList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<T>,
-    crossinline converter: JsonElementConverter<T>
+    default: JsonArrayDefaultSelector<T>,
+    converter: JsonElementConverter<T>
 ): JsonArrayProperty<T> = jsonArrayProperty(key, default, converter)
 
-inline fun <T: Any> JsonModel.lambdaList(
+fun <T: Any> JsonModel.lambdaList(
     key: String? = null,
     default: List<T>,
-    crossinline converter: JsonElementConverter<T>
+    converter: JsonElementConverter<T>
 ): JsonArrayProperty<T> = jsonArrayProperty(key, { default }, converter)
 
-inline fun <T: Any> JsonModel.lambdaList(
+fun <T: Any> JsonModel.lambdaList(
     key: String? = null,
-    crossinline converter: JsonElementConverter<T>
+    converter: JsonElementConverter<T>
 ): JsonArrayProperty<T> = jsonArrayProperty(key, converter = converter)
 
 /*
  *  List<T?>
  */
 
-inline fun <T> JsonObject?.byNullableLambdaList(
+fun <T> JsonObject?.byNullableLambdaList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<T?>,
-    crossinline converter: JsonElementConverter<T?>
+    default: JsonArrayDefaultSelector<T?>,
+    converter: JsonElementConverter<T?>
 ): JsonArrayProperty<T?> = nullableJsonArrayProperty(key, default, converter)
 
-inline fun <T> JsonObject?.byNullableLambdaList(
+fun <T> JsonObject?.byNullableLambdaList(
     key: String? = null,
     default: List<T?>,
-    crossinline converter: JsonElementConverter<T?>
+    converter: JsonElementConverter<T?>
 ): JsonArrayProperty<T?> = nullableJsonArrayProperty(key, { default }, converter)
 
-inline fun <T> JsonObject?.byNullableLambdaList(
+fun <T> JsonObject?.byNullableLambdaList(
     key: String? = null,
-    crossinline converter: JsonElementConverter<T?>
+    converter: JsonElementConverter<T?>
 ): JsonArrayProperty<T?> = nullableJsonArrayProperty(key, converter =  converter)
 
-inline fun <T> JsonModel?.nullableLambdaList(
+fun <T> JsonModel?.nullableLambdaList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<T?>,
-    crossinline converter: JsonElementConverter<T?>
+    default: JsonArrayDefaultSelector<T?>,
+    converter: JsonElementConverter<T?>
 ): JsonArrayProperty<T?> = nullableJsonArrayProperty(key, default, converter)
 
-inline fun <T> JsonModel?.nullableLambdaList(
+fun <T> JsonModel?.nullableLambdaList(
     key: String? = null,
     default: List<T?>,
-    crossinline converter: JsonElementConverter<T?>
+    converter: JsonElementConverter<T?>
 ): JsonArrayProperty<T?> = nullableJsonArrayProperty(key, { default }, converter)
 
-inline fun <T> JsonModel?.nullableLambdaList(
+fun <T> JsonModel?.nullableLambdaList(
     key: String? = null,
-    crossinline converter: JsonElementConverter<T?>
+    converter: JsonElementConverter<T?>
 ): JsonArrayProperty<T?> = nullableJsonArrayProperty(key, converter = converter)

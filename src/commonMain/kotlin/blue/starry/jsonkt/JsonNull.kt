@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt
 
 import kotlin.contracts.contract
 
-inline fun JsonElement?.isNull(): Boolean {
+fun JsonElement?.isNull(): Boolean {
     contract {
         returns(false) implies (this@isNull != null)
     }

@@ -30,14 +30,14 @@ import blue.starry.jsonkt.JsonObject
 import blue.starry.jsonkt.jsonObjectOf
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonObject.jsonModelListProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonArrayProperty<T> {
+internal fun <T: JsonModel> JsonObject.jsonModelListProperty(key: String? = null, block: (JsonObject) -> T): JsonArrayProperty<T> {
     return jsonArrayProperty(key) {
         block(it.jsonObject)
     }
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonObject.jsonModelListOrDefaultProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonArrayProperty<T> {
+internal fun <T: JsonModel> JsonObject.jsonModelListOrDefaultProperty(key: String? = null, block: (JsonObject) -> T): JsonArrayProperty<T> {
     return jsonArrayProperty(key) {
         runCatching {
             block(it.jsonObject)
@@ -48,21 +48,21 @@ internal inline fun <T: JsonModel> JsonObject.jsonModelListOrDefaultProperty(key
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonObject?.jsonModelListOrNullProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonArrayProperty<T?> {
+internal fun <T: JsonModel> JsonObject?.jsonModelListOrNullProperty(key: String? = null, block: (JsonObject) -> T): JsonArrayProperty<T?> {
     return nullableJsonArrayProperty(key) {
         block(it.jsonObject)
     }
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonModel.jsonModelListProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonArrayProperty<T> {
+internal fun <T: JsonModel> JsonModel.jsonModelListProperty(key: String? = null, block: (JsonObject) -> T): JsonArrayProperty<T> {
     return jsonArrayProperty(key) {
         block(it.jsonObject)
     }
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonModel.jsonModelListOrDefaultProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonArrayProperty<T> {
+internal fun <T: JsonModel> JsonModel.jsonModelListOrDefaultProperty(key: String? = null, block: (JsonObject) -> T): JsonArrayProperty<T> {
     return jsonArrayProperty(key) {
         runCatching {
             block(it.jsonObject)
@@ -73,7 +73,7 @@ internal inline fun <T: JsonModel> JsonModel.jsonModelListOrDefaultProperty(key:
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonModel?.jsonModelListOrNullProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonArrayProperty<T?> {
+internal fun <T: JsonModel> JsonModel?.jsonModelListOrNullProperty(key: String? = null, block: (JsonObject) -> T): JsonArrayProperty<T?> {
     return nullableJsonArrayProperty(key) {
         block(it.jsonObject)
     }
@@ -83,36 +83,36 @@ internal inline fun <T: JsonModel> JsonModel?.jsonModelListOrNullProperty(key: S
     List<JsonModel>
  */
 
-inline fun <T: JsonModel> JsonObject.byModelList(
+fun <T: JsonModel> JsonObject.byModelList(
     key: String? = null,
-    crossinline block: (JsonObject) -> T
+    block: (JsonObject) -> T
 ): JsonArrayProperty<T> = jsonModelListProperty(key, block)
 
-inline fun <T: JsonModel> JsonModel.modelList(
+fun <T: JsonModel> JsonModel.modelList(
     key: String? = null,
-    crossinline block: (JsonObject) -> T
+    block: (JsonObject) -> T
 ): JsonArrayProperty<T> = jsonModelListProperty(key, block)
 
-inline fun <T: JsonModel> JsonObject.byModelListOrDefault(
+fun <T: JsonModel> JsonObject.byModelListOrDefault(
     key: String? = null,
-    crossinline block: (JsonObject) -> T
+    block: (JsonObject) -> T
 ): JsonArrayProperty<T> = jsonModelListOrDefaultProperty(key, block)
 
-inline fun <T: JsonModel> JsonModel.modelListOrDefault(
+fun <T: JsonModel> JsonModel.modelListOrDefault(
     key: String? = null,
-    crossinline block: (JsonObject) -> T
+    block: (JsonObject) -> T
 ): JsonArrayProperty<T> = jsonModelListOrDefaultProperty(key, block)
 
 /*
     List<JsonModel?>
  */
 
-inline fun <T: JsonModel> JsonObject?.byNullableModelList(
+fun <T: JsonModel> JsonObject?.byNullableModelList(
     key: String? = null,
-    crossinline block: (JsonObject) -> T
+    block: (JsonObject) -> T
 ): JsonArrayProperty<T?> = jsonModelListOrNullProperty(key, block)
 
-inline fun <T: JsonModel> JsonModel?.nullableModelList(
+fun <T: JsonModel> JsonModel?.nullableModelList(
     key: String? = null,
-    crossinline block: (JsonObject) -> T
+    block: (JsonObject) -> T
 ): JsonArrayProperty<T?> = jsonModelListOrNullProperty(key, block)

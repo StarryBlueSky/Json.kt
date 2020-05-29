@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt
 
@@ -34,7 +34,7 @@ import kotlin.reflect.full.primaryConstructor
  * parseObject
  */
 
-inline fun <T: JsonModel> JsonElement.parseObject(model: KClass<T>): T {
+fun <T: JsonModel> JsonElement.parseObject(model: KClass<T>): T {
     return try {
         model.primaryConstructor!!.call(jsonObject)
     } catch (e: Throwable) {
@@ -42,7 +42,7 @@ inline fun <T: JsonModel> JsonElement.parseObject(model: KClass<T>): T {
     }
 }
 
-inline fun <T: JsonModel> JsonElement?.parseObjectOrNull(model: KClass<T>): T? {
+fun <T: JsonModel> JsonElement?.parseObjectOrNull(model: KClass<T>): T? {
     return runCatching {
         this?.parseObject(model)
     }.getOrNull()
@@ -116,7 +116,7 @@ inline fun <reified T: JsonModel> JsonPairArray?.parseObjectOrNull(): T? {
  * parseArray
  */
 
-inline fun <T: JsonModel> JsonElement.parseArray(model: KClass<T>): List<T> {
+fun <T: JsonModel> JsonElement.parseArray(model: KClass<T>): List<T> {
     return try {
         jsonArray.map {
             it.parseObject(model)
@@ -126,7 +126,7 @@ inline fun <T: JsonModel> JsonElement.parseArray(model: KClass<T>): List<T> {
     }
 }
 
-inline fun <T: JsonModel> JsonElement?.parseArrayOrNull(model: KClass<T>): List<T>? {
+fun <T: JsonModel> JsonElement?.parseArrayOrNull(model: KClass<T>): List<T>? {
     return runCatching {
         this?.parseArray(model)
     }.getOrNull()

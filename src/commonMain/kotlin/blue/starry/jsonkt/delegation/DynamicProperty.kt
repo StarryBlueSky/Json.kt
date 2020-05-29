@@ -43,12 +43,22 @@ internal inline fun <T: Any> KProperty<*>.jsonObject(
 ): T {
     val jsonValue = json[jsonKey]
 
-    return runCatching {
-        jsonValue!!.let(converter)
-    }.recoverCatching {
-        JsonKt.logger.info(it) { "`converter: JsonElementConverter<T>` throws an error." }
+    if (jsonValue.isNull()) {
+        return runCatching {
+            json.let(default)
+        }.onFailure {
+            JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` because `jsonValue` is null, but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
+        }.getOrThrow()
+    }
 
+    return runCatching {
+        jsonValue.let(converter)
+    }.onFailure {
+        JsonKt.logger.info(it) { "`converter: JsonElementConverter<T>` throws an error. jsonKey = `$jsonKey`, json =\n$json" }
+    }.recoverCatching {
         json.let(default)
+    }.onFailure {
+        JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
     }.getOrThrow()
 }
 
@@ -61,12 +71,22 @@ internal inline fun <T> KProperty<*>.nullableJsonObject(
 ): T? {
     val jsonValue = json?.get(jsonKey)
 
-    return runCatching {
-        jsonValue!!.let(converter)
-    }.recoverCatching {
-        JsonKt.logger.info(it) { "`converter: JsonElementConverter<T>` throws an error." }
+    if (jsonValue.isNull()) {
+        return runCatching {
+            json?.let(default)
+        }.onFailure {
+            JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` because `jsonValue` is null, but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
+        }.getOrThrow()
+    }
 
-        json?.let(default)
+    return runCatching {
+        jsonValue.let(converter)
+    }.onFailure {
+        JsonKt.logger.info(it) { "`converter: JsonElementConverter<T>` throws an error. jsonKey = `$jsonKey`, json =\n$json" }
+    }.recoverCatching {
+        json.let(default)
+    }.onFailure {
+        JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
     }.getOrNull()
 }
 
@@ -80,10 +100,10 @@ internal fun jsonObjectDefaultSelectorWithNull(@Suppress("UNUSED_PARAMETER") jso
     return null
 }
 
-inline fun <T: Any> JsonObject.jsonObjectProperty(
+fun <T: Any> JsonObject.jsonObjectProperty(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T> = ::jsonObjectDefaultSelector,
-    crossinline converter: JsonElementConverter<T>
+    default: JsonObjectDefaultSelector<T> = ::jsonObjectDefaultSelector,
+    converter: JsonElementConverter<T>
 ): JsonObjectProperty<T> = JsonObjectProperty(key) { property ->
     val json = this
     val jsonKey = key ?: property.name
@@ -91,10 +111,10 @@ inline fun <T: Any> JsonObject.jsonObjectProperty(
     property.jsonObject(json, jsonKey, default, converter)
 }
 
-inline fun <T: Any> JsonModel.jsonObjectProperty(
+fun <T: Any> JsonModel.jsonObjectProperty(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T> = ::jsonObjectDefaultSelector,
-    crossinline converter: JsonElementConverter<T>
+    default: JsonObjectDefaultSelector<T> = ::jsonObjectDefaultSelector,
+    converter: JsonElementConverter<T>
 ): JsonObjectProperty<T> = JsonObjectProperty(key) { property ->
     val json = json
     val jsonKey = key ?: keyConverter(property)
@@ -102,10 +122,10 @@ inline fun <T: Any> JsonModel.jsonObjectProperty(
     property.jsonObject(json, jsonKey, default, converter)
 }
 
-inline fun <T> JsonObject?.nullableJsonObjectProperty(
+fun <T> JsonObject?.nullableJsonObjectProperty(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T?> = ::jsonObjectDefaultSelectorWithNull,
-    crossinline converter: JsonElementConverter<T?>
+    default: JsonObjectDefaultSelector<T?> = ::jsonObjectDefaultSelectorWithNull,
+    converter: JsonElementConverter<T?>
 ): JsonObjectProperty<T?> = JsonObjectProperty(key) { property ->
     val json = this
     val jsonKey = key ?: property.name
@@ -113,10 +133,10 @@ inline fun <T> JsonObject?.nullableJsonObjectProperty(
     property.nullableJsonObject(json, jsonKey, default, converter)
 }
 
-inline fun <T> JsonModel?.nullableJsonObjectProperty(
+fun <T> JsonModel?.nullableJsonObjectProperty(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<T?> = ::jsonObjectDefaultSelectorWithNull,
-    crossinline converter: JsonElementConverter<T?>
+    default: JsonObjectDefaultSelector<T?> = ::jsonObjectDefaultSelectorWithNull,
+    converter: JsonElementConverter<T?>
 ): JsonObjectProperty<T?> = JsonObjectProperty(key) { property ->
     val json = this?.json
     val jsonKey = key ?: this?.keyConverter?.invoke(property) ?: property.name
@@ -136,8 +156,16 @@ internal inline fun <T: Any> KProperty<*>.jsonArray(
 ): List<T> {
     val jsonValue = json[jsonKey]
 
+    if (jsonValue.isNull() || jsonValue !is JsonArray) {
+        return runCatching {
+            json.let(default)
+        }.onFailure {
+            JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` because `jsonValue` is null or not JsonArray, but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
+        }.getOrThrow()
+    }
+
     return runCatching {
-        jsonValue!!.jsonArray.map { element ->
+        jsonValue.map { element ->
             runCatching {
                 if (element.isNull()) {
                     null
@@ -152,10 +180,12 @@ internal inline fun <T: Any> KProperty<*>.jsonArray(
                 it
             }.getOrThrow()
         }
+    }.onFailure {
+        JsonKt.logger.info(it) { "`converter: JsonElementConverter<T>` throws an error. jsonKey = `$jsonKey`, json =\n$json" }
     }.recoverCatching {
-        JsonKt.logger.info(it) { "`converter: JsonElementConverter<T>` throws an error." }
-
         json.let(default)
+    }.onFailure {
+        JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
     }.getOrThrow() as List<T> // workaround for compiler bug
 }
 
@@ -167,8 +197,16 @@ internal inline fun <T> KProperty<*>.nullableJsonArray(
 ): List<T?> {
     val jsonValue = json?.get(jsonKey)
 
+    if (jsonValue.isNull() || jsonValue !is JsonArray) {
+        return runCatching {
+            json?.let(default)
+        }.onFailure {
+            JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` because `jsonValue` is null or not JsonArray, but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
+        }.getOrNull() ?: emptyList()
+    }
+
     return runCatching {
-        jsonValue!!.jsonArray.map { element ->
+        jsonValue.map { element ->
             runCatching {
                 if (element.isNull()) {
                     null
@@ -177,10 +215,12 @@ internal inline fun <T> KProperty<*>.nullableJsonArray(
                 }
             }.getOrNull()
         }
+    }.onFailure {
+        JsonKt.logger.info(it) { "`converter: JsonElementConverter<T>` throws an error. jsonKey = `$jsonKey`, json =\n$json" }
     }.recoverCatching {
-        JsonKt.logger.info(it) { "`converter: JsonElementConverter<T>` throws an error." }
-
-        json?.let(default)
+        json.let(default)
+    }.onFailure {
+        JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
     }.getOrNull() ?: emptyList()
 }
 
@@ -200,10 +240,10 @@ inline fun <T: Any> JsonObject.jsonArrayProperty(
     property.jsonArray(json, jsonKey, default, converter)
 }
 
-inline fun <T: Any> JsonModel.jsonArrayProperty(
+fun <T: Any> JsonModel.jsonArrayProperty(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<T> = ::jsonArrayDefaultSelector,
-    crossinline converter: JsonElementConverter<T>
+    default: JsonArrayDefaultSelector<T> = ::jsonArrayDefaultSelector,
+    converter: JsonElementConverter<T>
 ): JsonArrayProperty<T> = JsonArrayProperty(key) { property ->
     val json = json
     val jsonKey = key ?: keyConverter(property)
@@ -211,10 +251,10 @@ inline fun <T: Any> JsonModel.jsonArrayProperty(
     property.jsonArray(json, jsonKey, default, converter)
 }
 
-inline fun <T> JsonObject?.nullableJsonArrayProperty(
+fun <T> JsonObject?.nullableJsonArrayProperty(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<T?> = ::jsonArrayDefaultSelector,
-    crossinline converter: JsonElementConverter<T?>
+    default: JsonArrayDefaultSelector<T?> = ::jsonArrayDefaultSelector,
+    converter: JsonElementConverter<T?>
 ): JsonArrayProperty<T?> = JsonArrayProperty(key) { property ->
     val json = this
     val jsonKey = key ?: property.name
@@ -222,10 +262,10 @@ inline fun <T> JsonObject?.nullableJsonArrayProperty(
     property.nullableJsonArray(json, jsonKey, default, converter)
 }
 
-inline fun <T> JsonModel?.nullableJsonArrayProperty(
+fun <T> JsonModel?.nullableJsonArrayProperty(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<T?> = ::jsonArrayDefaultSelector,
-    crossinline converter: JsonElementConverter<T?>
+    default: JsonArrayDefaultSelector<T?> = ::jsonArrayDefaultSelector,
+    converter: JsonElementConverter<T?>
 ): JsonArrayProperty<T?> = JsonArrayProperty(key) { property ->
     val json = this?.json
     val jsonKey = key ?: this?.keyConverter?.invoke(property) ?: property.name

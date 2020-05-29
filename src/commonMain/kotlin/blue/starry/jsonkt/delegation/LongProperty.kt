@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt.delegation
 
@@ -34,29 +34,29 @@ import kotlinx.serialization.json.longOrNull
  *  Long
  */
 
-inline fun JsonObject.byLong(
+fun JsonObject.byLong(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<Long>
+    default: JsonObjectDefaultSelector<Long>
 ) = byLambda(key, default) { it.long }
 
-inline fun JsonObject.byLong(
+fun JsonObject.byLong(
     key: String? = null,
     default: Long
 ) = byLambda(key, default) { it.long }
 
-inline fun JsonObject.byLong(key: String) = byLambda(key) { it.long }
+fun JsonObject.byLong(key: String) = byLambda(key) { it.long }
 
-inline fun JsonModel.long(
+fun JsonModel.long(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<Long>
+    default: JsonObjectDefaultSelector<Long>
 ) = lambda(key, default) { it.long }
 
-inline fun JsonModel.long(
+fun JsonModel.long(
     key: String? = null,
     default: Long
 ) = lambda(key, default) { it.long }
 
-inline fun JsonModel.long(key: String) = lambda(key) { it.long }
+fun JsonModel.long(key: String) = lambda(key) { it.long }
 
 inline val JsonObject.byLong
     get() = byLambda { it.long }
@@ -68,29 +68,29 @@ inline val JsonModel.long
  *  Long?
  */
 
-inline fun JsonObject?.byNullableLong(
+fun JsonObject?.byNullableLong(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<Long?>
+    default: JsonObjectDefaultSelector<Long?>
 ) = byNullableLambda(key, default) { it.longOrNull }
 
-inline fun JsonObject?.byNullableLong(
+fun JsonObject?.byNullableLong(
     key: String? = null,
     default: Long?
 ) = byNullableLambda(key, default) { it.longOrNull }
 
-inline fun JsonObject?.byNullableLong(key: String) = byNullableLambda(key) { it.longOrNull }
+fun JsonObject?.byNullableLong(key: String) = byNullableLambda(key) { it.longOrNull }
 
-inline fun JsonModel?.nullableLong(
+fun JsonModel?.nullableLong(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<Long?>
+    default: JsonObjectDefaultSelector<Long?>
 ) = nullableLambda(key, default) { it.longOrNull }
 
-inline fun JsonModel?.nullableLong(
+fun JsonModel?.nullableLong(
     key: String? = null,
     default: Long?
 ) = nullableLambda(key, default) { it.longOrNull }
 
-inline fun JsonModel?.nullableLong(key: String) = nullableLambda(key) { it.longOrNull }
+fun JsonModel?.nullableLong(key: String) = nullableLambda(key) { it.longOrNull }
 
 inline val JsonObject?.byNullableLong
     get() = byNullableLambda { it.longOrNull }
@@ -102,29 +102,29 @@ inline val JsonModel?.nullableLong
  *  List<Long>
  */
 
-inline fun JsonObject.byLongList(
+fun JsonObject.byLongList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<Long>
+    default: JsonArrayDefaultSelector<Long>
 ) = byLambdaList(key, default) { it.long }
 
-inline fun JsonObject.byLongList(
+fun JsonObject.byLongList(
     key: String? = null,
     default: List<Long>
 ) = byLambdaList(key, default) { it.long }
 
-inline fun JsonObject.byLongList(key: String) = byLambdaList(key) { it.long }
+fun JsonObject.byLongList(key: String) = byLambdaList(key) { it.long }
 
-inline fun JsonModel.longList(
+fun JsonModel.longList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<Long>
+    default: JsonArrayDefaultSelector<Long>
 ) = lambdaList(key, default) { it.long }
 
-inline fun JsonModel.longList(
+fun JsonModel.longList(
     key: String? = null,
     default: List<Long>
 ) = lambdaList(key, default) { it.long }
 
-inline fun JsonModel.longList(key: String) = lambdaList(key) { it.long }
+fun JsonModel.longList(key: String) = lambdaList(key) { it.long }
 
 inline val JsonObject.byLongList
     get() = byLambdaList { it.long }
@@ -136,29 +136,29 @@ inline val JsonModel.longList
  *  List<Long?>
  */
 
-inline fun JsonObject?.byNullableLongList(
+fun JsonObject?.byNullableLongList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<Long?>
+    default: JsonArrayDefaultSelector<Long?>
 ) = byNullableLambdaList(key, default) { it.longOrNull }
 
-inline fun JsonObject?.byNullableLongList(
+fun JsonObject?.byNullableLongList(
     key: String? = null,
     default: List<Long?>
 ) = byNullableLambdaList(key, default) { it.longOrNull }
 
-inline fun JsonObject?.byNullableLongList(key: String) = byNullableLambdaList(key) { it.longOrNull }
+fun JsonObject?.byNullableLongList(key: String) = byNullableLambdaList(key) { it.longOrNull }
 
-inline fun JsonModel?.nullableLongList(
+fun JsonModel?.nullableLongList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<Long?>
+    default: JsonArrayDefaultSelector<Long?>
 ) = nullableLambdaList(key, default) { it.longOrNull }
 
-inline fun JsonModel?.nullableLongList(
+fun JsonModel?.nullableLongList(
     key: String? = null,
     default: List<Long?>
 ) = nullableLambdaList(key, default) { it.longOrNull }
 
-inline fun JsonModel?.nullableLongList(key: String) = nullableLambdaList(key) { it.longOrNull }
+fun JsonModel?.nullableLongList(key: String) = nullableLambdaList(key) { it.longOrNull }
 
 inline val JsonObject?.byNullableLongList
     get() = byNullableLambdaList { it.longOrNull }

@@ -30,14 +30,14 @@ import blue.starry.jsonkt.JsonObject
 import blue.starry.jsonkt.jsonObjectOf
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonObject.jsonModelProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T> {
+internal fun <T: JsonModel> JsonObject.jsonModelProperty(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> {
     return jsonObjectProperty(key) {
         block(it.jsonObject)
     }
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonObject.jsonModelOrDefaultProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T> {
+internal fun <T: JsonModel> JsonObject.jsonModelOrDefaultProperty(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> {
     return jsonObjectProperty(key) {
         runCatching {
             block(it.jsonObject)
@@ -48,21 +48,21 @@ internal inline fun <T: JsonModel> JsonObject.jsonModelOrDefaultProperty(key: St
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonObject?.jsonModelOrNullProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T?> {
+internal fun <T: JsonModel> JsonObject?.jsonModelOrNullProperty(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T?> {
     return nullableJsonObjectProperty(key) {
         block(it.jsonObject)
     }
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonModel.jsonModelProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T> {
+internal fun <T: JsonModel> JsonModel.jsonModelProperty(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> {
     return jsonObjectProperty(key) { 
         block(it.jsonObject)
     }
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonModel.jsonModelOrDefaultProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T> {
+internal fun <T: JsonModel> JsonModel.jsonModelOrDefaultProperty(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> {
     return jsonObjectProperty(key) { 
         runCatching { 
             block(it.jsonObject)
@@ -73,7 +73,7 @@ internal inline fun <T: JsonModel> JsonModel.jsonModelOrDefaultProperty(key: Str
 }
 
 @PublishedApi
-internal inline fun <T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T?> {
+internal fun <T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T?> {
     return nullableJsonObjectProperty(key) { 
         block(it.jsonObject)
     }
@@ -83,18 +83,18 @@ internal inline fun <T: JsonModel> JsonModel?.jsonModelOrNullProperty(key: Strin
     JsonModel
  */
 
-inline fun <T: JsonModel> JsonObject.byModel(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T> = jsonModelProperty(key, block)
+fun <T: JsonModel> JsonObject.byModel(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> = jsonModelProperty(key, block)
 
-inline fun <T: JsonModel> JsonModel.model(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T> = jsonModelProperty(key, block)
+fun <T: JsonModel> JsonModel.model(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> = jsonModelProperty(key, block)
 
-inline fun <T: JsonModel> JsonObject.byModelOrDefault(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T> = jsonModelOrDefaultProperty(key, block)
+fun <T: JsonModel> JsonObject.byModelOrDefault(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> = jsonModelOrDefaultProperty(key, block)
 
-inline fun <T: JsonModel> JsonModel.modelOrDefault(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T> = jsonModelOrDefaultProperty(key, block)
+fun <T: JsonModel> JsonModel.modelOrDefault(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> = jsonModelOrDefaultProperty(key, block)
 
 /*
     JsonModel?
  */
 
-inline fun <T: JsonModel> JsonObject?.byNullableModel(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T?> = jsonModelOrNullProperty(key, block)
+fun <T: JsonModel> JsonObject?.byNullableModel(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T?> = jsonModelOrNullProperty(key, block)
 
-inline fun <T: JsonModel> JsonModel?.nullableModel(key: String? = null, crossinline block: (JsonObject) -> T): JsonObjectProperty<T?> = jsonModelOrNullProperty(key, block)
+fun <T: JsonModel> JsonModel?.nullableModel(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T?> = jsonModelOrNullProperty(key, block)

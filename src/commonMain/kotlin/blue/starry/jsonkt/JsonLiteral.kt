@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-@file:Suppress("UNUSED", "NOTHING_TO_INLINE")
+@file:Suppress("UNUSED")
 
 package blue.starry.jsonkt
 
@@ -33,11 +33,11 @@ package blue.starry.jsonkt
 /**
  * @throws JsonCastException
  */
-inline fun String.toJsonLiteral(): JsonLiteral {
+fun String.toJsonLiteral(): JsonLiteral {
     return toJsonElement().cast()
 }
 
-inline fun String?.toJsonLiteralOrNull(): JsonLiteral? {
+fun String?.toJsonLiteralOrNull(): JsonLiteral? {
     return runSafely {
         toJsonLiteral()
     }
