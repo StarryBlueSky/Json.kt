@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-import jp.nephy.jsonkt.JsonObject
-import jp.nephy.jsonkt.delegation.*
+import blue.starry.jsonkt.JsonObject
+import blue.starry.jsonkt.delegation.*
 
 @Suppress("Unused", "KDocMissingDocumentation", "PublicApiImplicitType")
 data class SampleModel(override val json: JsonObject): JsonModel {

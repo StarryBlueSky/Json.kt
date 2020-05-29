@@ -25,9 +25,12 @@
 package tests
 
 import SampleModel
-import jp.nephy.jsonkt.*
-import kotlinx.serialization.json.JsonPrimitive
+import blue.starry.jsonkt.asJsonElement
+import blue.starry.jsonkt.jsonArrayOf
+import blue.starry.jsonkt.jsonObjectOf
+import blue.starry.jsonkt.parseObject
 import json
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -49,11 +52,6 @@ class ModelTest {
     @Test fun doubleTest() {
         assertEquals(model.doubleValue, 2.0001)
         assertEquals(model.nullableDoubleValue, 4.0001)
-    }
-
-    fun charTest() {
-        assertEquals(model.charValue, 'x')
-        assertEquals(model.nullableCharValue, 'y')
     }
 
     @Test fun stringTest() {
