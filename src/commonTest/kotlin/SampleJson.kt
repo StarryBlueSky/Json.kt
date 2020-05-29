@@ -1,15 +1,47 @@
 // language=JSON
-const val json = """{
-    "a": 1,
-    "b": 2.3,
-    "c": "hoge",
-    "d": [2, 3, 5, 7],
-    "e": {
+const val json: String = """{
+    "i": 1,
+    "ni": null,
+    "li": [2,3,5,7],
+    "nli": [1,null,3],
+    
+    "f": 2.3,
+    "nf": 4.5,
+    
+    "d": 2.0001,
+    "nd": 4.0001,
+    
+    "c": "x",
+    "nc": "y",
+    
+    "s": "hoge",
+    "ns": "null",
+    
+    "o": {
+        "x": 1,
+        "y": 2
+    },
+    
+    "a": [
+        {
+        },
+        {
+            "x": 2
+        }
+    ],
+    
+    "e": {},
+    
+    "l": true,
+    
+    "p": 123,
+
+    "m": {
         "x": "1",
         "y": 2.0,
         "z": 3
     },
-    "f": [
+    "ml": [
         {
             "x": "1",
             "y": 2.0001,
@@ -21,5 +53,17 @@ const val json = """{
             "z": 30
         }
     ],
-    "snake_key": "Python"
+    
+    "lcc": {
+        "lowerCamelCaseKey": "kotlin"
+    },
+    "ucc": {
+        "UpperCamelCaseKey": "kotlin"
+    },
+    "sc": {
+        "snake_case_key": "kotlin"
+    },
+    
+    "ie": 4,
+    "lie": [1, 2]
 }"""
