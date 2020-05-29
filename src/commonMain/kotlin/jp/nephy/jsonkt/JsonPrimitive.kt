@@ -26,8 +26,12 @@
 
 package jp.nephy.jsonkt
 
-@Suppress("IMPLICIT_CAST_TO_ANY")
 inline fun <reified T> JsonPrimitive.cast(): T {
+    return safeCast<T>() ?: throw IllegalArgumentException("${T::class.simpleName} is not primitive type.")
+}
+
+@Suppress("IMPLICIT_CAST_TO_ANY")
+inline fun <reified T> JsonPrimitive.safeCast(): T? {
     return when (T::class) {
         Boolean::class -> {
             booleanOrNull
@@ -51,9 +55,9 @@ inline fun <reified T> JsonPrimitive.cast(): T {
             contentOrNull
         }
         else -> {
-            throw IllegalArgumentException("${T::class.simpleName} is not primitive type.")
+            null
         }
-    } as T
+    } as T?
 }
 
 /*

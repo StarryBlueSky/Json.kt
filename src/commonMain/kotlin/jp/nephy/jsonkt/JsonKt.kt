@@ -26,9 +26,12 @@
 
 package jp.nephy.jsonkt
 
+import mu.KLogger
+import mu.KotlinLogging
 import kotlin.reflect.KClass
 
 object JsonKt {
+    val logger: KLogger = KotlinLogging.logger("JsonKt")
     internal val serializers = mutableMapOf<KClass<*>, Serializer<*>>()
 
     fun <T: Any> install(sourceClass: KClass<T>, serializer: Serializer<T>) {

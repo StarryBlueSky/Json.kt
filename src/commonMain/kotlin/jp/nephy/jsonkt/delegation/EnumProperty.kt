@@ -29,6 +29,7 @@ package jp.nephy.jsonkt.delegation
 import jp.nephy.jsonkt.JsonKtException
 import jp.nephy.jsonkt.JsonObject
 import jp.nephy.jsonkt.cast
+import jp.nephy.jsonkt.safeCast
 import kotlin.reflect.KClass
 
 @Deprecated("Directly implementing JsonEnum<T> is deprecated for type safety. Use {BooleanJsonEnum, IntJsonEnum, LongJsonEnum, FloatJsonEnum, DoubleJsonEnum, CharJsonEnum, StringJsonEnum} instead of JsonEnum<T>.")
@@ -49,14 +50,17 @@ class NoSuchEnumMemberException(
     @Suppress("UNUSED_PARAMETER") val value: Any
 ): JsonKtException("Enum class ${enumClass.simpleName} does not have member of value $value.")
 
-/**
- * @throws NoSuchEnumMemberException
- */
-inline fun <T: Any, reified E> findEnumMember(value: T): E where E: Enum<E>, E: JsonEnum<T> {
+@PublishedApi
+internal inline fun <T: Any, reified E> findEnumMember(value: T): E where E: Enum<E>, E: JsonEnum<T> {
     return findEnumMemberOrNull(value) ?: throw NoSuchEnumMemberException(E::class, value)
 }
 
-inline fun <T: Any, reified E> findEnumMemberOrNull(value: T): E? where E: Enum<E>, E: JsonEnum<T> {
+@PublishedApi
+internal inline fun <T: Any, reified E> findEnumMemberOrNull(value: T?): E? where E: Enum<E>, E: JsonEnum<T> {
+    if (value == null) {
+        return null
+    }
+
     return enumValues<E>().find { const -> const.value == value }
 }
 
@@ -66,91 +70,42 @@ inline fun <T: Any, reified E> findEnumMemberOrNull(value: T): E? where E: Enum<
 
 inline fun <reified T: Any, reified E> JsonObject.byEnum(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E>
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) { 
+    crossinline default: JsonObjectDefaultSelector<E> = ::jsonObjectDefaultSelector
+): JsonObjectProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
     val casted = it.primitive.cast<T>()
     
     findEnumMember(casted)
 }
 
-inline fun <reified T: Any, reified E> JsonObject.byEnum(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key) { 
-    val casted = it.primitive.cast<T>()
-
-    findEnumMember<T, E>(casted)
-}
-
 inline fun <reified T: Any, reified E> JsonModel.enum(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E>
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
+    crossinline default: JsonObjectDefaultSelector<E> = ::jsonObjectDefaultSelector
+): JsonObjectProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
     val casted = it.primitive.cast<T>()
 
     findEnumMember(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonModel.enum(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key) {
-    val casted = it.primitive.cast<T>()
-
-    findEnumMember<T, E>(casted)
 }
 
 /*
     JsonEnum?
  */
 
-inline fun <reified T: Any, reified E> JsonObject.byNullableEnum(
+inline fun <reified T: Any, reified E> JsonObject?.byNullableEnum(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E?>
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) { 
-    val casted = it.primitive.cast<T>()
+    crossinline default: JsonObjectDefaultSelector<E?> = ::jsonObjectDefaultSelectorWithNull
+): JsonObjectProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonObjectProperty(key, default) {
+    val casted = it.primitive.safeCast<T>()
     
     findEnumMemberOrNull(casted)
 }
 
-inline fun <reified T: Any, reified E> JsonObject.byNullableEnum(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key) { 
-    val casted = it.primitive.cast<T>()
-
-    findEnumMemberOrNull<T, E>(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonModel.nullableEnum(
+inline fun <reified T: Any, reified E> JsonModel?.nullableEnum(
     key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E?>
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
-    val casted = it.primitive.cast<T>()
+    crossinline default: JsonObjectDefaultSelector<E?> = ::jsonObjectDefaultSelectorWithNull
+): JsonObjectProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonObjectProperty(key, default) {
+    val casted = it.primitive.safeCast<T>()
 
     findEnumMemberOrNull(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonModel.nullableEnum(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key) {
-    val casted = it.primitive.cast<T>()
-
-    findEnumMemberOrNull<T, E>(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonModel.enumOrNull(
-    key: String? = null,
-    crossinline default: JsonObjectDefaultSelector<E?>
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
-    val casted = it.primitive.cast<T>()
-
-    findEnumMemberOrNull(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonModel.enumOrNull(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key) {
-    val casted = it.primitive.cast<T>()
-
-    findEnumMemberOrNull<T, E>(casted)
 }
 
 /*
@@ -159,72 +114,40 @@ inline fun <reified T: Any, reified E> JsonModel.enumOrNull(
 
 inline fun <reified T: Any, reified E> JsonObject.byEnumList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<E>
-) where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) {
-    val casted = it.primitive.cast<T>()
+    crossinline default: JsonArrayDefaultSelector<E> = ::jsonArrayDefaultSelector
+): JsonArrayProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) { json ->
+    val casted = json.primitive.cast<T>()
 
     findEnumMember(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonObject.byEnumList(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key) {
-    val casted = it.primitive.cast<T>()
-
-    findEnumMember<T, E>(casted)
 }
 
 inline fun <reified T: Any, reified E> JsonModel.enumList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<E>
-) where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) {
+    crossinline default: JsonArrayDefaultSelector<E> = ::jsonArrayDefaultSelector
+): JsonArrayProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) {
     val casted = it.primitive.cast<T>()
 
     findEnumMember(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonModel.enumList(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key) {
-    val casted = it.primitive.cast<T>()
-
-    findEnumMember<T, E>(casted)
 }
 
 /*
     List<JsonEnum?>
  */
 
-inline fun <reified T: Any, reified E> JsonObject.byNullableEnumList(
+inline fun <reified T: Any, reified E> JsonObject?.byNullableEnumList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<E?>
-) where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) {
-    val casted = it.primitive.cast<T>()
+    crossinline default: JsonArrayDefaultSelector<E?> = ::jsonArrayDefaultSelector
+): JsonArrayProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonArrayProperty(key, default) {
+    val casted = it.primitive.safeCast<T>()
 
     findEnumMemberOrNull(casted)
 }
 
-inline fun <reified T: Any, reified E> JsonObject.byNullableEnumList(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key) {
-    val casted = it.primitive.cast<T>()
-
-    findEnumMemberOrNull<T, E>(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonModel.nullableEnumList(
+inline fun <reified T: Any, reified E> JsonModel?.nullableEnumList(
     key: String? = null,
-    crossinline default: JsonArrayDefaultSelector<E?>
-) where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) {
-    val casted = it.primitive.cast<T>()
+    crossinline default: JsonArrayDefaultSelector<E?> = ::jsonArrayDefaultSelector
+): JsonArrayProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonArrayProperty(key, default) {
+    val casted = it.primitive.safeCast<T>()
 
     findEnumMemberOrNull(casted)
-}
-
-inline fun <reified T: Any, reified E> JsonModel.nullableEnumList(
-    key: String? = null
-) where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key) {
-    val casted = it.primitive.cast<T>()
-
-    findEnumMemberOrNull<T, E>(casted)
 }

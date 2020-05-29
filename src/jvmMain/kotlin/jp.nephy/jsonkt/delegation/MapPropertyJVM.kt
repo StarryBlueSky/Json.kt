@@ -84,7 +84,7 @@ internal actual inline fun <reified T> JsonObject.getValue(key: String): T {
         }
         else -> {
             if (kClass.isSubclassOf(JsonModel::class)) {
-                value?.parseAs(kClass as KClass<JsonModel>)
+                value?.parseObject(kClass as KClass<JsonModel>)
             } else {
                 throw UnsupportedOperationException("Unsupported class: ${kClass.qualifiedName}")
             }

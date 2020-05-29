@@ -29,21 +29,17 @@ package jp.nephy.jsonkt.delegation
 import jp.nephy.jsonkt.*
 
 inline fun <reified T: JsonModel> JsonModel.modelValue(key: String): T {
-    return (json[key] ?: throw JsonNullPointerException(key, json)).parse()
+    return (json[key] ?: throw JsonNullPointerException(key, json)).parseObject()
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelValueOrNull(key: String): T? {
-    return json.getObjectOrNull(key).parseOrNull()
+    return json.getObjectOrNull(key).parseObjectOrNull()
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelListValue(key: String): List<T> {
-    return (json[key] ?: throw JsonNullPointerException(key, json)).parseList()
+    return (json[key] ?: throw JsonNullPointerException(key, json)).parseArray()
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelListValueOrNull(key: String): List<T>? {
-    return json.getArrayOrNull(key).parseListOrNull()
-}
-
-inline fun <reified T: JsonModel> JsonModel.modelListValueOrEmpty(key: String): List<T> {
-    return json.getArrayOrNull(key).parseListOrEmpty()
+    return json.getArrayOrNull(key).parseArrayOrNull()
 }

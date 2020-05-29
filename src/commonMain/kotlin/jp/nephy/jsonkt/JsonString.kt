@@ -26,6 +26,7 @@
 
 package jp.nephy.jsonkt
 
+import jp.nephy.jsonkt.delegation.JsonModel
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.json.JsonElementSerializer
@@ -61,4 +62,8 @@ inline fun JsonPairSequence.stringify(configuration: JsonConfiguration = default
  */
 inline fun JsonPairArray.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
     return toJsonArray().stringify(configuration)
+}
+
+inline fun JsonModel.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
+    return json.stringify(configuration)
 }

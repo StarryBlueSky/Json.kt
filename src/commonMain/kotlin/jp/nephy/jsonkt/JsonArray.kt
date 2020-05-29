@@ -163,10 +163,10 @@ inline val JsonArray.nullableStringList: List<String?>
     get() = map { it.stringOrNull }
 
 /*
- * Edit
+ * Copy
  */
 
 @Suppress("UNCHECKED_CAST")
-inline fun JsonArray.edit(block: (JsonMutableArray) -> Unit): JsonArray {
+inline fun JsonArray.copy(block: (JsonMutableArray) -> Unit): JsonArray {
     return (toMutableList() as JsonMutableArray).apply(block).toJsonArray()
 }

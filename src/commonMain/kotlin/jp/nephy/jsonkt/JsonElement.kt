@@ -141,13 +141,13 @@ inline val JsonElement.charOrNull: Char?
     }
 
 /*
- * Edit
+ * Copy
  */
 
-inline fun JsonElement.editAsObject(block: (JsonMutableMap) -> Unit): JsonObject {
-    return jsonObject.edit(block)
+inline fun JsonElement.copyAsObject(block: (JsonMutableMap) -> Unit): JsonObject {
+    return jsonObject.copy(block)
 }
 
-inline fun JsonElement.editAsArray(block: (JsonMutableArray) -> Unit): JsonArray {
-    return jsonArray.edit(block)
+inline fun JsonElement.copyAsArray(block: (JsonMutableArray) -> Unit): JsonArray {
+    return jsonArray.copy(block)
 }

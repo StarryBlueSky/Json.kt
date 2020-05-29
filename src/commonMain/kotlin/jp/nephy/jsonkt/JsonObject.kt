@@ -104,10 +104,10 @@ inline fun JsonPairArray?.toJsonObjectOrNull(): JsonObject? {
 }
 
 /*
- * Edit
+ * Copy
  */
 
 @Suppress("UNCHECKED_CAST")
-inline fun JsonObject.edit(block: (JsonMutableMap) -> Unit): JsonObject {
+inline fun JsonObject.copy(block: (JsonMutableMap) -> Unit): JsonObject {
     return (toMutableMap() as JsonMutableMap).apply(block).toJsonObject()
 }

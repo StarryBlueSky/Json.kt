@@ -37,9 +37,5 @@ internal val defaultJsonInstance = Json(defaultJsonConfiguration)
 
 @PublishedApi
 internal inline fun <T, R> T?.runSafely(block: T.() -> R?): R? {
-    if (this == null) {
-        return null
-    }
-
-    return this.runCatching(block).getOrNull()
+    return (this ?: return null).runCatching(block).getOrNull()
 }
