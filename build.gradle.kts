@@ -363,7 +363,7 @@ bintray {
 
     pkg.apply {
         repo = if (isEAPBuild) "dev" else "stable"
-        userOrg = githubOrganizationName.toLowerCase()
+        userOrg = "nephyproject"
 
         name = packageName
         desc = packageDescription
