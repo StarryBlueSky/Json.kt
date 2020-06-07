@@ -38,7 +38,7 @@ val githubOrganizationName = "StarryBlueSky"
 val githubRepositoryName = "Json.kt"
 val packageGroupId = "blue.starry"
 val packageName = "JsonKt"
-val packageVersion = Version(5, 0, 0)
+val packageVersion = Version(5, 0, 1)
 val packageDescription = "Json bindings for Kotlin"
 
 object ThirdpartyVersion {
