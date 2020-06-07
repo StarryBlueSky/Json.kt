@@ -89,14 +89,14 @@ kotlin {
         named("jvmMain") {
             dependencies {
                 // for JVM (Android)
-                implementation("jp.nephy:jsonkt:$jsonkt_version")
+                implementation("blue.starry:jsonkt:$jsonkt_version")
             }
         }
 
         named("jsMain") {
             dependencies {
                 // for JS
-                implementation("jp.nephy:jsonkt-js:$jsonkt_version")
+                implementation("blue.starry:jsonkt-js:$jsonkt_version")
             }
         }
     }
