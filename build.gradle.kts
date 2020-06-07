@@ -45,7 +45,7 @@ object ThirdpartyVersion {
     const val KotlinxSerializationRuntime = "0.20.0"
 
     // for testing
-    const val Spek = "2.0.10"
+    const val JUnit = "5.6.2"
 
     // for logging
     const val KotlinLogging = "1.7.9"
@@ -137,11 +137,13 @@ kotlin {
             kotlinOptions {
                 metaInfo = true
                 sourceMap = true
-                verbose = true
                 moduleKind = "umd"
             }
         }
     }
+    // mingwX64("mingw")
+    // linuxX64("linux")
+    // macosX64("macos")
 
     sourceSets {
         commonMain {
@@ -171,10 +173,10 @@ kotlin {
         named("jvmTest") {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(kotlin("test-junit5"))
 
-                implementation("org.spekframework.spek2:spek-dsl-jvm:${ThirdpartyVersion.Spek}")
-                runtimeOnly("org.spekframework.spek2:spek-runner-junit5:${ThirdpartyVersion.Spek}")
+                // For test
+                implementation(kotlin("test-junit5"))
+                implementation("org.junit.jupiter:junit-jupiter:${ThirdpartyVersion.JUnit}")
 
                 implementation("ch.qos.logback:logback-core:${ThirdpartyVersion.Logback}")
                 implementation("ch.qos.logback:logback-classic:${ThirdpartyVersion.Logback}")
@@ -196,19 +198,27 @@ kotlin {
             }
         }
 
-//        named("nativeMain") {
+//        named("mingwMain") {
 //            dependencies {
 //                api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:${ThirdpartyVersion.KotlinxSerializationRuntime}")
 //            }
 //        }
-//        named("nativeTest") {
+//        named("mingwTest") {
 //        }
+    }
+
+    targets.all {
+        compilations.all {
+            kotlinOptions {
+                apiVersion = "1.3"
+                languageVersion = "1.3"
+                verbose = true
+            }
+        }
     }
 
     sourceSets.all {
         languageSettings.progressiveMode = true
-        languageSettings.apiVersion = "1.3"
-        languageSettings.languageVersion = "1.3"
         languageSettings.useExperimentalAnnotation("kotlin.Experimental")
         languageSettings.useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
     }
@@ -232,11 +242,10 @@ testlogger {
     theme = ThemeType.MOCHA
 }
 
-tasks {
-    named<Test>("jvmTest") {
-        useJUnitPlatform {
-            includeEngines("spek2")
-        }
+tasks.named<Test>("jvmTest") {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
     }
 }
 
