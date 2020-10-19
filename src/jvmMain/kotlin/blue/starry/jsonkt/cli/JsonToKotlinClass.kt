@@ -28,6 +28,9 @@ package blue.starry.jsonkt.cli
 
 import blue.starry.jsonkt.*
 import blue.starry.jsonkt.cli.property.*
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -74,8 +77,8 @@ fun String.toModelString(modelName: String? = null, printComments: Boolean? = nu
 class JsonToKotlinClass internal constructor(private val json: JsonObject) {
     fun convert(targetModelName: String?, printComments: Boolean?): String {
         return buildString {
-            appendln("import blue.starry.jsonkt.*")
-            appendln("import blue.starry.jsonkt.delegation.*\n")
+            appendLine("import blue.starry.jsonkt.*")
+            appendLine("import blue.starry.jsonkt.delegation.*\n")
 
             with(JsonObjectParser(json)) {
                 val modelName = targetModelName.orEmpty().ifBlank { "Model" }
@@ -135,7 +138,7 @@ class JsonToKotlinClass internal constructor(private val json: JsonObject) {
 
                         val altJson = jsonObjectOf(*values.map { (k, v) ->
                             when {
-                                v.all { element -> !element.isNull } -> k to v.run {
+                                v.all { element -> element !is JsonNull } -> k to v.run {
                                     if (all { element -> element is JsonObject }) {
                                         val innerValues = mutableMapOf<String, Pair<MutableSet<JsonElement>, Boolean>>()
                                         forEach { element ->
@@ -143,7 +146,8 @@ class JsonToKotlinClass internal constructor(private val json: JsonObject) {
                                                 if (k in innerValues) {
                                                     innerValues[k]?.first?.add(v)
                                                 } else {
-                                                    innerValues[k] = mutableSetOf(v) to (size != count { element -> k in element.jsonObject })
+                                                    innerValues[k] =
+                                                        mutableSetOf(v) to (size != count { element -> k in element.jsonObject })
                                                 }
                                             }
                                         }
@@ -165,9 +169,9 @@ class JsonToKotlinClass internal constructor(private val json: JsonObject) {
                                         first()
                                     }
                                 }
-                                v.all { element -> element.isNull } -> k to JsonNull
-                                else -> k to v.find { element -> !element.isNull }!!.apply {
-                                    primitive.isNullable = true
+                                v.all { element -> element is JsonNull } -> k to JsonNull
+                                else -> k to v.find { element -> element !is JsonNull }!!.apply {
+                                    jsonPrimitive.isNullable = true
                                 }
                             }
                         }.toTypedArray())

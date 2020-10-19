@@ -24,13 +24,11 @@
 
 package blue.starry.jsonkt.delegation
 
-import blue.starry.jsonkt.*
+import blue.starry.jsonkt.jsonArrayOrNull
+import blue.starry.jsonkt.jsonObjectOrNull
+import blue.starry.jsonkt.primitiveOrNull
+import blue.starry.jsonkt.stringOrNull
 import kotlinx.serialization.json.*
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonLiteral
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
 @PublishedApi
@@ -40,19 +38,19 @@ internal actual inline fun <reified T> JsonObject.getValue(key: String): T {
 
     return when (val kClass = T::class) {
         Boolean::class -> {
-            value?.booleanOrNull
+            value?.primitiveOrNull?.booleanOrNull
         }
         Int::class -> {
-            value?.intOrNull
+            value?.primitiveOrNull?.intOrNull
         }
         Long::class -> {
-            value?.longOrNull
+            value?.primitiveOrNull?.longOrNull
         }
         Float::class -> {
-            value?.floatOrNull
+            value?.primitiveOrNull?.floatOrNull
         }
         Double::class -> {
-            value?.doubleOrNull
+            value?.primitiveOrNull?.doubleOrNull
         }
         Char::class -> {
             value?.stringOrNull?.firstOrNull()
@@ -68,9 +66,6 @@ internal actual inline fun <reified T> JsonObject.getValue(key: String): T {
         }
         JsonPrimitive::class -> {
             value?.primitiveOrNull
-        }
-        JsonLiteral::class -> {
-            value?.literalOrNull
         }
         JsonNull::class -> {
             value?.jsonNull

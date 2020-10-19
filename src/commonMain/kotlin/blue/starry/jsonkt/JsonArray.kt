@@ -103,25 +103,22 @@ inline val JsonArray.jsonArrayList: List<JsonArray>
     get() = map { it.jsonArray }
 
 inline val JsonArray.jsonPrimitiveList: List<JsonPrimitive>
-    get() = map { it.primitive }
-
-inline val JsonArray.jsonLiteralList: List<JsonLiteral>
-    get() = map { it.literal }
+    get() = map { it.jsonPrimitive }
 
 inline val JsonArray.booleanList: List<Boolean>
-    get() = map { it.boolean }
+    get() = map { it.jsonPrimitive.boolean }
 
 inline val JsonArray.intList: List<Int>
-    get() = map { it.int }
+    get() = map { it.jsonPrimitive.int }
 
 inline val JsonArray.longList: List<Long>
-    get() = map { it.long }
+    get() = map { it.jsonPrimitive.long }
 
 inline val JsonArray.floatList: List<Float>
-    get() = map { it.float }
+    get() = map { it.jsonPrimitive.float }
 
 inline val JsonArray.doubleList: List<Double>
-    get() = map { it.double }
+    get() = map { it.jsonPrimitive.double }
 
 inline val JsonArray.charList: List<Char>
     get() = map { it.char }
@@ -138,29 +135,26 @@ inline val JsonArray.nullableJsonArrayList: List<JsonArray?>
 inline val JsonArray.nullableJsonPrimitiveList: List<JsonPrimitive?>
     get() = map { it.primitiveOrNull }
 
-inline val JsonArray.nullableJsonLiteralList: List<JsonLiteral?>
-    get() = map { it.literalOrNull }
-
 inline val JsonArray.nullableBooleanList: List<Boolean?>
-    get() = map { it.booleanOrNull }
+    get() = map { it.jsonPrimitive.booleanOrNull }
 
 inline val JsonArray.nullableIntList: List<Int?>
-    get() = map { it.intOrNull }
+    get() = map { it.jsonPrimitive.intOrNull }
 
 inline val JsonArray.nullableLongList: List<Long?>
-    get() = map { it.longOrNull }
+    get() = map { it.jsonPrimitive.longOrNull }
 
 inline val JsonArray.nullableFloatList: List<Float?>
-    get() = map { it.floatOrNull }
+    get() = map { it.jsonPrimitive.floatOrNull }
 
 inline val JsonArray.nullableDoubleList: List<Double?>
-    get() = map { it.doubleOrNull }
+    get() = map { it.jsonPrimitive.doubleOrNull }
 
 inline val JsonArray.nullableCharList: List<Char?>
     get() = map { it.charOrNull }
 
 inline val JsonArray.nullableStringList: List<String?>
-    get() = map { it.stringOrNull }
+    get() = map { it.jsonPrimitive.contentOrNull }
 
 /*
  * Copy

@@ -186,7 +186,7 @@ internal inline fun <T: Any> KProperty<*>.jsonArray(
         json.let(default)
     }.onFailure {
         JsonKt.logger.info(it) { "Fallback to `default: JsonObjectDefaultSelector<T>` but it throws an error. jsonKey = `$jsonKey`, json =\n$json" }
-    }.getOrThrow() as List<T> // workaround for compiler bug
+    }.getOrThrow()
 }
 
 @PublishedApi

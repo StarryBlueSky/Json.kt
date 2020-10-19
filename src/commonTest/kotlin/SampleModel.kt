@@ -58,8 +58,6 @@ data class SampleModel(override val json: JsonObject): JsonModel {
 
     val jsonElementValue by jsonElement("e")
 
-    val jsonLiteralValue by jsonLiteral("l")
-
     val jsonPrimitiveValue by jsonPrimitive("p")
 
     val modelValue by model("m") { InnerModel(it) }

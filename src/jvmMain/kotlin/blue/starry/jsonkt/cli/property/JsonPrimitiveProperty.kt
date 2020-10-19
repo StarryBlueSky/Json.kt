@@ -25,7 +25,8 @@
 package blue.starry.jsonkt.cli.property
 
 import blue.starry.jsonkt.JsonElement
+import kotlinx.serialization.json.jsonPrimitive
 
 internal class JsonPrimitiveProperty(pair: Map.Entry<String, JsonElement>, printComments: Boolean): AbstractJsonProperty(pair, printComments) {
-    override val delegationName = toMethodName(jsonPrimitive = element.primitive)
+    override val delegationName = toMethodName(jsonPrimitive = element.jsonPrimitive)
 }

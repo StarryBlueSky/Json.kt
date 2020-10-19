@@ -27,6 +27,8 @@
 package blue.starry.jsonkt.delegation
 
 import blue.starry.jsonkt.JsonObject
+import blue.starry.jsonkt.primitiveOrNull
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.longOrNull
 
@@ -37,32 +39,32 @@ import kotlinx.serialization.json.longOrNull
 fun JsonObject.byLong(
     key: String? = null,
     default: JsonObjectDefaultSelector<Long>
-) = byLambda(key, default) { it.long }
+) = byLambda(key, default) { it.jsonPrimitive.long }
 
 fun JsonObject.byLong(
     key: String? = null,
     default: Long
-) = byLambda(key, default) { it.long }
+) = byLambda(key, default) { it.jsonPrimitive.long }
 
-fun JsonObject.byLong(key: String) = byLambda(key) { it.long }
+fun JsonObject.byLong(key: String) = byLambda(key) { it.jsonPrimitive.long }
 
 fun JsonModel.long(
     key: String? = null,
     default: JsonObjectDefaultSelector<Long>
-) = lambda(key, default) { it.long }
+) = lambda(key, default) { it.jsonPrimitive.long }
 
 fun JsonModel.long(
     key: String? = null,
     default: Long
-) = lambda(key, default) { it.long }
+) = lambda(key, default) { it.jsonPrimitive.long }
 
-fun JsonModel.long(key: String) = lambda(key) { it.long }
+fun JsonModel.long(key: String) = lambda(key) { it.jsonPrimitive.long }
 
 inline val JsonObject.byLong
-    get() = byLambda { it.long }
+    get() = byLambda { it.jsonPrimitive.long }
 
 inline val JsonModel.long
-    get() = lambda { it.long }
+    get() = lambda { it.jsonPrimitive.long }
 
 /*
  *  Long?
@@ -71,32 +73,32 @@ inline val JsonModel.long
 fun JsonObject?.byNullableLong(
     key: String? = null,
     default: JsonObjectDefaultSelector<Long?>
-) = byNullableLambda(key, default) { it.longOrNull }
+) = byNullableLambda(key, default) { it.primitiveOrNull?.longOrNull }
 
 fun JsonObject?.byNullableLong(
     key: String? = null,
     default: Long?
-) = byNullableLambda(key, default) { it.longOrNull }
+) = byNullableLambda(key, default) { it.primitiveOrNull?.longOrNull }
 
-fun JsonObject?.byNullableLong(key: String) = byNullableLambda(key) { it.longOrNull }
+fun JsonObject?.byNullableLong(key: String) = byNullableLambda(key) { it.primitiveOrNull?.longOrNull }
 
 fun JsonModel?.nullableLong(
     key: String? = null,
     default: JsonObjectDefaultSelector<Long?>
-) = nullableLambda(key, default) { it.longOrNull }
+) = nullableLambda(key, default) { it.primitiveOrNull?.longOrNull }
 
 fun JsonModel?.nullableLong(
     key: String? = null,
     default: Long?
-) = nullableLambda(key, default) { it.longOrNull }
+) = nullableLambda(key, default) { it.primitiveOrNull?.longOrNull }
 
-fun JsonModel?.nullableLong(key: String) = nullableLambda(key) { it.longOrNull }
+fun JsonModel?.nullableLong(key: String) = nullableLambda(key) { it.primitiveOrNull?.longOrNull }
 
 inline val JsonObject?.byNullableLong
-    get() = byNullableLambda { it.longOrNull }
+    get() = byNullableLambda { it.primitiveOrNull?.longOrNull }
 
 inline val JsonModel?.nullableLong
-    get() = nullableLambda { it.longOrNull }
+    get() = nullableLambda { it.primitiveOrNull?.longOrNull }
 
 /*
  *  List<Long>
@@ -105,32 +107,32 @@ inline val JsonModel?.nullableLong
 fun JsonObject.byLongList(
     key: String? = null,
     default: JsonArrayDefaultSelector<Long>
-) = byLambdaList(key, default) { it.long }
+) = byLambdaList(key, default) { it.jsonPrimitive.long }
 
 fun JsonObject.byLongList(
     key: String? = null,
     default: List<Long>
-) = byLambdaList(key, default) { it.long }
+) = byLambdaList(key, default) { it.jsonPrimitive.long }
 
-fun JsonObject.byLongList(key: String) = byLambdaList(key) { it.long }
+fun JsonObject.byLongList(key: String) = byLambdaList(key) { it.jsonPrimitive.long }
 
 fun JsonModel.longList(
     key: String? = null,
     default: JsonArrayDefaultSelector<Long>
-) = lambdaList(key, default) { it.long }
+) = lambdaList(key, default) { it.jsonPrimitive.long }
 
 fun JsonModel.longList(
     key: String? = null,
     default: List<Long>
-) = lambdaList(key, default) { it.long }
+) = lambdaList(key, default) { it.jsonPrimitive.long }
 
-fun JsonModel.longList(key: String) = lambdaList(key) { it.long }
+fun JsonModel.longList(key: String) = lambdaList(key) { it.jsonPrimitive.long }
 
 inline val JsonObject.byLongList
-    get() = byLambdaList { it.long }
+    get() = byLambdaList { it.jsonPrimitive.long }
 
 inline val JsonModel.longList
-    get() = lambdaList { it.long }
+    get() = lambdaList { it.jsonPrimitive.long }
 
 /*
  *  List<Long?>
@@ -139,29 +141,29 @@ inline val JsonModel.longList
 fun JsonObject?.byNullableLongList(
     key: String? = null,
     default: JsonArrayDefaultSelector<Long?>
-) = byNullableLambdaList(key, default) { it.longOrNull }
+) = byNullableLambdaList(key, default) { it.primitiveOrNull?.longOrNull }
 
 fun JsonObject?.byNullableLongList(
     key: String? = null,
     default: List<Long?>
-) = byNullableLambdaList(key, default) { it.longOrNull }
+) = byNullableLambdaList(key, default) { it.primitiveOrNull?.longOrNull }
 
-fun JsonObject?.byNullableLongList(key: String) = byNullableLambdaList(key) { it.longOrNull }
+fun JsonObject?.byNullableLongList(key: String) = byNullableLambdaList(key) { it.primitiveOrNull?.longOrNull }
 
 fun JsonModel?.nullableLongList(
     key: String? = null,
     default: JsonArrayDefaultSelector<Long?>
-) = nullableLambdaList(key, default) { it.longOrNull }
+) = nullableLambdaList(key, default) { it.primitiveOrNull?.longOrNull }
 
 fun JsonModel?.nullableLongList(
     key: String? = null,
     default: List<Long?>
-) = nullableLambdaList(key, default) { it.longOrNull }
+) = nullableLambdaList(key, default) { it.primitiveOrNull?.longOrNull }
 
-fun JsonModel?.nullableLongList(key: String) = nullableLambdaList(key) { it.longOrNull }
+fun JsonModel?.nullableLongList(key: String) = nullableLambdaList(key) { it.primitiveOrNull?.longOrNull }
 
 inline val JsonObject?.byNullableLongList
-    get() = byNullableLambdaList { it.longOrNull }
+    get() = byNullableLambdaList { it.primitiveOrNull?.longOrNull }
 
 inline val JsonModel?.nullableLongList
-    get() = nullableLambdaList { it.longOrNull }
+    get() = nullableLambdaList { it.primitiveOrNull?.longOrNull }
