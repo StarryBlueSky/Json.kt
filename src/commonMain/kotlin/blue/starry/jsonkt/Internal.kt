@@ -24,14 +24,6 @@
 
 package blue.starry.jsonkt
 
-import kotlinx.serialization.json.Json
-
-@PublishedApi
-internal val defaultJsonInstance = Json {
-    prettyPrint = true
-    useArrayPolymorphism = true
-}
-
 @PublishedApi
 internal inline fun <T, R> T?.runSafely(block: T.() -> R?): R? {
     return (this ?: return null).runCatching(block).getOrNull()

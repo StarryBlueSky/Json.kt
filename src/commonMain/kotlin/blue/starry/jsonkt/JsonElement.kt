@@ -28,11 +28,9 @@ package blue.starry.jsonkt
 
 import blue.starry.jsonkt.delegation.JsonModel
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.*
 import kotlinx.serialization.json.JsonNull.content
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
 inline fun <reified T: Any> JsonElement.cast(): T {
     return this as? T ?: throw JsonCastException(this, T::class)
@@ -47,7 +45,7 @@ inline fun <reified T: Any> JsonElement.cast(): T {
  */
 fun String.toJsonElement(): JsonElement {
     return try {
-        defaultJsonInstance.decodeFromString(this)
+        Json.decodeFromString(this)
     } catch (e: Throwable) {
         throw JsonCastException(this, JsonElement::class)
     }

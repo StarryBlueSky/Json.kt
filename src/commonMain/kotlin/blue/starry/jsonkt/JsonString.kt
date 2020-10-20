@@ -34,54 +34,29 @@ import kotlinx.serialization.json.Json
  * stringify
  */
 
-fun JsonElement.encodeToString(customizedJson: Json): String {
+fun JsonElement.encodeToString(customizedJson: Json = Json): String {
     return customizedJson.encodeToString(this)
 }
 
-fun JsonElement.encodeToString(): String {
-    return defaultJsonInstance.encodeToString(this)
-}
-
 /**
  * @throws JsonCastException
  */
-fun JsonPairIterable.encodeToString(customizedJson: Json): String {
+fun JsonPairIterable.encodeToString(customizedJson: Json = Json): String {
     return toJsonArray().encodeToString(customizedJson)
 }
 
 /**
  * @throws JsonCastException
  */
-fun JsonPairIterable.encodeToString(): String {
-    return toJsonArray().encodeToString()
-}
-
-/**
- * @throws JsonCastException
- */
-fun JsonPairSequence.encodeToString(customizedJson: Json): String {
+fun JsonPairSequence.encodeToString(customizedJson: Json = Json): String {
     return toJsonArray().encodeToString(customizedJson)
 }
 
 /**
  * @throws JsonCastException
  */
-fun JsonPairSequence.encodeToString(): String {
-    return toJsonArray().encodeToString()
-}
-
-/**
- * @throws JsonCastException
- */
-fun JsonPairArray.encodeToString(customizedJson: Json): String {
+fun JsonPairArray.encodeToString(customizedJson: Json = Json): String {
     return toJsonArray().encodeToString(customizedJson)
-}
-
-/**
- * @throws JsonCastException
- */
-fun JsonPairArray.encodeToString(): String {
-    return toJsonArray().encodeToString()
 }
 
 fun JsonModel.encodeToString(customizedJson: Json): String {
