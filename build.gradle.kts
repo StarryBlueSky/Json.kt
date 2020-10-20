@@ -25,7 +25,6 @@
 @file:Suppress("KDocMissingDocumentation", "PublicApiImplicitType")
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
-import org.jetbrains.dokka.gradle.DokkaTask
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.ZonedDateTime
@@ -65,7 +64,7 @@ plugins {
     id("com.jfrog.bintray") version "1.8.5"
 
     // For documentation
-    id("org.jetbrains.dokka") version "0.10.1"
+    id("org.jetbrains.dokka") version "1.4.10"
 }
 
 fun Project.property(key: String? = null) = object : ReadOnlyProperty<Any, String?> {
@@ -261,69 +260,45 @@ project.version = if (isEAPBuild) {
 }
 
 tasks {
-    dokka {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/kdoc"
-
-        configuration {
-            jdkVersion = 8
-            includeNonPublic = false
-            reportUndocumented = true
-            skipEmptyPackages = true
-            skipDeprecated = true
-
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("Common")
-//            }
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("JVM")
-//            }
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("JS")
-//            }
+    dokkaHtml {
+        outputDirectory.set(buildDir.resolve("kdoc"))
+        
+        dokkaSourceSets {
+            configureEach { 
+                jdkVersion.set(8)
+                includeNonPublic.set(false)
+                reportUndocumented.set(true)
+                skipEmptyPackages.set(true)
+                skipDeprecated.set(true)
+            }
         }
     }
 
     register<Jar>("kdocJar") {
-        val dokkaTask = getByName<DokkaTask>("dokka")
-        from(dokkaTask.outputDirectory)
-        dependsOn(dokkaTask)
+        val task = dokkaHtml.get()
+        from(task.outputDirectory)
+        dependsOn(task)
         archiveClassifier.set("kdoc")
     }
 
-    register<DokkaTask>("dokkaJavadoc") {
-        outputFormat = "javadoc"
-        outputDirectory = "$buildDir/javadoc"
+    dokkaJavadoc {
+        outputDirectory.set(buildDir.resolve("javadoc"))
 
-        configuration {
-            jdkVersion = 8
-            includeNonPublic = false
-            reportUndocumented = false
-            skipEmptyPackages = true
-            skipDeprecated = true
-
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("Common")
-//            }
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("JVM")
-//            }
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("JS")
-//            }
+        dokkaSourceSets {
+            configureEach {
+                jdkVersion.set(8)
+                includeNonPublic.set(false)
+                reportUndocumented.set(false)
+                skipEmptyPackages.set(true)
+                skipDeprecated.set(true)
+            }
         }
     }
 
     register<Jar>("javadocJar") {
-        val dokkaTask = getByName<DokkaTask>("dokkaJavadoc")
-        from(dokkaTask.outputDirectory)
-        dependsOn(dokkaTask)
+        val task = dokkaJavadoc.get()
+        from(task.outputDirectory)
+        dependsOn(task)
         archiveClassifier.set("javadoc")
     }
 }
