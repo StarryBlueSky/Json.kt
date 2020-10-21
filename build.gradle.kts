@@ -25,12 +25,11 @@
 @file:Suppress("KDocMissingDocumentation", "PublicApiImplicitType")
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
-import org.gradle.kotlin.dsl.*
-import org.jetbrains.dokka.gradle.DokkaTask
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.collections.set
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -42,22 +41,22 @@ val packageVersion = Version(5, 0, 1)
 val packageDescription = "Json bindings for Kotlin"
 
 object ThirdpartyVersion {
-    const val KotlinxSerializationRuntime = "0.20.0"
+    const val KotlinxSerializationRuntime = "1.0.0"
 
     // for testing
-    const val JUnit = "5.6.2"
+    const val JUnit = "5.7.0"
 
     // for logging
-    const val KotlinLogging = "1.7.9"
+    const val KotlinLogging = "1.7.10"
     const val Logback = "1.2.3"
     const val Jansi = "1.18"
 }
 
 plugins {
-    kotlin("multiplatform") version "1.3.72"
+    kotlin("multiplatform") version "1.4.10"
 
     // For testing
-    id("com.adarshr.test-logger") version "2.0.0"
+    id("com.adarshr.test-logger") version "2.1.1"
     id("build-time-tracker") version "0.11.1"
 
     // For publishing
@@ -65,11 +64,11 @@ plugins {
     id("com.jfrog.bintray") version "1.8.5"
 
     // For documentation
-    id("org.jetbrains.dokka") version "0.10.1"
+    id("org.jetbrains.dokka") version "1.4.10"
 }
 
-fun Project.property(key: String? = null) = object: ReadOnlyProperty<Project, String?> {
-    override fun getValue(thisRef: Project, property: KProperty<*>): String? {
+fun Project.property(key: String? = null) = object : ReadOnlyProperty<Any, String?> {
+    override fun getValue(thisRef: Any, property: KProperty<*>): String? {
         val name = key ?: property.name
         return (properties[name] ?: System.getProperty(name) ?: System.getenv(name))?.toString()
     }
@@ -150,7 +149,7 @@ kotlin {
             dependencies {
                 api(kotlin("stdlib-common"))
 
-                api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json:${ThirdpartyVersion.KotlinxSerializationRuntime}")
                 api("io.github.microutils:kotlin-logging-common:${ThirdpartyVersion.KotlinLogging}")
             }
         }
@@ -166,7 +165,7 @@ kotlin {
                 implementation(kotlin("stdlib"))
                 implementation(kotlin("reflect"))
 
-                api("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+                //api("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${ThirdpartyVersion.KotlinxSerializationRuntime}")
                 implementation("io.github.microutils:kotlin-logging:${ThirdpartyVersion.KotlinLogging}")
             }
         }
@@ -188,7 +187,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-js"))
 
-                api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+                //api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${ThirdpartyVersion.KotlinxSerializationRuntime}")
                 implementation("io.github.microutils:kotlin-logging-js:${ThirdpartyVersion.KotlinLogging}")
             }
         }
@@ -210,8 +209,8 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                apiVersion = "1.3"
-                languageVersion = "1.3"
+                apiVersion = "1.4"
+                languageVersion = "1.4"
                 verbose = true
             }
         }
@@ -261,69 +260,45 @@ project.version = if (isEAPBuild) {
 }
 
 tasks {
-    dokka {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/kdoc"
-
-        configuration {
-            jdkVersion = 8
-            includeNonPublic = false
-            reportUndocumented = true
-            skipEmptyPackages = true
-            skipDeprecated = true
-
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("Common")
-//            }
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("JVM")
-//            }
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("JS")
-//            }
+    dokkaHtml {
+        outputDirectory.set(buildDir.resolve("kdoc"))
+        
+        dokkaSourceSets {
+            configureEach { 
+                jdkVersion.set(8)
+                includeNonPublic.set(false)
+                reportUndocumented.set(true)
+                skipEmptyPackages.set(true)
+                skipDeprecated.set(true)
+            }
         }
     }
 
     register<Jar>("kdocJar") {
-        val dokkaTask = getByName<DokkaTask>("dokka")
-        from(dokkaTask.outputDirectory)
-        dependsOn(dokkaTask)
+        val task = dokkaHtml.get()
+        from(task.outputDirectory)
+        dependsOn(task)
         archiveClassifier.set("kdoc")
     }
 
-    register<DokkaTask>("dokkaJavadoc") {
-        outputFormat = "javadoc"
-        outputDirectory = "$buildDir/javadoc"
+    dokkaJavadoc {
+        outputDirectory.set(buildDir.resolve("javadoc"))
 
-        configuration {
-            jdkVersion = 8
-            includeNonPublic = false
-            reportUndocumented = false
-            skipEmptyPackages = true
-            skipDeprecated = true
-
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("Common")
-//            }
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("JVM")
-//            }
-//            sourceRoot {
-//                path = kotlin.sourceSets.getByName("jsMain").kotlin.srcDirs.first().toString()
-//                platforms = listOf("JS")
-//            }
+        dokkaSourceSets {
+            configureEach {
+                jdkVersion.set(8)
+                includeNonPublic.set(false)
+                reportUndocumented.set(false)
+                skipEmptyPackages.set(true)
+                skipDeprecated.set(true)
+            }
         }
     }
 
     register<Jar>("javadocJar") {
-        val dokkaTask = getByName<DokkaTask>("dokkaJavadoc")
-        from(dokkaTask.outputDirectory)
-        dependsOn(dokkaTask)
+        val task = dokkaJavadoc.get()
+        from(task.outputDirectory)
+        dependsOn(task)
         archiveClassifier.set("javadoc")
     }
 }

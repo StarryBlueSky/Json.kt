@@ -30,6 +30,7 @@ import blue.starry.jsonkt.JsonKtException
 import blue.starry.jsonkt.JsonObject
 import blue.starry.jsonkt.cast
 import blue.starry.jsonkt.safeCast
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.reflect.KClass
 
 @Deprecated("Directly implementing JsonEnum<T> is deprecated for type safety. Use {BooleanJsonEnum, IntJsonEnum, LongJsonEnum, FloatJsonEnum, DoubleJsonEnum, CharJsonEnum, StringJsonEnum} instead of JsonEnum<T>.")
@@ -72,7 +73,7 @@ inline fun <reified T: Any, reified E> JsonObject.byEnum(
     key: String? = null,
     noinline default: JsonObjectDefaultSelector<E> = ::jsonObjectDefaultSelector
 ): JsonObjectProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
-    val casted = it.primitive.cast<T>()
+    val casted = it.jsonPrimitive.cast<T>()
     
     findEnumMember(casted)
 }
@@ -81,7 +82,7 @@ inline fun <reified T: Any, reified E> JsonModel.enum(
     key: String? = null,
     noinline default: JsonObjectDefaultSelector<E> = ::jsonObjectDefaultSelector
 ): JsonObjectProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonObjectProperty(key, default) {
-    val casted = it.primitive.cast<T>()
+    val casted = it.jsonPrimitive.cast<T>()
 
     findEnumMember(casted)
 }
@@ -94,7 +95,7 @@ inline fun <reified T: Any, reified E> JsonObject?.byNullableEnum(
     key: String? = null,
     noinline default: JsonObjectDefaultSelector<E?> = ::jsonObjectDefaultSelectorWithNull
 ): JsonObjectProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonObjectProperty(key, default) {
-    val casted = it.primitive.safeCast<T>()
+    val casted = it.jsonPrimitive.safeCast<T>()
     
     findEnumMemberOrNull(casted)
 }
@@ -103,7 +104,7 @@ inline fun <reified T: Any, reified E> JsonModel?.nullableEnum(
     key: String? = null,
     noinline default: JsonObjectDefaultSelector<E?> = ::jsonObjectDefaultSelectorWithNull
 ): JsonObjectProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonObjectProperty(key, default) {
-    val casted = it.primitive.safeCast<T>()
+    val casted = it.jsonPrimitive.safeCast<T>()
 
     findEnumMemberOrNull(casted)
 }
@@ -116,7 +117,7 @@ inline fun <reified T: Any, reified E> JsonObject.byEnumList(
     key: String? = null,
     noinline default: JsonArrayDefaultSelector<E> = ::jsonArrayDefaultSelector
 ): JsonArrayProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) { json ->
-    val casted = json.primitive.cast<T>()
+    val casted = json.jsonPrimitive.cast<T>()
 
     findEnumMember(casted)
 }
@@ -125,7 +126,7 @@ inline fun <reified T: Any, reified E> JsonModel.enumList(
     key: String? = null,
     noinline default: JsonArrayDefaultSelector<E> = ::jsonArrayDefaultSelector
 ): JsonArrayProperty<E> where E: Enum<E>, E: JsonEnum<T> = jsonArrayProperty(key, default) {
-    val casted = it.primitive.cast<T>()
+    val casted = it.jsonPrimitive.cast<T>()
 
     findEnumMember(casted)
 }
@@ -138,7 +139,7 @@ inline fun <reified T: Any, reified E> JsonObject?.byNullableEnumList(
     key: String? = null,
     noinline default: JsonArrayDefaultSelector<E?> = ::jsonArrayDefaultSelector
 ): JsonArrayProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonArrayProperty(key, default) {
-    val casted = it.primitive.safeCast<T>()
+    val casted = it.jsonPrimitive.safeCast<T>()
 
     findEnumMemberOrNull(casted)
 }
@@ -147,7 +148,7 @@ inline fun <reified T: Any, reified E> JsonModel?.nullableEnumList(
     key: String? = null,
     noinline default: JsonArrayDefaultSelector<E?> = ::jsonArrayDefaultSelector
 ): JsonArrayProperty<E?> where E: Enum<E>, E: JsonEnum<T> = nullableJsonArrayProperty(key, default) {
-    val casted = it.primitive.safeCast<T>()
+    val casted = it.jsonPrimitive.safeCast<T>()
 
     findEnumMemberOrNull(casted)
 }

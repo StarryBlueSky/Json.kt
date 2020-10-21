@@ -33,5 +33,5 @@ fun JsonElement?.isNull(): Boolean {
         returns(false) implies (this@isNull != null)
     }
 
-    return this == null || isNull
+    return this == null || this is JsonNull
 }

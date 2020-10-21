@@ -26,6 +26,8 @@
 
 package blue.starry.jsonkt
 
+import kotlinx.serialization.json.*
+
 inline fun <reified T> JsonPrimitive.cast(): T {
     return safeCast<T>() ?: throw IllegalArgumentException("${T::class.simpleName} is not primitive type.")
 }
@@ -96,6 +98,3 @@ inline val JsonPrimitive.isFloat: Boolean
 
 inline val JsonPrimitive.isDouble: Boolean
     get() = doubleOrNull != null
-
-inline val JsonPrimitive.isString: Boolean
-    get() = literal.isString

@@ -33,7 +33,7 @@ inline fun <reified T: JsonModel> JsonModel.modelValue(key: String): T {
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelValueOrNull(key: String): T? {
-    return json.getObjectOrNull(key).parseObjectOrNull()
+    return (json[key] as? JsonObject).parseObjectOrNull()
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelListValue(key: String): List<T> {
@@ -41,5 +41,5 @@ inline fun <reified T: JsonModel> JsonModel.modelListValue(key: String): List<T>
 }
 
 inline fun <reified T: JsonModel> JsonModel.modelListValueOrNull(key: String): List<T>? {
-    return json.getArrayOrNull(key).parseArrayOrNull()
+    return (json[key] as? JsonArray).parseArrayOrNull()
 }

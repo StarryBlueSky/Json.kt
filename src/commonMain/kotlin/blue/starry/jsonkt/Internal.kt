@@ -24,17 +24,6 @@
 
 package blue.starry.jsonkt
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-
-@PublishedApi
-internal val defaultJsonConfiguration = JsonConfiguration.Stable.copy(
-    prettyPrint = true,
-    useArrayPolymorphism = true
-)
-@PublishedApi
-internal val defaultJsonInstance = Json(defaultJsonConfiguration)
-
 @PublishedApi
 internal inline fun <T, R> T?.runSafely(block: T.() -> R?): R? {
     return (this ?: return null).runCatching(block).getOrNull()

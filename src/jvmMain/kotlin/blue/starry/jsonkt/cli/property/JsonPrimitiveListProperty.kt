@@ -25,14 +25,16 @@
 package blue.starry.jsonkt.cli.property
 
 import blue.starry.jsonkt.JsonElement
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 
 internal class JsonPrimitiveListProperty(pair: Map.Entry<String, JsonElement>, printComments: Boolean): AbstractJsonProperty(pair, printComments) {
-    private val candidateMethodName = toMethodName(jsonPrimitive = element.jsonArray.first().primitive)
+    private val candidateMethodName = toMethodName(jsonPrimitive = element.jsonArray.first().jsonPrimitive)
     override val delegationName = "${candidateMethodName}List"
 
     init {
-        require(element.jsonArray.all { toMethodName(jsonPrimitive = it.primitive) == candidateMethodName }) {
-            "Not all elements are same type. These must be ${element.jsonArray.first().primitive::class.simpleName}."
+        require(element.jsonArray.all { toMethodName(jsonPrimitive = it.jsonPrimitive) == candidateMethodName }) {
+            "Not all elements are same type. These must be ${element.jsonArray.first().jsonPrimitive::class.simpleName}."
         }
     }
 }

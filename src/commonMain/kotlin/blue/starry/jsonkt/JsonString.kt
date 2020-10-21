@@ -27,43 +27,42 @@
 package blue.starry.jsonkt
 
 import blue.starry.jsonkt.delegation.JsonModel
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import kotlinx.serialization.json.JsonElementSerializer
 
 /*
  * stringify
  */
 
-fun JsonElement.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
-    return if (configuration == defaultJsonConfiguration) {
-        defaultJsonInstance
-    } else {
-        Json(configuration)
-    }.stringify(JsonElementSerializer, this)
+fun JsonElement.encodeToString(customizedJson: Json = Json): String {
+    return customizedJson.encodeToString(this)
 }
 
 /**
  * @throws JsonCastException
  */
-fun JsonPairIterable.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
-    return toJsonArray().stringify(configuration)
+fun JsonPairIterable.encodeToString(customizedJson: Json = Json): String {
+    return toJsonArray().encodeToString(customizedJson)
 }
 
 /**
  * @throws JsonCastException
  */
-fun JsonPairSequence.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
-    return toJsonArray().stringify(configuration)
+fun JsonPairSequence.encodeToString(customizedJson: Json = Json): String {
+    return toJsonArray().encodeToString(customizedJson)
 }
 
 /**
  * @throws JsonCastException
  */
-fun JsonPairArray.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
-    return toJsonArray().stringify(configuration)
+fun JsonPairArray.encodeToString(customizedJson: Json = Json): String {
+    return toJsonArray().encodeToString(customizedJson)
 }
 
-fun JsonModel.stringify(configuration: JsonConfiguration = defaultJsonConfiguration): String {
-    return json.stringify(configuration)
+fun JsonModel.encodeToString(customizedJson: Json): String {
+    return json.encodeToString(customizedJson)
+}
+
+fun JsonModel.encodeToString(): String {
+    return json.encodeToString()
 }

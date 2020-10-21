@@ -29,6 +29,7 @@ package blue.starry.jsonkt.delegation
 import blue.starry.jsonkt.JsonObject
 import blue.starry.jsonkt.JsonPrimitive
 import blue.starry.jsonkt.primitiveOrNull
+import kotlinx.serialization.json.jsonPrimitive
 
 /*
  *  JsonPrimitive
@@ -37,32 +38,32 @@ import blue.starry.jsonkt.primitiveOrNull
 fun JsonObject.byJsonPrimitive(
     key: String? = null,
     default: JsonObjectDefaultSelector<JsonPrimitive>
-) = byLambda(key, default) { it.primitive }
+) = byLambda(key, default) { it.jsonPrimitive }
 
 fun JsonObject.byJsonPrimitive(
     key: String? = null,
     default: JsonPrimitive
-) = byLambda(key, default) { it.primitive }
+) = byLambda(key, default) { it.jsonPrimitive }
 
-fun JsonObject.byJsonPrimitive(key: String) = byLambda(key) { it.primitive }
+fun JsonObject.byJsonPrimitive(key: String) = byLambda(key) { it.jsonPrimitive }
 
 fun JsonModel.jsonPrimitive(
     key: String? = null,
     default: JsonObjectDefaultSelector<JsonPrimitive>
-) = lambda(key, default) { it.primitive }
+) = lambda(key, default) { it.jsonPrimitive }
 
 fun JsonModel.jsonPrimitive(
     key: String? = null,
     default: JsonPrimitive
-) = lambda(key, default) { it.primitive }
+) = lambda(key, default) { it.jsonPrimitive }
 
-fun JsonModel.jsonPrimitive(key: String) = lambda(key) { it.primitive }
+fun JsonModel.jsonPrimitive(key: String) = lambda(key) { it.jsonPrimitive }
 
 inline val JsonObject.byJsonPrimitive
-    get() = byLambda { it.primitive }
+    get() = byLambda { it.jsonPrimitive }
 
 inline val JsonModel.jsonPrimitive
-    get() = lambda { it.primitive }
+    get() = lambda { it.jsonPrimitive }
 
 /*
  *  JsonPrimitive?
@@ -105,32 +106,32 @@ inline val JsonModel?.nullableJsonPrimitive
 fun JsonObject.byJsonPrimitiveList(
     key: String? = null,
     default: JsonArrayDefaultSelector<JsonPrimitive>
-) = byLambdaList(key, default) { it.primitive }
+) = byLambdaList(key, default) { it.jsonPrimitive }
 
 fun JsonObject.byJsonPrimitiveList(
     key: String? = null,
     default: List<JsonPrimitive>
-) = byLambdaList(key, default) { it.primitive }
+) = byLambdaList(key, default) { it.jsonPrimitive }
 
-fun JsonObject.byJsonPrimitiveList(key: String) = byLambdaList(key) { it.primitive }
+fun JsonObject.byJsonPrimitiveList(key: String) = byLambdaList(key) { it.jsonPrimitive }
 
 fun JsonModel.jsonPrimitiveList(
     key: String? = null,
     default: JsonArrayDefaultSelector<JsonPrimitive>
-) = lambdaList(key, default) { it.primitive }
+) = lambdaList(key, default) { it.jsonPrimitive }
 
 fun JsonModel.jsonPrimitiveList(
     key: String? = null,
     default: List<JsonPrimitive>
-) = lambdaList(key, default) { it.primitive }
+) = lambdaList(key, default) { it.jsonPrimitive }
 
-fun JsonModel.jsonPrimitiveList(key: String) = lambdaList(key) { it.primitive }
+fun JsonModel.jsonPrimitiveList(key: String) = lambdaList(key) { it.jsonPrimitive }
 
 inline val JsonObject.byJsonPrimitiveList
-    get() = byLambdaList { it.primitive }
+    get() = byLambdaList { it.jsonPrimitive }
 
 inline val JsonModel.jsonPrimitiveList
-    get() = lambdaList { it.primitive }
+    get() = lambdaList { it.jsonPrimitive }
 
 /*
  *  List<JsonPrimitive?>

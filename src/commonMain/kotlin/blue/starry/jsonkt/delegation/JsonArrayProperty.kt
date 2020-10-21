@@ -29,6 +29,7 @@ package blue.starry.jsonkt.delegation
 import blue.starry.jsonkt.JsonArray
 import blue.starry.jsonkt.JsonObject
 import blue.starry.jsonkt.jsonArrayOrNull
+import kotlinx.serialization.json.jsonArray
 
 /*
  *  JsonArray

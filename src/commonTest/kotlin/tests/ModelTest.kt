@@ -25,7 +25,6 @@
 package tests
 
 import SampleModel
-import blue.starry.jsonkt.asJsonElement
 import blue.starry.jsonkt.jsonArrayOf
 import blue.starry.jsonkt.jsonObjectOf
 import blue.starry.jsonkt.parseObject
@@ -35,26 +34,32 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ModelTest {
-    private val model = json.parseObject { SampleModel(it) }
+    private val model: SampleModel = run {
+        json.parseObject { SampleModel(it) }
+    }
 
-    @Test fun intTest() {
+    @Test
+    fun intTest() {
         assertEquals(model.intValue, 1)
         assertEquals(model.nullableIntValue, null)
         assertEquals(model.intListValue, listOf(2, 3, 5, 7))
         assertEquals(model.nullableIntListValue, listOf(1, null, 3))
     }
 
-    @Test fun floatTest() {
+    @Test
+    fun floatTest() {
         assertEquals(model.floatValue, 2.3f)
         assertEquals(model.nullableFloatValue, 4.5f)
     }
 
-    @Test fun doubleTest() {
+    @Test
+    fun doubleTest() {
         assertEquals(model.doubleValue, 2.0001)
         assertEquals(model.nullableDoubleValue, 4.0001)
     }
 
-    @Test fun stringTest() {
+    @Test
+    fun stringTest() {
         assertEquals(model.stringValue, "hoge")
         assertEquals(model.nullableStringValue, "null")
     }
@@ -69,10 +74,6 @@ class ModelTest {
 
     @Test fun jsonElementTest() {
         assertEquals(model.jsonElementValue, jsonObjectOf())
-    }
-
-    @Test fun jsonLiteralTest() {
-        assertEquals(model.jsonLiteralValue, true.asJsonElement())
     }
 
     @Test fun jsonPrimitiveTest() {

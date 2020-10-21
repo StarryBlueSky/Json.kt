@@ -29,6 +29,7 @@ package blue.starry.jsonkt.delegation
 import blue.starry.jsonkt.JsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonPrimitive
 
 /*
  *  Int
@@ -37,32 +38,32 @@ import kotlinx.serialization.json.intOrNull
 fun JsonObject.byInt(
     key: String? = null,
     default: JsonObjectDefaultSelector<Int>
-) = byLambda(key, default) { it.int }
+) = byLambda(key, default) { it.jsonPrimitive.int }
 
 fun JsonObject.byInt(
     key: String? = null,
     default: Int
-) = byLambda(key, default) { it.int }
+) = byLambda(key, default) { it.jsonPrimitive.int }
 
-fun JsonObject.byInt(key: String) = byLambda(key) { it.int }
+fun JsonObject.byInt(key: String) = byLambda(key) { it.jsonPrimitive.int }
 
 fun JsonModel.int(
     key: String? = null,
     default: JsonObjectDefaultSelector<Int>
-) = lambda(key, default) { it.int }
+) = lambda(key, default) { it.jsonPrimitive.int }
 
 fun JsonModel.int(
     key: String? = null,
     default: Int
-) = lambda(key, default) { it.int }
+) = lambda(key, default) { it.jsonPrimitive.int }
 
-fun JsonModel.int(key: String) = lambda(key) { it.int }
+fun JsonModel.int(key: String) = lambda(key) { it.jsonPrimitive.int }
 
 inline val JsonObject.byInt
-    get() = byLambda { it.int }
+    get() = byLambda { it.jsonPrimitive.int }
 
 inline val JsonModel.int
-    get() = lambda { it.int }
+    get() = lambda { it.jsonPrimitive.int }
 
 /*
  *  Int?
@@ -71,32 +72,32 @@ inline val JsonModel.int
 fun JsonObject?.byNullableInt(
     key: String? = null,
     default: JsonObjectDefaultSelector<Int?>
-) = byNullableLambda(key, default) { it.intOrNull }
+) = byNullableLambda(key, default) { it.jsonPrimitive.intOrNull }
 
 fun JsonObject?.byNullableInt(
     key: String? = null,
     default: Int?
-) = byNullableLambda(key, default) { it.intOrNull }
+) = byNullableLambda(key, default) { it.jsonPrimitive.intOrNull }
 
-fun JsonObject?.byNullableInt(key: String) = byNullableLambda(key) { it.intOrNull }
+fun JsonObject?.byNullableInt(key: String) = byNullableLambda(key) { it.jsonPrimitive.intOrNull }
 
 fun JsonModel?.nullableInt(
     key: String? = null,
     default: JsonObjectDefaultSelector<Int?>
-) = nullableLambda(key, default) { it.intOrNull }
+) = nullableLambda(key, default) { it.jsonPrimitive.intOrNull }
 
 fun JsonModel?.nullableInt(
     key: String? = null,
     default: Int?
-) = nullableLambda(key, default) { it.intOrNull }
+) = nullableLambda(key, default) { it.jsonPrimitive.intOrNull }
 
-fun JsonModel?.nullableInt(key: String) = nullableLambda(key) { it.intOrNull }
+fun JsonModel?.nullableInt(key: String) = nullableLambda(key) { it.jsonPrimitive.intOrNull }
 
 inline val JsonObject?.byNullableInt
-    get() = byNullableLambda { it.intOrNull }
+    get() = byNullableLambda { it.jsonPrimitive.intOrNull }
 
 inline val JsonModel?.nullableInt
-    get() = nullableLambda { it.intOrNull }
+    get() = nullableLambda { it.jsonPrimitive.intOrNull }
 
 /*
  *  List<Int>
@@ -105,32 +106,32 @@ inline val JsonModel?.nullableInt
 fun JsonObject.byIntList(
     key: String? = null,
     default: JsonArrayDefaultSelector<Int>
-) = byLambdaList(key, default) { it.int }
+) = byLambdaList(key, default) { it.jsonPrimitive.int }
 
 fun JsonObject.byIntList(
     key: String? = null,
     default: List<Int>
-) = byLambdaList(key, default) { it.int }
+) = byLambdaList(key, default) { it.jsonPrimitive.int }
 
-fun JsonObject.byIntList(key: String) = byLambdaList(key) { it.int }
+fun JsonObject.byIntList(key: String) = byLambdaList(key) { it.jsonPrimitive.int }
 
 fun JsonModel.intList(
     key: String? = null,
     default: JsonArrayDefaultSelector<Int>
-) = lambdaList(key, default) { it.int }
+) = lambdaList(key, default) { it.jsonPrimitive.int }
 
 fun JsonModel.intList(
     key: String? = null,
     default: List<Int>
-) = lambdaList(key, default) { it.int }
+) = lambdaList(key, default) { it.jsonPrimitive.int }
 
-fun JsonModel.intList(key: String) = lambdaList(key) { it.int }
+fun JsonModel.intList(key: String) = lambdaList(key) { it.jsonPrimitive.int }
 
 inline val JsonObject.byIntList
-    get() = byLambdaList { it.int }
+    get() = byLambdaList { it.jsonPrimitive.int }
 
 inline val JsonModel.intList
-    get() = lambdaList { it.int }
+    get() = lambdaList { it.jsonPrimitive.int }
 
 /*
  *  List<Int?>
@@ -139,29 +140,29 @@ inline val JsonModel.intList
 fun JsonObject?.byNullableIntList(
     key: String? = null,
     default: JsonArrayDefaultSelector<Int?>
-) = byNullableLambdaList(key, default) { it.intOrNull }
+) = byNullableLambdaList(key, default) { it.jsonPrimitive.intOrNull }
 
 fun JsonObject?.byNullableIntList(
     key: String? = null,
     default: List<Int?>
-) = byNullableLambdaList(key, default) { it.intOrNull }
+) = byNullableLambdaList(key, default) { it.jsonPrimitive.intOrNull }
 
-fun JsonObject?.byNullableIntList(key: String) = byNullableLambdaList(key) { it.intOrNull }
+fun JsonObject?.byNullableIntList(key: String) = byNullableLambdaList(key) { it.jsonPrimitive.intOrNull }
 
 fun JsonModel?.nullableIntList(
     key: String? = null,
     default: JsonArrayDefaultSelector<Int?>
-) = nullableLambdaList(key, default) { it.intOrNull }
+) = nullableLambdaList(key, default) { it.jsonPrimitive.intOrNull }
 
 fun JsonModel?.nullableIntList(
     key: String? = null,
     default: List<Int?>
-) = nullableLambdaList(key, default) { it.intOrNull }
+) = nullableLambdaList(key, default) { it.jsonPrimitive.intOrNull }
 
-fun JsonModel?.nullableIntList(key: String) = nullableLambdaList(key) { it.intOrNull }
+fun JsonModel?.nullableIntList(key: String) = nullableLambdaList(key) { it.jsonPrimitive.intOrNull }
 
 inline val JsonObject?.byNullableIntList
-    get() = byNullableLambdaList { it.intOrNull }
+    get() = byNullableLambdaList { it.jsonPrimitive.intOrNull }
 
 inline val JsonModel?.nullableIntList
-    get() = nullableLambdaList { it.intOrNull }
+    get() = nullableLambdaList { it.jsonPrimitive.intOrNull }

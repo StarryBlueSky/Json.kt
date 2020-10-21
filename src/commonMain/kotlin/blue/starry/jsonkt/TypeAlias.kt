@@ -45,5 +45,4 @@ typealias JsonObject = kotlinx.serialization.json.JsonObject
 typealias JsonArray = kotlinx.serialization.json.JsonArray
 typealias JsonElement = kotlinx.serialization.json.JsonElement
 typealias JsonPrimitive = kotlinx.serialization.json.JsonPrimitive
-typealias JsonLiteral = kotlinx.serialization.json.JsonLiteral
 typealias JsonNull = kotlinx.serialization.json.JsonNull

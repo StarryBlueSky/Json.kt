@@ -28,6 +28,7 @@ import blue.starry.jsonkt.JsonArray
 import blue.starry.jsonkt.JsonElement
 import blue.starry.jsonkt.JsonObject
 import blue.starry.jsonkt.JsonPrimitive
+import kotlinx.serialization.json.*
 
 internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement>, private val printComments: Boolean) {
     val key = pair.key
@@ -56,7 +57,7 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
             jsonPrimitive.longOrNull != null -> "long"
             jsonPrimitive.floatOrNull != null -> "float"
             jsonPrimitive.doubleOrNull != null -> "double"
-            jsonPrimitive.contentOrNull != null -> "string"
+            jsonPrimitive !is JsonNull -> "string"
             else -> throw IllegalStateException("Unknown type: ${jsonPrimitive::class.qualifiedName}.")
         }.let {
             if (nullable) {

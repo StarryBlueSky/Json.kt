@@ -27,9 +27,10 @@
 package blue.starry.jsonkt
 
 import blue.starry.jsonkt.delegation.JsonModel
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonNull.content
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.content
-import kotlinx.serialization.json.contentOrNull
 
 inline fun <reified T: Any> JsonElement.cast(): T {
     return this as? T ?: throw JsonCastException(this, T::class)
@@ -44,7 +45,7 @@ inline fun <reified T: Any> JsonElement.cast(): T {
  */
 fun String.toJsonElement(): JsonElement {
     return try {
-        defaultJsonInstance.parseJson(this)
+        Json.decodeFromString(this)
     } catch (e: Throwable) {
         throw JsonCastException(this, JsonElement::class)
     }
@@ -109,31 +110,26 @@ operator fun JsonElement.get(index: Int): JsonElement {
  */
 
 inline val JsonElement.jsonObjectOrNull: JsonObject?
-    get() = runSafely {
-        jsonObject
-    }
+    get() = this as? JsonObject
 
 inline val JsonElement.jsonArrayOrNull: JsonArray?
-    get() = runSafely {
-        jsonArray
-    }
+    get() = this as? JsonArray
 
 inline val JsonElement.string: String
-    get() = content
+    get() {
+        return jsonPrimitive.takeIf { it.isString }?.content ?: throw IllegalStateException("The value is not a string")
+    }
 inline val JsonElement.stringOrNull: String?
-    get() = contentOrNull
+    get() {
+        if (this !is JsonPrimitive || !isString) {
+            return null
+        }
+
+        return content
+    }
 
 inline val JsonElement.primitiveOrNull: JsonPrimitive?
-    get() = runSafely {
-        primitive
-    }
-
-inline val JsonElement.literal: JsonLiteral
-    get() = this as JsonLiteral
-inline val JsonElement.literalOrNull: JsonLiteral?
-    get() = runSafely {
-        literal
-    }
+    get() = this as? JsonPrimitive
 
 inline val JsonElement.char: Char
     get() = content.first()

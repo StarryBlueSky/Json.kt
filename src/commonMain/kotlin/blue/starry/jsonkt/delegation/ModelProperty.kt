@@ -28,6 +28,7 @@ package blue.starry.jsonkt.delegation
 
 import blue.starry.jsonkt.JsonObject
 import blue.starry.jsonkt.jsonObjectOf
+import kotlinx.serialization.json.jsonObject
 
 @PublishedApi
 internal fun <T: JsonModel> JsonObject.jsonModelProperty(key: String? = null, block: (JsonObject) -> T): JsonObjectProperty<T> {
