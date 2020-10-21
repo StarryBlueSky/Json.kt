@@ -40,67 +40,67 @@ class ModelTest {
 
     @Test
     fun intTest() {
-        assertEquals(model.intValue, 1)
-        assertEquals(model.nullableIntValue, null)
-        assertEquals(model.intListValue, listOf(2, 3, 5, 7))
-        assertEquals(model.nullableIntListValue, listOf(1, null, 3))
+        assertEquals(1, model.intValue)
+        assertEquals(null, model.nullableIntValue)
+        assertEquals(listOf(2, 3, 5, 7), model.intListValue)
+        assertEquals(listOf(1, null, 3), model.nullableIntListValue)
     }
 
     @Test
     fun floatTest() {
-        assertEquals(model.floatValue, 2.3f)
-        assertEquals(model.nullableFloatValue, 4.5f)
+        assertEquals(2.3f, model.floatValue)
+        assertEquals(4.5f, model.nullableFloatValue)
     }
 
     @Test
     fun doubleTest() {
-        assertEquals(model.doubleValue, 2.0001)
-        assertEquals(model.nullableDoubleValue, 4.0001)
+        assertEquals(2.0001, model.doubleValue)
+        assertEquals(4.0001, model.nullableDoubleValue)
     }
 
     @Test
     fun stringTest() {
-        assertEquals(model.stringValue, "hoge")
-        assertEquals(model.nullableStringValue, "null")
+        assertEquals("hoge", model.stringValue)
+        assertEquals("null", model.nullableStringValue)
     }
 
     @Test fun jsonObjectTest() {
-        assertEquals(model.jsonObjectValue, jsonObjectOf("x" to 1, "y" to 2))
+        assertEquals(jsonObjectOf("x" to 1, "y" to 2), model.jsonObjectValue)
     }
 
     @Test fun jsonArrayTest() {
-        assertEquals(model.jsonArrayValue, jsonArrayOf(jsonObjectOf(), jsonObjectOf("x" to 2)))
+        assertEquals(jsonArrayOf(jsonObjectOf(), jsonObjectOf("x" to 2)), model.jsonArrayValue)
     }
 
     @Test fun jsonElementTest() {
-        assertEquals(model.jsonElementValue, jsonObjectOf())
+        assertEquals(jsonObjectOf(), model.jsonElementValue)
     }
 
     @Test fun jsonPrimitiveTest() {
-        assertEquals(model.jsonPrimitiveValue, JsonPrimitive(123))
+        assertEquals(JsonPrimitive(123), model.jsonPrimitiveValue)
     }
 
     @Test fun modelTest() {
-        assertEquals(model.modelValue.x, "1")
-        assertEquals(model.modelValue.y, 2.0)
-        assertEquals(model.modelValue.z, 3)
+        assertEquals("1", model.modelValue.x)
+        assertEquals(2.0, model.modelValue.y)
+        assertEquals(3, model.modelValue.z)
 
-        assertEquals(model.modelListValue[0].x, "1")
-        assertEquals(model.modelListValue[0].y, 2.0001)
-        assertEquals(model.modelListValue[0].z, 3)
-        assertEquals(model.modelListValue[1].x, null)
-        assertEquals(model.modelListValue[1].y, 20.00001)
-        assertEquals(model.modelListValue[1].z, 30)
+        assertEquals("1", model.modelListValue[0].x)
+        assertEquals(2.0001, model.modelListValue[0].y)
+        assertEquals(3, model.modelListValue[0].z)
+        assertEquals(null, model.modelListValue[1].x)
+        assertEquals(20.00001, model.modelListValue[1].y)
+        assertEquals(30, model.modelListValue[1].z)
     }
 
     @Test fun keyCaseTest() {
-        assertEquals(model.lowerCamelCaseModel.lowerCamelCaseKey, "kotlin")
-        assertEquals(model.upperCamelCaseModel.upperCamelCaseKey, "kotlin")
-        assertEquals(model.snakeCaseModel.snakeCaseKey, "kotlin")
+        assertEquals("kotlin", model.lowerCamelCaseModel.lowerCamelCaseKey)
+        assertEquals("kotlin", model.upperCamelCaseModel.upperCamelCaseKey)
+        assertEquals("kotlin", model.snakeCaseModel.snakeCaseKey)
     }
 
     @Test fun intEnumTest() {
-        assertEquals(model.intEnumValue, SampleModel.InnerIntEnum.Default)
-        assertEquals(model.intEnumListValue, listOf(SampleModel.InnerIntEnum.One, SampleModel.InnerIntEnum.Two))
+        assertEquals(SampleModel.InnerIntEnum.Default, model.intEnumValue)
+        assertEquals(listOf(SampleModel.InnerIntEnum.One, SampleModel.InnerIntEnum.Two), model.intEnumListValue)
     }
 }
