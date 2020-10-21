@@ -1,5 +1,5 @@
 # Json.kt: Json bindings for Kotlin Multiplatform
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.72-blue.svg)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.10-blue.svg)](https://kotlinlang.org)
 [![stable](https://img.shields.io/bintray/v/nephyproject/stable/JsonKt.svg?label=stable)](https://bintray.com/nephyproject/stable/JsonKt/_latestVersion)
 [![dev](https://img.shields.io/bintray/v/nephyproject/dev/JsonKt.svg?label=dev)](https://bintray.com/nephyproject/dev/JsonKt/_latestVersion)
 [![license](https://img.shields.io/github/license/StarryBlueSky/Json.kt.svg)](https://github.com/StarryBlueSky/Json.kt/blob/master/LICENSE)
