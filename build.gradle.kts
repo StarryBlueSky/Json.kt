@@ -165,7 +165,7 @@ kotlin {
                 implementation(kotlin("stdlib"))
                 implementation(kotlin("reflect"))
 
-                //api("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:${ThirdpartyVersion.KotlinxSerializationRuntime}")
                 implementation("io.github.microutils:kotlin-logging:${ThirdpartyVersion.KotlinLogging}")
             }
         }
@@ -187,7 +187,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-js"))
 
-                //api("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${ThirdpartyVersion.KotlinxSerializationRuntime}")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json-js:${ThirdpartyVersion.KotlinxSerializationRuntime}")
                 implementation("io.github.microutils:kotlin-logging-js:${ThirdpartyVersion.KotlinLogging}")
             }
         }
