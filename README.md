@@ -1,7 +1,7 @@
 # Json.kt: Json bindings for Kotlin Multiplatform
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.10-blue.svg)](https://kotlinlang.org)
-[![stable](https://img.shields.io/bintray/v/nephyproject/stable/JsonKt.svg?label=stable)](https://bintray.com/nephyproject/stable/JsonKt/_latestVersion)
-[![dev](https://img.shields.io/bintray/v/nephyproject/dev/JsonKt.svg?label=dev)](https://bintray.com/nephyproject/dev/JsonKt/_latestVersion)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.20-blue.svg)](https://kotlinlang.org)
+[![stable](https://img.shields.io/bintray/v/starry-blue-sky/stable/JsonKt.svg?label=stable)](https://bintray.com/starry-blue-sky/stable/JsonKt/_latestVersion)
+[![dev](https://img.shields.io/bintray/v/starry-blue-sky/dev/JsonKt.svg?label=dev)](https://bintray.com/starry-blue-sky/dev/JsonKt/_latestVersion)
 [![license](https://img.shields.io/github/license/StarryBlueSky/Json.kt.svg)](https://github.com/StarryBlueSky/Json.kt/blob/master/LICENSE)
 [![issues](https://img.shields.io/github/issues/StarryBlueSky/Json.kt.svg)](https://github.com/StarryBlueSky/Json.kt/issues)
 [![pull requests](https://img.shields.io/github/issues-pr/StarryBlueSky/Json.kt.svg)](https://github.com/StarryBlueSky/Json.kt/pulls)  
@@ -9,8 +9,12 @@
 委譲プロパティを使い, 直感的に Json を Kotlin のクラスに変換できます。  
 Using delegation properties, you can convert Json to Kotlin classes intuitively.  
 
-現時点では JVM (Android), JS target に対応しています。 (各種 Native target に対応予定)  
+現時点では JVM (Android), JS target に対応しています。 (各種 Native target に対応予定です)  
 JVM (Android) and JS targets are supported for now. (We'll support Native targets later.)  
+
+ドキュメントは [こちら](https://docs.starry.blue/jsonkt) で公開しています。  
+Documentations are published at [here](https://docs.starry.blue/jsonkt).  
+
 
 ```kotlin
 data class Model(override val json: JsonObject): JsonModel {
@@ -62,9 +66,9 @@ fun main() {
 Get Started
 -----------
 
-Latest Json.kt version is [![Stable](https://img.shields.io/bintray/v/nephyproject/stable/JsonKt.svg?label=stable)](https://bintray.com/nephyproject/dev/JsonKt/_latestVersion) or [![Dev](https://img.shields.io/bintray/v/nephyproject/dev/JsonKt.svg?label=dev)](https://bintray.com/nephyproject/dev/JsonKt/_latestVersion).  
+Latest Json.kt version is [![Stable](https://img.shields.io/bintray/v/starry-blue-sky/stable/JsonKt.svg?label=stable)](https://bintray.com/starry-blue-sky/dev/JsonKt/_latestVersion) or [![Dev](https://img.shields.io/bintray/v/starry-blue-sky/dev/JsonKt.svg?label=dev)](https://dl.bintray.com/starry-blue-sky/dev/JsonKt/_latestVersion).  
 
-Stable releases are available at [Bintray](https://bintray.com/nephyproject/stable/JsonKt). EAP builds are also available ([Dev Repository](https://bintray.com/nephyproject/dev/JsonKt)). Every commit is published as EAP build.  
+Stable releases are available at [Bintray](hhttps://dl.bintray.com/starry-blue-sky/stable/JsonKt). EAP builds are also available ([Dev Repository](https://dl.bintray.com/starry-blue-sky/dev/JsonKt)). Every commit is published as EAP build.  
 
 build.gradle.kts:
 ```kotlin
@@ -72,32 +76,23 @@ repositories {
     mavenCentral()
     jcenter()
 
-    maven(url = "https://dl.bintray.com/nephyproject/stable")
+    maven(url = "https://dl.bintray.com/starry-blue-sky/stable")
     // or dev repository if EAP builds preferred
-    // maven(url = "https://dl.bintray.com/nephyproject/dev")
+    // maven(url = "https://dl.bintray.com/starry-blue-sky/dev")
 }
 
 kotlin {
     sourceSets {
         named("commonMain") {
             dependencies {
-                // for common; In many cases, this is not necessary.
-                implementation("blue.starry:jsonkt-common:$jsonkt_version")
-            }
-        }
-
-        named("jvmMain") {
-            dependencies {
-                // for JVM (Android)
                 implementation("blue.starry:jsonkt:$jsonkt_version")
             }
         }
 
+        // Json.kt v6.0+: Not needed anymore
+        named("jvmMain") {
+        }
         named("jsMain") {
-            dependencies {
-                // for JS
-                implementation("blue.starry:jsonkt-js:$jsonkt_version")
-            }
         }
     }
 }
