@@ -1,10 +1,10 @@
 # Json.kt: Json bindings for Kotlin Multiplatform
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.20-blue.svg)](https://kotlinlang.org)
-[![stable](https://img.shields.io/bintray/v/starry-blue-sky/stable/JsonKt.svg?label=stable)](https://bintray.com/starry-blue-sky/stable/JsonKt/_latestVersion)
-[![dev](https://img.shields.io/bintray/v/starry-blue-sky/dev/JsonKt.svg?label=dev)](https://bintray.com/starry-blue-sky/dev/JsonKt/_latestVersion)
-[![license](https://img.shields.io/github/license/StarryBlueSky/Json.kt.svg)](https://github.com/StarryBlueSky/Json.kt/blob/master/LICENSE)
-[![issues](https://img.shields.io/github/issues/StarryBlueSky/Json.kt.svg)](https://github.com/StarryBlueSky/Json.kt/issues)
-[![pull requests](https://img.shields.io/github/issues-pr/StarryBlueSky/Json.kt.svg)](https://github.com/StarryBlueSky/Json.kt/pulls)  
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.30-blue.svg)](https://kotlinlang.org)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/releases)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/StarryBlueSky/Json.kt/Check)](https://github.com/StarryBlueSky/Json.kt)
+[![license](https://img.shields.io/github/license/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/blob/master/LICENSE)
+[![issues](https://img.shields.io/github/issues/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/issues)
+[![pull requests](https://img.shields.io/github/issues-pr/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/pulls)
 
 委譲プロパティを使い, 直感的に Json を Kotlin のクラスに変換できます。  
 Using delegation properties, you can convert Json to Kotlin classes intuitively.  
@@ -66,11 +66,10 @@ fun main() {
 Get Started
 -----------
 
-Latest Json.kt version is [![Stable](https://img.shields.io/bintray/v/starry-blue-sky/stable/JsonKt.svg?label=stable)](https://bintray.com/starry-blue-sky/dev/JsonKt/_latestVersion) or [![Dev](https://img.shields.io/bintray/v/starry-blue-sky/dev/JsonKt.svg?label=dev)](https://dl.bintray.com/starry-blue-sky/dev/JsonKt/_latestVersion).  
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/releases)
 
-Stable releases are available at [Bintray](hhttps://dl.bintray.com/starry-blue-sky/stable/JsonKt). EAP builds are also available ([Dev Repository](https://dl.bintray.com/starry-blue-sky/dev/JsonKt)). Every commit is published as EAP build.  
+`build.gradle.kts`
 
-build.gradle.kts:
 ```kotlin
 repositories {
     mavenCentral()
