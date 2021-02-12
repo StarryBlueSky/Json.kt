@@ -29,6 +29,11 @@ object Libraries {
     const val LogbackCore = "ch.qos.logback:logback-core:${Versions.Logback}"
     const val LogbackClassic = "ch.qos.logback:logback-classic:${Versions.Logback}"
     const val Jansi = "org.fusesource.jansi:jansi:${Versions.Jansi}"
+
+    val ExperimentalAnnotations = setOf(
+        "kotlin.Experimental",
+        "kotlin.contracts.ExperimentalContracts"
+    )
 }
 
 object Publications {
@@ -150,8 +155,10 @@ kotlin {
 
     sourceSets.all {
         languageSettings.progressiveMode = true
-        languageSettings.useExperimentalAnnotation("kotlin.Experimental")
-        languageSettings.useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+
+        Libraries.ExperimentalAnnotations.forEach {
+            languageSettings.useExperimentalAnnotation(it)
+        }
     }
 }
 
