@@ -65,6 +65,8 @@ fun main() {
 
 # Get Started
 
+We moved the repository to Maven Central. So you can use our library without adding extra repository.
+
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/releases)
 
 ```kotlin
