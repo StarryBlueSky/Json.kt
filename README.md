@@ -63,43 +63,18 @@ fun main() {
 }
 ```
 
-Get Started
------------
+# Get Started
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/releases)
 
-`build.gradle.kts`
-
 ```kotlin
-repositories {
-    mavenCentral()
-    jcenter()
-
-    maven(url = "https://dl.bintray.com/starry-blue-sky/stable")
-    // or dev repository if EAP builds preferred
-    // maven(url = "https://dl.bintray.com/starry-blue-sky/dev")
-}
-
-kotlin {
-    sourceSets {
-        named("commonMain") {
-            dependencies {
-                implementation("blue.starry:jsonkt:$jsonkt_version")
-            }
-        }
-
-        // Json.kt v6.0+: Not needed anymore
-        named("jvmMain") {
-        }
-        named("jsMain") {
-        }
-    }
+dependencies {
+    implementation("blue.starry:jsonkt:$JsonKtVersion")
 }
 ```
 
-License
----------
+# License
 
 Json.kt is provided under MIT License.  
 
-Copyright (c) 2017-2020 StarryBlueSky.
+Copyright (c) 2017-2021 StarryBlueSky.
