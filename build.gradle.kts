@@ -13,7 +13,7 @@ plugins {
 }
 
 object Versions {
-    const val KotlinxSerializationJson = "1.0.1"
+    const val KotlinxSerializationJson = "1.1.0"
 
     const val JUnit = "5.7.0"
     const val KotlinLogging = "2.0.4"
