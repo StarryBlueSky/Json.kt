@@ -1,0 +1,7 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+blue.starry.jsonkt
+blue.starry.jsonkt.cli
+blue.starry.jsonkt.delegation
+
