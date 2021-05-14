@@ -43,19 +43,25 @@ private fun JsonModel.defaultJsonKeyConverter(property: KProperty<*>): String {
     return when (keyCase) {
         JsonKeyCase.Unspecified -> property.name
         JsonKeyCase.LowerCamelCase -> {
-            property.name.decapitalize()
+            property.name.replaceFirstChar { it.lowercase() }
         }
         JsonKeyCase.UpperCamelCase -> {
-            property.name.capitalize()
+            property.name.replaceFirstChar {
+                if (it.isLowerCase()) {
+                    it.titlecase()
+                } else {
+                    it.toString()
+                }
+            }
         }
         JsonKeyCase.SnakeCase -> {
             buildString {
                 for (c in property.name) {
-                    if (c == c.toUpperCase()) {
+                    if (c == c.uppercaseChar()) {
                         if (length > 0) {
                             append('_')
                         }
-                        append(c.toLowerCase())
+                        append(c.lowercaseChar())
                     } else {
                         append(c)
                     }

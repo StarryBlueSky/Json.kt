@@ -31,6 +31,7 @@ import blue.starry.jsonkt.cli.property.*
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.util.*
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -39,7 +40,7 @@ fun generateModelClass(): String {
     print("Model name? (Optional): ")
     val modelName = readLine().orEmpty()
     print("Use type strict mode? (Y/n): ")
-    val printComments = readLine().orEmpty().toLowerCase() == "y"
+    val printComments = readLine().orEmpty().lowercase(Locale.getDefault()) == "y"
     println("Input json string. If blank line is input, quit.")
 
     while (true) {

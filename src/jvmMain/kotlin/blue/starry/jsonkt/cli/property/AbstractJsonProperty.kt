@@ -29,6 +29,7 @@ import blue.starry.jsonkt.JsonElement
 import blue.starry.jsonkt.JsonObject
 import blue.starry.jsonkt.JsonPrimitive
 import kotlinx.serialization.json.*
+import java.util.*
 
 internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement>, private val printComments: Boolean) {
     val key = pair.key
@@ -61,7 +62,7 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
             else -> throw IllegalStateException("Unknown type: ${jsonPrimitive::class.qualifiedName}.")
         }.let {
             if (nullable) {
-                "nullable${it.capitalize()}"
+                "nullable${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
             } else {
                 it
             }
@@ -70,7 +71,9 @@ internal abstract class AbstractJsonProperty(pair: Map.Entry<String, JsonElement
 
     fun String.toLowerCamelCase(): String {
         val part = split("_")
-        return part.first().decapitalize() + part.drop(1).joinToString("") { it.capitalize() }
+        return part.first().replaceFirstChar { it.lowercase(Locale.getDefault()) } + part.drop(1).joinToString("") {
+            it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        }
     }
 
     fun String.toSafeKotlinLiteral(): String {

@@ -57,4 +57,4 @@ open class CachingReadOnlyProperty<in R, out T> internal constructor(
 actual class JsonDelegateProperty<out T> actual constructor(
     internal actual val key: String?,
     initializer: PropertyInitializer<T>
-): ReadOnlyProperty<Any?, T> by CachingReadOnlyProperty<Any?, T>(initializer)
+): ReadOnlyProperty<Any?, T> by CachingReadOnlyProperty(initializer)

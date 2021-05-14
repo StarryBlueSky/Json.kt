@@ -25,7 +25,9 @@
 package blue.starry.jsonkt.cli.property
 
 import blue.starry.jsonkt.JsonElement
+import java.util.*
 
 internal abstract class AbstractJsonModelProperty(pair: Map.Entry<String, JsonElement>, printComments: Boolean): AbstractJsonProperty(pair, printComments) {
-    val modelName = key.toSafeKotlinLiteral().toLowerCamelCase().capitalize()
+    val modelName = key.toSafeKotlinLiteral().toLowerCamelCase()
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 }

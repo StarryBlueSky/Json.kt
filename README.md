@@ -1,19 +1,19 @@
 # Json.kt: Json bindings for Kotlin Multiplatform
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.30-blue.svg)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.5-blue.svg)](https://kotlinlang.org)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/releases)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/StarryBlueSky/Json.kt/Check)](https://github.com/StarryBlueSky/Json.kt)
 [![license](https://img.shields.io/github/license/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/blob/master/LICENSE)
 [![issues](https://img.shields.io/github/issues/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/issues)
 [![pull requests](https://img.shields.io/github/issues-pr/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/pulls)
 
-委譲プロパティを使い, 直感的に Json を Kotlin のクラスに変換できます。  
-Using delegation properties, you can convert Json to Kotlin classes intuitively.  
+委譲プロパティを使い, 直感的に JSON を Kotlin のクラスに変換できます。  
+Using delegated properties, you can intuitively convert JSON to Kotlin classes.
 
-現時点では JVM (Android), JS target に対応しています。 (各種 Native target に対応予定です)  
-JVM (Android) and JS targets are supported for now. (We'll support Native targets later.)  
+現時点では JVM (Android), JS target に対応しています。  
+At present, it supports Java 8 or later, Android, and JavaScript target.
 
 ドキュメントは [こちら](https://starrybluesky.github.io/Json.kt/jsonkt/) で公開しています。  
-Documentations are published at [here](https://starrybluesky.github.io/Json.kt/jsonkt/).  
+Documentation is available at [here](https://starrybluesky.github.io/Json.kt/jsonkt/).  
 
 
 ```kotlin
@@ -59,13 +59,14 @@ private val json = """{
 fun main() {
     val model = json.parseObject { Model(it) }
 
-    println(model.a == 1) // true
+    assertEquals(1, model.a)
 }
 ```
 
 # Get Started
 
-We moved the repository to Maven Central. So you can use our library without adding extra repository.
+Json.kt はバージョン `6.0.2` から Maven Central で公開されています。以前の Bintray リポジトリはもう利用できません。  
+Json.kt is now available in the Maven Central since version `6.0.2`. The previous Bintray repository is no longer available.
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/releases)
 
@@ -77,6 +78,6 @@ dependencies {
 
 # License
 
-Json.kt is provided under MIT License.  
+Json.kt is provided under the MIT License.  
 
 Copyright (c) 2017-2021 StarryBlueSky.
