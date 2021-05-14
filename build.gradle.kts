@@ -1,24 +1,24 @@
 plugins {
-    kotlin("multiplatform") version "1.4.30"
+    kotlin("multiplatform") version "1.5.0"
 
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
-    id("com.adarshr.test-logger") version "2.1.1"
+    id("com.adarshr.test-logger") version "3.0.0"
     id("net.rdrei.android.buildtimetracker") version "0.11.0"
 
     `maven-publish`
     signing
-    id("io.codearte.nexus-staging") version "0.22.0"
+    id("io.codearte.nexus-staging") version "0.30.0"
 
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "1.4.32"
 }
 
 object Versions {
-    const val KotlinxSerializationJson = "1.1.0"
+    const val KotlinxSerializationJson = "1.2.1"
 
-    const val JUnit = "5.7.0"
-    const val KotlinLogging = "2.0.4"
+    const val JUnit = "5.7.1"
+    const val KotlinLogging = "2.0.6"
     const val Logback = "1.2.3"
-    const val Jansi = "1.18"
+    const val Jansi = "2.3.2"
 }
 
 object Libraries {
@@ -78,9 +78,6 @@ object Env {
 
 repositories {
     mavenCentral()
-
-    // TODO: For dokka; should remove it by May 01, 2021
-    jcenter()
 }
 
 kotlin {
@@ -145,8 +142,8 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                apiVersion = "1.4"
-                languageVersion = "1.4"
+                apiVersion = "1.5"
+                languageVersion = "1.5"
                 allWarningsAsErrors = true
                 verbose = true
             }
