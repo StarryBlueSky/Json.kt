@@ -12,8 +12,8 @@ Using delegated properties, you can intuitively convert JSON to Kotlin classes.
 現時点では JVM (Android), JS target に対応しています。  
 At present, it supports Java 8 or later, Android, and JavaScript target.
 
-ドキュメントは [こちら](https://starrybluesky.github.io/Json.kt/jsonkt/) で公開しています。  
-Documentation is available at [here](https://starrybluesky.github.io/Json.kt/jsonkt/).  
+ドキュメントは [こちら](https://starrybluesky.github.io/Json.kt/) で公開しています。  
+Documentation is available at [here](https://starrybluesky.github.io/Json.kt/).  
 
 
 ```kotlin
