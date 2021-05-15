@@ -88,7 +88,7 @@ kotlin {
             kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }
-    js(BOTH) {
+    js {
         nodejs()
         browser {
             testTask {
