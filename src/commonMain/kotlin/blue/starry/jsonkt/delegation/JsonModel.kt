@@ -58,7 +58,7 @@ private fun JsonModel.defaultJsonKeyConverter(property: KProperty<*>): String {
             buildString {
                 for (c in property.name) {
                     if (c == c.uppercaseChar()) {
-                        if (length > 0) {
+                        if (isNotEmpty()) {
                             append('_')
                         }
                         append(c.lowercaseChar())

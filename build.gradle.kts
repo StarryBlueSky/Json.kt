@@ -1,39 +1,12 @@
+import blue.starry.scriptextender.EnvReference
+
 plugins {
-    kotlin("multiplatform") version "1.5.0"
-
-    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
-    id("com.adarshr.test-logger") version "3.0.0"
-    id("net.rdrei.android.buildtimetracker") version "0.11.0"
-
+    kotlin("multiplatform") version "1.6.10"
     `maven-publish`
     signing
     id("io.codearte.nexus-staging") version "0.30.0"
-
-    id("org.jetbrains.dokka") version "1.4.32"
-}
-
-object Versions {
-    const val KotlinxSerializationJson = "1.2.1"
-
-    const val JUnit = "5.7.1"
-    const val KotlinLogging = "2.0.6"
-    const val Logback = "1.2.3"
-    const val Jansi = "2.3.2"
-}
-
-object Libraries {
-    const val KotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.KotlinxSerializationJson}"
-    const val KotlinLogging = "io.github.microutils:kotlin-logging:${Versions.KotlinLogging}"
-
-    const val JUnitJupiter = "org.junit.jupiter:junit-jupiter:${Versions.JUnit}"
-    const val LogbackCore = "ch.qos.logback:logback-core:${Versions.Logback}"
-    const val LogbackClassic = "ch.qos.logback:logback-classic:${Versions.Logback}"
-    const val Jansi = "org.fusesource.jansi:jansi:${Versions.Jansi}"
-
-    val ExperimentalAnnotations = setOf(
-        "kotlin.Experimental",
-        "kotlin.contracts.ExperimentalContracts"
-    )
+    id("org.jetbrains.dokka") version "1.6.10"
+    id("blue.starry.scriptextender") version "0.0.2"
 }
 
 object Publications {
@@ -58,18 +31,18 @@ object Publications {
 }
 
 object Env {
-    const val Version = "VERSION"
+    val Version = EnvReference("VERSION")
 
-    const val OSSRHProfileId = "OSSRH_PROFILE_ID"
-    const val OSSRHUsername = "OSSRH_USERNAME"
-    const val OSSRHPassword = "OSSRH_PASSWORD"
+    val OSSRHProfileId = EnvReference("OSSRH_PROFILE_ID")
+    val OSSRHUsername = EnvReference("OSSRH_USERNAME")
+    val OSSRHPassword = EnvReference("OSSRH_PASSWORD")
 
-    const val GitHubUsername = "GITHUB_USERNAME"
-    const val GitHubPassword = "GITHUB_PASSWORD"
+    val GitHubUsername = EnvReference("GITHUB_USERNAME")
+    val GitHubPassword = EnvReference("GITHUB_PASSWORD")
 
-    const val SigningKeyId = "SIGNING_KEYID"
-    const val SigningKey = "SIGNING_KEY"
-    const val SigningPassword = "SIGNING_PASSWORD"
+    val SigningKeyId = EnvReference("SIGNING_KEYID")
+    val SigningKey = EnvReference("SIGNING_KEY")
+    val SigningPassword = EnvReference("SIGNING_PASSWORD")
 }
 
 /*
@@ -104,8 +77,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("reflect"))
 
-                api(Libraries.KotlinxSerializationJson)
-                api(Libraries.KotlinLogging)
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                api("io.github.microutils:kotlin-logging:2.1.21")
             }
         }
         commonTest {
@@ -121,12 +94,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
 
-                implementation(kotlin("test-junit5"))
-                implementation(Libraries.JUnitJupiter)
-
-                implementation(Libraries.LogbackCore)
-                implementation(Libraries.LogbackClassic)
-                implementation(Libraries.Jansi)
+                implementation("ch.qos.logback:logback-classic:1.3.0-alpha12")
             }
         }
 
@@ -142,8 +110,8 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                apiVersion = "1.5"
-                languageVersion = "1.5"
+                apiVersion = "1.6"
+                languageVersion = "1.6"
                 allWarningsAsErrors = true
                 verbose = true
             }
@@ -151,47 +119,12 @@ kotlin {
     }
 
     sourceSets.all {
-        languageSettings.progressiveMode = true
+        languageSettings {
+            progressiveMode = true
 
-        Libraries.ExperimentalAnnotations.forEach {
-            languageSettings.useExperimentalAnnotation(it)
+            optIn("kotlin.Experimental")
+            optIn("kotlin.contracts.ExperimentalContracts")
         }
-    }
-}
-
-/*
- * Tests
- */
-
-ktlint {
-    verbose.set(true)
-    outputToConsole.set(true)
-    reporters {
-        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
-    }
-    ignoreFailures.set(true)
-}
-
-buildtimetracker {
-    reporters {
-        register("summary") {
-            options["ordered"] = "true"
-            options["barstyle"] = "ascii"
-            options["shortenTaskNames"] = "false"
-        }
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-
-    testLogging {
-        showStandardStreams = true
-        events("passed", "failed")
-    }
-
-    testlogger {
-        theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA_PARALLEL
     }
 }
 
@@ -212,7 +145,7 @@ publishing {
         maven {
             name = "Sonatype"
             url = uri(
-                if (System.getenv(Env.Version).orEmpty().endsWith("-SNAPSHOT")) {
+                if (Env.Version.valueOrNull.orEmpty().endsWith("-SNAPSHOT")) {
                     Publications.MavenCentralSnapshotRepositoryUrl
                 } else {
                     Publications.MavenCentralStagingRepositoryUrl
@@ -220,8 +153,8 @@ publishing {
             )
 
             credentials {
-                username = System.getenv(Env.OSSRHUsername)
-                password = System.getenv(Env.OSSRHPassword)
+                username = Env.OSSRHUsername.valueOrNull
+                password = Env.OSSRHPassword.valueOrNull
             }
         }
 
@@ -230,8 +163,8 @@ publishing {
             url = uri(Publications.GitHubPackagesRepositoryUrl)
 
             credentials {
-                username = System.getenv(Env.GitHubUsername)
-                password = System.getenv(Env.GitHubPassword)
+                username = Env.GitHubUsername.valueOrNull
+                password = Env.GitHubPassword.valueOrNull
             }
         }
     }
@@ -246,7 +179,7 @@ publishing {
                 "${rootProject.name}-$name"
             }
         }
-        version = System.getenv(Env.Version)
+        version = Env.Version.valueOrNull
 
         pom {
             name.set(artifactId)
@@ -283,19 +216,19 @@ signing {
     setRequired { gradle.taskGraph.hasTask("publish") }
     sign(publishing.publications)
 
-    if (System.getenv(Env.SigningKey) != null) {
+    if (Env.SigningKey.isPresent) {
         @Suppress("UnstableApiUsage")
         useInMemoryPgpKeys(
-            System.getenv(Env.SigningKeyId),
-            System.getenv(Env.SigningKey),
-            System.getenv(Env.SigningPassword)
+            Env.SigningKeyId.value,
+            Env.SigningKey.value,
+            Env.SigningPassword.value
         )
     }
 }
 
 nexusStaging {
     packageGroup = Publications.OSSRHProfileGroupId
-    stagingProfileId = System.getenv(Env.OSSRHProfileId)
-    username = System.getenv(Env.OSSRHUsername)
-    password = System.getenv(Env.OSSRHPassword)
+    stagingProfileId = Env.OSSRHProfileId.valueOrNull
+    username = Env.OSSRHUsername.valueOrNull
+    password = Env.OSSRHPassword.valueOrNull
 }

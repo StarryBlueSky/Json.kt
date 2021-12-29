@@ -1,5 +1,5 @@
 # Json.kt: Json bindings for Kotlin Multiplatform
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.5-blue.svg)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.6-blue.svg)](https://kotlinlang.org)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/releases)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/StarryBlueSky/Json.kt/Check)](https://github.com/StarryBlueSky/Json.kt)
 [![license](https://img.shields.io/github/license/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/blob/master/LICENSE)
