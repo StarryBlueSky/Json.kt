@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
     signing
     id("io.codearte.nexus-staging") version "0.30.0"
-    id("org.jetbrains.dokka") version "1.6.10"
+    id("org.jetbrains.dokka") version "1.6.21"
     id("blue.starry.scriptextender") version "0.0.2"
 }
 
