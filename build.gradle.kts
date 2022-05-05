@@ -1,11 +1,11 @@
 import blue.starry.scriptextender.EnvReference
 
 plugins {
-    kotlin("multiplatform") version "1.6.10"
+    kotlin("multiplatform") version "1.6.21"
     `maven-publish`
     signing
     id("io.codearte.nexus-staging") version "0.30.0"
-    id("org.jetbrains.dokka") version "1.6.10"
+    id("org.jetbrains.dokka") version "1.6.21"
     id("blue.starry.scriptextender") version "0.0.2"
 }
 
@@ -65,9 +65,7 @@ kotlin {
         nodejs()
         browser {
             testTask {
-                useKarma {
-                    useChromeHeadless()
-                }
+                enabled = false
             }
         }
     }
@@ -94,7 +92,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
 
-                implementation("ch.qos.logback:logback-classic:1.3.0-alpha12")
+                implementation("ch.qos.logback:logback-classic:1.2.11")
             }
         }
 
@@ -112,7 +110,6 @@ kotlin {
             kotlinOptions {
                 apiVersion = "1.6"
                 languageVersion = "1.6"
-                allWarningsAsErrors = true
                 verbose = true
             }
         }
@@ -122,8 +119,7 @@ kotlin {
         languageSettings {
             progressiveMode = true
 
-            optIn("kotlin.Experimental")
-            optIn("kotlin.contracts.ExperimentalContracts")
+            optIn("kotlin.RequiresOptIn")
         }
     }
 }
@@ -217,7 +213,6 @@ signing {
     sign(publishing.publications)
 
     if (Env.SigningKey.isPresent) {
-        @Suppress("UnstableApiUsage")
         useInMemoryPgpKeys(
             Env.SigningKeyId.value,
             Env.SigningKey.value,

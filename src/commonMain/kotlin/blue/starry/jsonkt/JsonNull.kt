@@ -26,8 +26,10 @@
 
 package blue.starry.jsonkt
 
+import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
+@OptIn(ExperimentalContracts::class)
 fun JsonElement?.isNull(): Boolean {
     contract {
         returns(false) implies (this@isNull != null)
