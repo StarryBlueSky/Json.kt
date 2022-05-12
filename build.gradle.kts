@@ -75,7 +75,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("reflect"))
 
-                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
                 api("io.github.microutils:kotlin-logging:2.1.21")
             }
         }
