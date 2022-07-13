@@ -1,5 +1,5 @@
 # Json.kt: Json bindings for Kotlin Multiplatform
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.6-blue.svg)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.7-blue.svg)](https://kotlinlang.org)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/releases)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/StarryBlueSky/Json.kt/Check)](https://github.com/StarryBlueSky/Json.kt)
 [![license](https://img.shields.io/github/license/StarryBlueSky/Json.kt)](https://github.com/StarryBlueSky/Json.kt/blob/master/LICENSE)
@@ -14,7 +14,6 @@ At present, it supports Java 8 or later, Android, and JavaScript target.
 
 ドキュメントは [こちら](https://starrybluesky.github.io/Json.kt/) で公開しています。  
 Documentation is available at [here](https://starrybluesky.github.io/Json.kt/).  
-
 
 ```kotlin
 data class Model(override val json: JsonObject): JsonModel {

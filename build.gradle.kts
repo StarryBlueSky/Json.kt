@@ -1,12 +1,12 @@
-import blue.starry.scriptextender.EnvReference
+import blue.starry.gradle.EnvReference
 
 plugins {
-    kotlin("multiplatform") version "1.6.21"
+    kotlin("multiplatform") version "1.7.10"
     `maven-publish`
     signing
     id("io.codearte.nexus-staging") version "0.30.0"
-    id("org.jetbrains.dokka") version "1.6.21"
-    id("blue.starry.scriptextender") version "0.0.2"
+    id("org.jetbrains.dokka") version "1.7.10"
+    id("blue.starry.gradle") version "0.0.1"
 }
 
 object Publications {
@@ -108,9 +108,8 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                apiVersion = "1.6"
-                languageVersion = "1.6"
-                verbose = true
+                apiVersion = "1.7"
+                languageVersion = "1.7"
             }
         }
     }
