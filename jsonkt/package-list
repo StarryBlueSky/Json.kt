@@ -458,6 +458,8 @@ $dokka.location:blue.starry.jsonkt.delegation/JsonKeyCase.SnakeCase///PointingTo
 $dokka.location:blue.starry.jsonkt.delegation/JsonKeyCase.Unspecified///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}jsonkt/blue.starry.jsonkt.delegation/-json-key-case/-unspecified/index.html
 $dokka.location:blue.starry.jsonkt.delegation/JsonKeyCase.UpperCamelCase///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}jsonkt/blue.starry.jsonkt.delegation/-json-key-case/-upper-camel-case/index.html
 $dokka.location:blue.starry.jsonkt.delegation/JsonKeyCase///PointingToDeclaration/jsonkt/blue.starry.jsonkt.delegation/-json-key-case/index.html
+$dokka.location:blue.starry.jsonkt.delegation/JsonKeyCase/valueOf/#kotlin.String/PointingToDeclaration/jsonkt/blue.starry.jsonkt.delegation/-json-key-case/value-of.html
+$dokka.location:blue.starry.jsonkt.delegation/JsonKeyCase/values/#/PointingToDeclaration/jsonkt/blue.starry.jsonkt.delegation/-json-key-case/values.html
 $dokka.location:blue.starry.jsonkt.delegation/JsonModel///PointingToDeclaration/jsonkt/blue.starry.jsonkt.delegation/-json-model/index.html
 $dokka.location:blue.starry.jsonkt.delegation/JsonModel/json/#/PointingToDeclaration/jsonkt/blue.starry.jsonkt.delegation/-json-model/json.html
 $dokka.location:blue.starry.jsonkt.delegation/JsonModel/keyCase/#/PointingToDeclaration/jsonkt/blue.starry.jsonkt.delegation/-json-model/key-case.html
