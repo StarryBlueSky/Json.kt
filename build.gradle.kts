@@ -76,7 +76,7 @@ kotlin {
                 implementation(kotlin("reflect"))
 
                 api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-                api("io.github.microutils:kotlin-logging:2.1.23")
+                api("io.github.microutils:kotlin-logging:3.0.5")
             }
         }
         commonTest {
