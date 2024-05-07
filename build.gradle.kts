@@ -1,7 +1,7 @@
 import blue.starry.gradle.EnvReference
 
 plugins {
-    kotlin("multiplatform") version "1.7.22"
+    kotlin("multiplatform") version "1.9.24"
     `maven-publish`
     signing
     id("io.codearte.nexus-staging") version "0.30.0"
