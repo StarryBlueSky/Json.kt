@@ -92,7 +92,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
 
-                implementation("ch.qos.logback:logback-classic:1.5.20")
+                implementation("ch.qos.logback:logback-classic:1.5.21")
             }
         }
 
